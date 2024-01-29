@@ -1,0 +1,54 @@
+<!-- git clone https://github.com/Rado00/2023_ABMT_Corrado_Muratori.git 2023_ABMT_Corrado_Muratori
+"git config --global user.email ""corrado.muratori0@gmail.com""
+
+  git config --global user.name ""Rado00""" -->
+
+<!--   GENERATE JAR FILE
+"C:/Program Files/maven/apache-maven-3.9.4/bin/mvn" -Pstandalone package
+mvn -Pstandalone package
+  You need to be in the project’s root directory when you are executing the package command. -->
+
+<!-- RUNNARE MATSIM -->
+CONTROLLA GLI OUTPUTSSSS
+
+<!-- SCENARIO CUTTER -->
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx128G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar com.rado.app.RunScenarioCutter --config-path /cluster/home/cmuratori/2023_ABMT_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /cluster/scratch/cmuratori/SwissCutOutputThurgau --extent-path /cluster/home/cmuratori/2023_ABMT_DATA/ShapeFiles/Thurgau/ThurgauKanton_Connected.shp"
+
+<!-- SCENARIO CUTTER 2 -->
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx128G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar com.rado.app.RunScenarioCutter --config-path /cluster/home/cmuratori/2023_ABMT_DATA/BaselineSwitzerlandOutputs/output_config_mod_1pct.xml --output-path /cluster/scratch/cmuratori/Saved_Outputs/scenarioCut/ --extent-path /cluster/home/cmuratori/2023_ABMT_DATA/ShapeFiles/Thurgau/ThurgauKanton_Connected.shp"
+
+
+
+<!-- -----1 ZH PCT BASELINE EULER-->
+sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2023_ABMT_DATA/1pct/zurich_config_eqasim_baseline_1pct.xml"
+
+<!-- -----25 ZH PCT BASELINE -->
+sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2023_ABMT_DATA/25pct/zurich_config_eqasim_baseline_25pct.xml"
+
+<!-- -----100 ZH PCT BASELINE -->
+sbatch -n 1 --cpus-per-task=12 --time=72:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2023_ABMT_DATA/100pct/zurich_config_eqasim_baseline_100pct.xml"
+
+<!-- ------SAMPLE--------------- -->
+sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project/utils/CreatePopulationSample"
+
+2023_ABMT_DATA/100pct/zurich_config_eqasim_baseline_100pct.xml
+Week2.RunMatsimExample
+defaultConfig.xml
+/cluster/home/cmuratori/jdk-11/bin/java
+/cluster/home/cmuratori/2023_ABMT_Corrado_Muratori/2023_ABMT_Corrado_Muratori/src/main/java/project/utils/CreatePopulationSample
+/cluster/home/cmuratori/2023_ABMT_DATA/25pct
+
+<!-- POM ="C:\Users\muaa\Documents\3_MIEI\2023_ABMT_Corrado_Muratori\2023_ABMT_Corrado_Muratori\pom.xml" -->
+
+CHECK SENT JOB
+myjobs
+<!-- squeue -u cmuratori
+PD (Pending), R (Running), CG (Completing), CD (Completed), F (Failed)
+
+To check the contents of the output file in real time, you can use:
+tail -f slurm-34383711.out
+To exit the tail -f viewing, press Ctrl + C. -->
+
+<!-- Check All the Space in Cluster -->
+lquota
+
