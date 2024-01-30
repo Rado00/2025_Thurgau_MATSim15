@@ -7,6 +7,8 @@ USER_NAME=$(whoami)
 # MAVEN PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     MAVEN_PATH="/cluster/home/cmuratori/2023_ABMT_Corrado/abmt2023/"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
+    MAVEN_PATH="/home/muaa/2023_ABMT_Corrado/abmt2023/"
 elif [[ "$OS_TYPE" == "Darwin" ]]; then
     MAVEN_PATH="/Users/Marco/Library/CloudStorage/OneDrive-Persönlich/ETHZ/Agent Based Modeling/data/"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
@@ -20,7 +22,9 @@ echo "Data folder is set to: $MAVEN_PATH"
 
 # DATA PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
-    DATA_PATH="/cluster/scratch/cmuratori/data/scenarios"
+    DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
+    DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2023"
 elif [[ "$OS_TYPE" == "Darwin" ]]; then
     DATA_PATH="/Users/Marco/Library/CloudStorage/OneDrive-Persönlich/ETHZ/Agent Based Modeling/data/"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
