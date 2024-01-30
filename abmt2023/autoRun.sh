@@ -6,7 +6,7 @@ USER_NAME=$(whoami)
 
 # MAVEN PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
-    MAVEN_PATH="/cluster/home/cmuratori/.../"
+    MAVEN_PATH="/cluster/home/cmuratori/2023_ABMT_Corrado/abmt2023/"
 elif [[ "$OS_TYPE" == "Darwin" ]]; then
     MAVEN_PATH="/Users/Marco/Library/CloudStorage/OneDrive-Persönlich/ETHZ/Agent Based Modeling/data/"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
@@ -20,7 +20,7 @@ echo "Data folder is set to: $MAVEN_PATH"
 
 # DATA PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
-    DATA_PATH="/cluster/home/cmuratori/.../"
+    DATA_PATH="/cluster/scratch/cmuratori/data/scenarios"
 elif [[ "$OS_TYPE" == "Darwin" ]]; then
     DATA_PATH="/Users/Marco/Library/CloudStorage/OneDrive-Persönlich/ETHZ/Agent Based Modeling/data/"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
@@ -40,13 +40,13 @@ cd "$MAVEN_PATH"
 mvn -Pstandalone package
 
 # Copy the .jar file to the 10pct scenario directory
-cp "$MAVEN_PATH/target/abmt2023-0.0.1-SNAPSHOT.jar" "$DATA_PATH/1pct"
+cp "$MAVEN_PATH/target/abmt2023-0.0.1-SNAPSHOT.jar" "$DATA_PATH/10pct"
 # cp /cluster/home/cmuratori/ABM_Marco/abmt2023/target/abmt2023-0.0.1-SNAPSHOT.jar /cluster/scratch/cmuratori/data/scenarios/10pct/
 # cp /cluster/home/cmuratori/ABM_Marco/abmt2023/target/abmt2023-0.0.1-SNAPSHOT.jar //cluster//scratch//cmuratori//data//scenarios//Zurich//1pct//
 
 
 # Navigate to the 10pct scenario directory
-cd "$DATA_PATH/1pct"
+cd "$DATA_PATH/10pct"
 # cd /cluster/scratch/cmuratori/data/scenarios/10pct/
 # cd //cluster//scratch//cmuratori//data//scenarios//Zurich//1pct//
 
