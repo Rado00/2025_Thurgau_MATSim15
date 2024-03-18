@@ -10,6 +10,7 @@ mvn -Pstandalone package
 
 <!-- RUNNARE MATSIM -->
 CONTROLLA GLI OUTPUTSSSS
+VANNO ESEGUITI NELLA CARTELLA /home/muaa/2023_ABMT_Corrado/abmt2023 
 
 <!-- SCENARIO CUTTER -->
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx128G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar com.rado.app.RunScenarioCutter --config-path /cluster/home/cmuratori/2023_ABMT_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /cluster/scratch/cmuratori/SwissCutOutputThurgau --extent-path /cluster/home/cmuratori/2023_ABMT_DATA/ShapeFiles/Thurgau/ThurgauKanton_Connected.shp"
@@ -19,6 +20,10 @@ sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-
 
 CUTTER GPRO
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /home/muaa/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Frauenfeld/Frauenfeld.shp"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /home/muaa/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Weinfelden/Weinfelden.shp"
+
+IMPUTE HEADWAYS GPRO
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/100pct/configOriginaleTaglio.xml --output-path /home/muaa/Thurgau_Scenario/hdw"
 
 
 /home/muaa/2023_ABMT_Corrado/abmt2023/target
