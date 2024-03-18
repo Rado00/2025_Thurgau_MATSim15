@@ -17,7 +17,11 @@ sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-
 <!-- SCENARIO CUTTER 2 -->
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx128G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar com.rado.app.RunScenarioCutter --config-path /cluster/home/cmuratori/2023_ABMT_DATA/BaselineSwitzerlandOutputs/output_config_mod_1pct.xml --output-path /cluster/scratch/cmuratori/Saved_Outputs/scenarioCut/ --extent-path /cluster/home/cmuratori/2023_ABMT_DATA/ShapeFiles/Thurgau/ThurgauKanton_Connected.shp"
 
+CUTTER GPRO
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /home/muaa/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Frauenfeld/Frauenfeld.shp"
 
+
+/home/muaa/2023_ABMT_Corrado/abmt2023/target
 
 <!-- -----1 ZH PCT BASELINE EULER-->
 sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2023_ABMT_DATA/1pct/zurich_config_eqasim_baseline_1pct.xml"

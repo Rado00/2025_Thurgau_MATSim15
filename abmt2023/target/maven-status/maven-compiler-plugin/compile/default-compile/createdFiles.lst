@@ -60,6 +60,7 @@ abmt2023/project/config/AstraConfigurator.class
 abmt2023/week8/exercises/mode_choice/parameters/AbmtModeParameters$AbmtCarParameters.class
 abmt2023/project/mode_choice/variables/AstraPersonVariables.class
 abmt2023/project/utils/OutputPathConfigurator.class
+abmt2023/project/mode_choice/RunBaselineSimulation_NoDrt.class
 abmt2023/project/travel_time/SmoothingTravelTimeModule.class
 abmt2023/project/mode_choice/DrtCostParameters.class
 abmt2023/project/mode_choice/InfiniteHeadwayConstraint.class

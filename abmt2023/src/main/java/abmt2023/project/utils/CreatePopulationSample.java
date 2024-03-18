@@ -15,10 +15,10 @@ public class CreatePopulationSample {
 
 		PopulationReader reader = new PopulationReader(sc);
 		
-		double sample = 0.25;
+		double sample = 0.01;
 
 		// input population file
-		reader.readFile(args[0]);
+		reader.readFile("/home/muaa/Thurgau_Scenario/1pct/population.xml.gz");
 
 		MutableScenario sc2 = ScenarioUtils.createMutableScenario(ConfigUtils.createConfig());
 

@@ -63,6 +63,10 @@
       <id>eth-ivt-sharing</id>
       <url>https://packagecloud.io/eth-ivt/sharing/maven2</url>
     </repository>
+    <repository>
+      <id>eqasim-tools</id>
+      <url>https://github.com/kaghog/matsim-tools/tree/master/src/main/java/eqasim</url>
+    </repository>
   </repositories>
   <properties>
     <maven.compiler.target>11</maven.compiler.target>

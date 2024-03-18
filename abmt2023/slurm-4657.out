@@ -1,0 +1,2 @@
+Error: Could not find or load main class project.utils.RunSwitzerlandScenarioCutter
+Caused by: java.lang.ClassNotFoundException: project.utils.RunSwitzerlandScenarioCutter
