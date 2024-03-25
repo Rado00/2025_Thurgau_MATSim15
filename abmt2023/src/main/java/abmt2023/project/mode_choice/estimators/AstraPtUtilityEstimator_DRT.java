@@ -10,7 +10,7 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.mode_choice.AstraModeParameters;
+import abmt2023.project.mode_choice.AstraModeParameters_DRT;
 import abmt2023.project.mode_choice.predictors.AstraPersonPredictor;
 import abmt2023.project.mode_choice.predictors.AstraPtPredictor;
 import abmt2023.project.mode_choice.predictors.AstraTripPredictor;
@@ -18,16 +18,16 @@ import abmt2023.project.mode_choice.variables.AstraPersonVariables;
 import abmt2023.project.mode_choice.variables.AstraPtVariables;
 import abmt2023.project.mode_choice.variables.AstraTripVariables;
 
-public class AstraPtUtilityEstimator extends PtUtilityEstimator {
+public class AstraPtUtilityEstimator_DRT extends PtUtilityEstimator {
 	static public final String NAME = "AstraPtEstimator";
 
-	private final AstraModeParameters parameters;
+	private final AstraModeParameters_DRT parameters;
 	private final AstraPtPredictor predictor;
 	private final AstraPersonPredictor personPredictor;
 	private final AstraTripPredictor tripPredictor;
 
 	@Inject
-	public AstraPtUtilityEstimator(AstraModeParameters parameters, AstraPtPredictor predictor,
+	public AstraPtUtilityEstimator_DRT(AstraModeParameters_DRT parameters, AstraPtPredictor predictor,
 			AstraPersonPredictor personPredictor, AstraTripPredictor tripPredictor) {
 		super(parameters, predictor.delegate);
 

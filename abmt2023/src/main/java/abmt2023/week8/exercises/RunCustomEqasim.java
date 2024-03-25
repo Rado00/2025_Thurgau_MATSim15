@@ -1,36 +1,59 @@
 package abmt2023.week8.exercises;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.eqasim.core.components.config.EqasimConfigGroup;
 import org.eqasim.core.simulation.mode_choice.EqasimModeChoiceModule;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.contribs.discrete_mode_choice.modules.DiscreteModeChoiceModule;
 import org.matsim.contribs.discrete_mode_choice.modules.config.DiscreteModeChoiceConfigGroup;
+import org.matsim.core.config.CommandLine;
+import org.matsim.core.config.CommandLine.ConfigurationException;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 import org.matsim.core.scenario.ScenarioUtils;
 
+import abmt2023.project.utils.OutputPathConfigurator;
 import abmt2023.week8.exercises.mode_choice.AbmtModeChoiceModule;
 
 public class RunCustomEqasim {
 	
-public static void main(String[] args)  {
+	static public void main(String[] args) throws ConfigurationException, MalformedURLException, IOException {
+		// Some paramters added from AdPT
+
 		
-		String configPath = args[0]; //use the sioux fall scenario config_default_eqasim.xml file
+		CommandLine cmd = new CommandLine.Builder(args) //
+				.requireOptions("config-path") // --config-path "path-to-your-config-file/config.xml" is required
+				.allowPrefixes( "mode-parameter", "cost-parameter") //
+				.build();
 		
 		//load the config file with the necessary modules (DMC module and eqasim...)
 		//Hint: Search for the EqasimConfigurator class and see what class we should load
 		 //First load the Siouxfalls scenario
 		
-        Config config = ConfigUtils.loadConfig(configPath, new EqasimConfigGroup(), new DiscreteModeChoiceConfigGroup());
+        Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), new EqasimConfigGroup(), new DiscreteModeChoiceConfigGroup());
         
 
         config.controler().setLastIteration(2);
         config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);        
         
-        config.controler().setOutputDirectory("output2110_2");
+        		// Set output directory to a unique directory
+        String baseDirPath = OutputPathConfigurator.getOutputPath();
+        String baseDir = "Sim_SetGit";
+        Path path = Paths.get(baseDirPath, baseDir);
+        int index = 0;
 
+        while (Files.exists(path)) {
+            index++;
+            path = Paths.get(baseDirPath, baseDir + index);
+        }
+        config.controler().setOutputDirectory(path.toString());
 
 		//load scenario
         Scenario scenario = ScenarioUtils.loadScenario(config);

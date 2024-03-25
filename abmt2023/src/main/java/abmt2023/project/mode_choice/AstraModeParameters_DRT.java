@@ -2,7 +2,7 @@ package abmt2023.project.mode_choice;
 
 import org.eqasim.switzerland.mode_choice.parameters.SwissModeParameters;
 
-public class AstraModeParameters extends SwissModeParameters {
+public class AstraModeParameters_DRT extends SwissModeParameters {
 	static public class AstraBaseModeParameters {
 		public double betaAgeOver60 = 0.0;
 		public double betaWork = 0.0;
@@ -39,8 +39,8 @@ public class AstraModeParameters extends SwissModeParameters {
 	public double lambdaCostHouseholdIncome = 0.0;
 	public double referenceHouseholdIncome_MU = 0.0;
 
-	static public AstraModeParameters buildFrom6Feb2020() {
-		AstraModeParameters parameters = new AstraModeParameters();
+	static public AstraModeParameters_DRT buildFrom6Feb2020() {
+		AstraModeParameters_DRT parameters = new AstraModeParameters_DRT();
 
 		// General
 		parameters.betaCost_u_MU = -0.0888;

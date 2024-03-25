@@ -21,16 +21,16 @@ import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
 import org.matsim.core.controler.Controler;
 import org.matsim.households.Household;
 
-import abmt2023.project.mode_choice.AstraModeAvailability;
+import abmt2023.project.mode_choice.AstraModeAvailability_Baseline;
 import abmt2023.project.mode_choice.InfiniteHeadwayConstraint;
-import abmt2023.project.mode_choice.estimators.AstraBikeUtilityEstimator;
-import abmt2023.project.mode_choice.estimators.AstraCarUtilityEstimator;
-import abmt2023.project.mode_choice.estimators.AstraPtUtilityEstimator;
-import abmt2023.project.mode_choice.estimators.AstraWalkUtilityEstimator;
+import abmt2023.project.mode_choice.estimators.AstraBikeUtilityEstimator_Baseline;
+import abmt2023.project.mode_choice.estimators.AstraCarUtilityEstimator_Baseline;
+import abmt2023.project.mode_choice.estimators.AstraPtUtilityEstimator_Baseline;
+import abmt2023.project.mode_choice.estimators.AstraWalkUtilityEstimator_Baseline;
 import ch.sbb.matsim.config.SwissRailRaptorConfigGroup;
 
-public class AstraConfigurator extends EqasimConfigurator {
-	private AstraConfigurator() {
+public class AstraConfigurator_Baseline extends EqasimConfigurator {
+	private AstraConfigurator_Baseline() {
 	}
 
 	static public ConfigGroup[] getConfigGroups() {
@@ -61,10 +61,10 @@ public class AstraConfigurator extends EqasimConfigurator {
 		eqasimConfig.setTripAnalysisInterval(config.controler().getWriteEventsInterval());
 
 		// Estimators
-		eqasimConfig.setEstimator(TransportMode.car, AstraCarUtilityEstimator.NAME);
-		eqasimConfig.setEstimator(TransportMode.pt, AstraPtUtilityEstimator.NAME);
-		eqasimConfig.setEstimator(TransportMode.bike, AstraBikeUtilityEstimator.NAME);
-		eqasimConfig.setEstimator(TransportMode.walk, AstraWalkUtilityEstimator.NAME);
+		eqasimConfig.setEstimator(TransportMode.car, AstraCarUtilityEstimator_Baseline.NAME);
+		eqasimConfig.setEstimator(TransportMode.pt, AstraPtUtilityEstimator_Baseline.NAME);
+		eqasimConfig.setEstimator(TransportMode.bike, AstraBikeUtilityEstimator_Baseline.NAME);
+		eqasimConfig.setEstimator(TransportMode.walk, AstraWalkUtilityEstimator_Baseline.NAME);
 
 		DiscreteModeChoiceConfigGroup dmcConfig = (DiscreteModeChoiceConfigGroup) config.getModules()
 				.get(DiscreteModeChoiceConfigGroup.GROUP_NAME);
@@ -73,7 +73,7 @@ public class AstraConfigurator extends EqasimConfigurator {
 		tripConstraints.add(InfiniteHeadwayConstraint.NAME);
 		dmcConfig.setTripConstraints(tripConstraints);
 
-		dmcConfig.setModeAvailability(AstraModeAvailability.NAME);		
+		dmcConfig.setModeAvailability(AstraModeAvailability_Baseline.NAME);		
 	}	
 
 	static public void adjustScenario(Scenario scenario) {

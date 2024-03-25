@@ -24,8 +24,11 @@ sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-
 
 IMPUTE HEADWAYS GPRO
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/100pct/configOriginaleTaglio.xml --output-path /home/muaa/Thurgau_Scenario/hdw"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/1pct/configThurgauMod1.xml --output-path /home/muaa/Thurgau_Scenario/pop_hdwy.xml.gz"
 
-
+GENERATE VEHIVLES ALL THURGAU
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/muaa/Thurgau_Scenario/1pct/network.xml.gz --outputpath /home/muaa/Thurgau_Scenario/1pct --fleetSize 10000 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"
+ 
 /home/muaa/2023_ABMT_Corrado/abmt2023/target
 
 <!-- -----1 ZH PCT BASELINE EULER-->

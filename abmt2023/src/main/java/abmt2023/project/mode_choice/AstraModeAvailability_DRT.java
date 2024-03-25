@@ -10,12 +10,12 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 import org.matsim.contribs.discrete_mode_choice.model.mode_availability.ModeAvailability;
 
 
-public class AstraModeAvailability implements ModeAvailability {
+public class AstraModeAvailability_DRT implements ModeAvailability {
 	public static final String NAME = "AstraModeAvailability";
 
 	private final SwissModeAvailability delegate;
 
-	public AstraModeAvailability(SwissModeAvailability delegate) {
+	public AstraModeAvailability_DRT(SwissModeAvailability delegate) {
 		this.delegate = delegate;
 	}
 

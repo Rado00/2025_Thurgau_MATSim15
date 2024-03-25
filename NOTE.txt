@@ -10,8 +10,9 @@ mvn -Pstandalone package
 RUN SIM 
 bash autorun
 
-GENERATE VEHICLES ZURICH
-java -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar week9.drt.GenerateDrtVehicles --networkFile "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/Zurich/25pct/zurich_network.xml.gz" --outputpath "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/Zurich/25pct/" --fleetSize 500 --operationStartTime 0 --operationEndTime 86400 --seats 1 --name_suffix drt
+----------RUN LAPTOP-----------
+GENERATE VEHIVLES ALL THURGAU
+java -cp target/abmt2023-0.0.1-SNAPSHOT.jar week9.lectures.drt.GenerateDrtVehicles --networkFile "/home/muaa/Thurgau_Scenario/1pct/network.xml.gz" --outputpath "/home/muaa/Thurgau_Scenario/1pct" --fleetSize 100000 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt
 
 RUN DRT
 java -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar week9.drt.RunDrtNew --config-path "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/Zurich/1pct/config_New_1pct.xml"

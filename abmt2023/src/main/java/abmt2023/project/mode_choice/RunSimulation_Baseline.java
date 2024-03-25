@@ -17,13 +17,6 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.PlanElement;
-import org.matsim.contrib.drt.routing.DrtRoute;
-import org.matsim.contrib.drt.routing.DrtRouteFactory;
-import org.matsim.contrib.drt.run.MultiModeDrtConfigGroup;
-import org.matsim.contrib.drt.run.MultiModeDrtModule;
-import org.matsim.contrib.dvrp.run.DvrpConfigGroup;
-import org.matsim.contrib.dvrp.run.DvrpModule;
-import org.matsim.contrib.dvrp.run.DvrpQSimComponents;
 import org.matsim.core.config.CommandLine;
 import org.matsim.core.config.CommandLine.ConfigurationException;
 import org.matsim.core.config.Config;
@@ -34,16 +27,11 @@ import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.controler.events.IterationEndsEvent;
 import org.matsim.core.controler.listener.IterationEndsListener;
 
-import abmt2023.project.config.AstraConfigurator;
+import abmt2023.project.config.AstraConfigurator_Baseline;
 import abmt2023.project.travel_time.SmoothingTravelTimeModule;
-import abmt2023.project.utils.OutputPathConfigurator;
-import abmt2023.project.mode_choice.CustomEqasimModeChoiceModule;
-import abmt2023.project.mode_choice.estimators.DRTUtilityEstimator;
-import abmt2023.project.mode_choice.costs.OperatorCostCalculator;
-import abmt2023.project.mode_choice.DrtCostParameters;
+import org.eqasim.core.simulation.mode_choice.EqasimModeChoiceModule;
 
-
-public class RunBaselineSimulation {
+public class RunSimulation_Baseline {
 
 	static public void main(String[] args) throws ConfigurationException, MalformedURLException, IOException {
 		// Some paramters added from AdPT
@@ -54,13 +42,14 @@ public class RunBaselineSimulation {
 				.allowPrefixes( "mode-parameter", "cost-parameter") //
 				.build();
 		
-		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), AstraConfigurator.getConfigGroups());
-		AstraConfigurator.configure(config);
+		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), AstraConfigurator_Baseline.getConfigGroups());
+		AstraConfigurator_Baseline.configure(config);
 		cmd.applyConfiguration(config);
 		
 		// Set output directory to a unique directory
-        String baseDirPath = OutputPathConfigurator.getOutputPath();
-        String baseDir = "Sim_SetGit";
+        // String baseDirPath = "/cluster/scratch/cmuratori/data/output_euler";
+		String baseDirPath = "/home/muaa/SAVED_OUTPUTS";
+        String baseDir = "Sim_1pct_Thurgau_NoDrt";
         Path path = Paths.get(baseDirPath, baseDir);
         int index = 0;
 
@@ -70,21 +59,15 @@ public class RunBaselineSimulation {
         }
 
         config.controler().setOutputDirectory(path.toString());
-    	config.controler().setLastIteration(4); // Taking value from config file when commented out
-        
-        DvrpConfigGroup dvrpConfig = new DvrpConfigGroup();
-        config.addModule(dvrpConfig);
-
-        MultiModeDrtConfigGroup multiModeDrtConfig = new MultiModeDrtConfigGroup();
-        config.addModule(multiModeDrtConfig);
-		
+    	config.controler().setLastIteration(5); // Taking value from config file when commented out
+        		
 		Scenario scenario = ScenarioUtils.createScenario(config);  
 		
 		
 		SwitzerlandConfigurator.configureScenario(scenario);
 		ScenarioUtils.loadScenario(scenario);
 		SwitzerlandConfigurator.adjustScenario(scenario);
-		AstraConfigurator.adjustScenario(scenario);
+		AstraConfigurator_Baseline.adjustScenario(scenario);
 
 		EqasimConfigGroup eqasimConfig = EqasimConfigGroup.get(config);
 
@@ -105,10 +88,6 @@ public class RunBaselineSimulation {
 			}
 		}
 
-		 // Add DRT route factory
-        scenario.getPopulation().getFactory().getRouteFactories().setRouteFactory(DrtRoute.class,
-                new DrtRouteFactory());
-		
 		// EqasimLinkSpeedCalcilator deactivated!
 
 		Controler controller = new Controler(scenario); // add something to run DRT controllers
@@ -117,34 +96,12 @@ public class RunBaselineSimulation {
 		// controller.addOverridingModule(new CustomEqasimModeChoiceModule());
 		controller.addOverridingModule(new EqasimModeChoiceModule());
 		controller.addOverridingModule(new SwissModeChoiceModule(cmd));
-		controller.addOverridingModule(new AstraModule(cmd));
+		controller.addOverridingModule(new AstraModule_Baseline(cmd));
 
-		AstraConfigurator.configureController(controller, cmd);
+		AstraConfigurator_Baseline.configureController(controller, cmd);
 
 		controller.addOverridingModule(new SmoothingTravelTimeModule());
 		
-		//Create drt controller object 
-        
-		// // Instantiate OperatorCostCalculator
-		// DrtCostParameters drtCostParams = DrtCostParameters.buildDefault(); // Modify as needed
-		// OperatorCostCalculator costCalculator = new OperatorCostCalculator(scenario, drtCostParams);
-
-		// // Add an IterationEndsListener to calculate costs at the end of the simulation
-		// controller.addControlerListener(new IterationEndsListener() {
-		// 	@Override
-		// 	public void notifyIterationEnds(IterationEndsEvent event) {
-		// 		if (event.getIteration() == event.getServices().getConfig().controler().getLastIteration()) {
-		// 			costCalculator.calculateAndWriteOperatorCosts();
-		// 		}
-		// 	}
-		// });
-
-		controller.addOverridingModule(new DvrpModule());
-		controller.addOverridingModule(new MultiModeDrtModule());
-		controller.configureQSimComponents(components -> {
-            DvrpQSimComponents.activateAllModes(MultiModeDrtConfigGroup.get(config)).configure(components);
-        });
-
 		controller.run();
 	}
 }

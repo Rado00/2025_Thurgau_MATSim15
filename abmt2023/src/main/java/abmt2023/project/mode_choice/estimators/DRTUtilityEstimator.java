@@ -12,7 +12,7 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.mode_choice.AstraModeParameters;
+import abmt2023.project.mode_choice.AstraModeParameters_DRT;
 import abmt2023.project.mode_choice.costs.DRTCostModel;
 import abmt2023.project.mode_choice.predictors.AstraPersonPredictor;
 import abmt2023.project.mode_choice.predictors.AstraTripPredictor;
@@ -26,14 +26,14 @@ public class DRTUtilityEstimator implements UtilityEstimator {
 	
 	static public final String NAME = "DRTUtilityEstimator";
 
-	private final AstraModeParameters parameters; //TODO: do not forget to add appropriate parameters to this class
+	private final AstraModeParameters_DRT parameters; //TODO: do not forget to add appropriate parameters to this class
 	private final AstraPersonPredictor personPredictor;
 	private final AstraTripPredictor tripPredictor;
 	private final DRTPredictor drtpredictor;
 
 	
 	@Inject
-	public DRTUtilityEstimator(AstraModeParameters parameters, DRTPredictor drtpredictor,
+	public DRTUtilityEstimator(AstraModeParameters_DRT parameters, DRTPredictor drtpredictor,
 			AstraPersonPredictor personPredictor, AstraTripPredictor tripPredictor, DRTCostModel costPredictor) {
 		
 
