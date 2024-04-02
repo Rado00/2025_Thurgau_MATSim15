@@ -6,8 +6,8 @@ import org.matsim.core.config.CommandLine;
 import java.io.IOException;
 
 /**
- * @author kaghog created on 04.07.2022
- * @project matsim-tools
+ * author kaghog created on 04.07.2022
+ * project matsim-tools
  *
  * The script expects a number of arguments:
  * --config-path /path/to/zurich_config.xml
