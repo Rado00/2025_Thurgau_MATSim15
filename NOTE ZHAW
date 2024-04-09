@@ -29,7 +29,16 @@ COPIARE FILES IN ALTRO Cluster
 scp /home/comura/DATA_ABM/FrauenfeldScenario muaa@gpro1.cloudlab.zhaw.ch:/home/muaa/FrauenfeldScenariodestination
 
 
-IMPUTE HEADWAYS GPRO
+DOPO CHANGE PROJ
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_config.xml --output-path /home/muaa/SAVED_OUTPUTS/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Frauenfeld_proj/Frauenfeld_proj.shp"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/Switzerland_2020_Output/switzerland_config_mod.xml --output-path /home/muaa/SAVED_OUTPUTS/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Frauenfeld_proj/Frauenfeld_proj.shp --prefix Frauen_ --threads 24"
+Thurgau
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /home/muaa/SAVED_OUTPUTS/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Thurgau/ThurgauKanton_Connected.shp --config:plans.inputPlansFile /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_population.xml.gz --prefix Frauen_ --threads 24"
+
+/home/muaa/ABM_DATA/ShapeFiles/Thurgau/ThurgauKanton_Connected.shp
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /home/muaa/SAVED_OUTPUTS/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Frauenfeld/Frauenfeld.shp --config:plans.inputPlansFile /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_population.xml.gz --prefix zurich_ --threads 24"
+
+IMPUTE HEADWAYS GPR
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/100pct/configOriginaleTaglio.xml --output-path /home/muaa/Thurgau_Scenario/hdw"
 sbatch -n 1 --cpus-per-task=12 --time=50:00:00 --job-name="abmt2023" --mem-per-cpu=5000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/1pct/configThurgauMod1.xml --output-path /home/muaa/Thurgau_Scenario/pop_hdwy.xml.gz"
 
