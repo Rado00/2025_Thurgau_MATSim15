@@ -4,9 +4,10 @@
   git config --global user.name ""Rado00""" -->
 
 <!--   GENERATE JAR FILE
-"C:/Program Files/maven/apache-maven-3.9.4/bin/mvn" -Pstandalone package
 mvn -Pstandalone package
+
   You need to be in the project’s root directory when you are executing the package command. -->
+/home/comura/jdk-11
 
 <!-- RUNNARE MATSIM -->
 CONTROLLA GLI OUTPUTSSSS
@@ -20,11 +21,17 @@ sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-
 
 CUTTER GPRO
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /home/muaa/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Frauenfeld/Frauenfeld.shp"
-sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/muaa/ABM_DATA/switzerland_2020_baseline/switzerland_config_mod.xml --output-path /home/muaa/FrauenfeldScenario --extent-path /home/muaa/ABM_DATA/ShapeFiles/Weinfelden/Weinfelden.shp"
+---------------------------UZH
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/comura/DATA_ABM/Switzerland_2020_baseline/switzerland_config_mod_output.xml --output-path /home/comura/OUTPUTS/FrauenfeldScenario --extent-path /home/comura/DATA_ABM/ShapeFiles/Frauenfeld_proj/Frauenfeld_proj.shp"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/comura/DATA_ABM/Switzerland_2020_baseline/switzerland_config_mod_output.xml --output-path /home/comura/OUTPUTS/WeinfeldenScenario --extent-path /home/comura/DATA_ABM/ShapeFiles/Weinfelden_proj/Weinfelden_proj.shp"
+
+COPIARE FILES IN ALTRO Cluster
+scp /home/comura/DATA_ABM/FrauenfeldScenario muaa@gpro1.cloudlab.zhaw.ch:/home/muaa/FrauenfeldScenariodestination
+
 
 IMPUTE HEADWAYS GPRO
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/100pct/configOriginaleTaglio.xml --output-path /home/muaa/Thurgau_Scenario/hdw"
-sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/1pct/configThurgauMod1.xml --output-path /home/muaa/Thurgau_Scenario/pop_hdwy.xml.gz"
+sbatch -n 1 --cpus-per-task=12 --time=50:00:00 --job-name="abmt2023" --mem-per-cpu=5000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/1pct/configThurgauMod1.xml --output-path /home/muaa/Thurgau_Scenario/pop_hdwy.xml.gz"
 
 GENERATE VEHIVLES ALL THURGAU
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/muaa/Thurgau_Scenario/1pct/network.xml.gz --outputpath /home/muaa/Thurgau_Scenario/1pct --fleetSize 10000 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"

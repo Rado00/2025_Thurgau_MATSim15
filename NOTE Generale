@@ -1,0 +1,36 @@
+------------(((GIT CONFIG)))-----------
+<!-- git clone https://github.com/Rado00/2023_ABMT_Corrado_Muratori.git 2023_ABMT_Corrado_Muratori
+"git config --global user.email ""corrado.muratori0@gmail.com""
+  git config --global user.name ""Rado00""" -->
+
+-------------(((GENERATE JAR FILE)))---------------
+mvn -Pstandalone package
+  You need to be in the project’s root directory when you are executing the package command
+
+--------------(((PATHS DA MODIFICARE TRA PC E CLUSTER)))------------------
+1) RunBaselineSim -> Output Dir 
+2) autoRun.sh 
+3) runSimulation in cartella DRT
+3) Config -> DRT vehicles
+
+---------------(((CLUSTER UZH)))-----------------------
+cluster.s3it.uzh.ch
+
+-------------(((CHECK SENT JOB)))------------------
+myjobs
+<!-- squeue -u cmuratori
+PD (Pending), R (Running), CG (Completing), CD (Completed), F (Failed)
+
+To check the contents of the output file in real time, you can use:
+tail -f slurm-34383711.out
+To exit the tail -f viewing, press Ctrl + C. -->
+
+-------------(((Check All the Space in Cluster)))--------------
+lquota o free -h
+
+<!-- RUNNARE MATSIM -->
+CONTROLLA GLI OUTPUTSSSS se non usi bash autorun
+
+COPIARE FILES IN ALTRO Cluster
+scp /home/comura/DATA_ABM/FrauenfeldScenario muaa@gpro1.cloudlab.zhaw.ch:/home/muaa/FrauenfeldScenariodestination
+penso funzioni solo se si hanno entrambi aperti
