@@ -7,3 +7,20 @@ java -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project.mode_choice.
 
 <!-- -----RUN 1 ZH Windows LAPTOP 02.24 -->
 java -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.mode_choice.RunBaselineSimulation --config-path "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/Zurich/1pct/config_New_1pct.xml"
+
+HARDCODED ARGUMENTS
+    public static void main(String[] args) throws InterruptedException, CommandLine.ConfigurationException, IOException {
+        RunScenarioCutter.main(args);
+
+        // Predefined arguments
+        String[] hardcodedArgs = new String[]{
+            "--config-path", "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/switzerland_2020_baseline/switzerland_config_mod.xml",
+            "--output-path", "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/FrauenfeldScenario",
+            "--extent-path", "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/ShapeFiles/Frauenfeld_proj/Frauenfeld_proj.shp",
+            // "--config:plans.inputPlansFile", "/path/to/plans.xml.gz",
+            "--prefix", "Frauen_",
+            "--threads", "24"
+        };
+
+        RunScenarioCutter.main(hardcodedArgs);
+    }
