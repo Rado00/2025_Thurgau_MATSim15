@@ -18,12 +18,12 @@ cluster.s3it.uzh.ch
 
 -------------(((CHECK SENT JOB)))------------------
 myjobs
-<!-- squeue -u cmuratori
+squeue -u cmuratori
 PD (Pending), R (Running), CG (Completing), CD (Completed), F (Failed)
 
 To check the contents of the output file in real time, you can use:
 tail -f slurm-34383711.out
-To exit the tail -f viewing, press Ctrl + C. -->
+To exit the tail -f viewing, press Ctrl + C.
 
 -------------(((Check All the Space in Cluster)))--------------
 lquota o free -h

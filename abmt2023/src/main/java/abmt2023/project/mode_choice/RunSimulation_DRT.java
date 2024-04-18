@@ -45,33 +45,35 @@ import abmt2023.project.mode_choice.DrtCostParameters;
 
 
 public class RunSimulation_DRT {
-
+	public RunSimulation_DRT() {
+        super(); // Explicitly call the superclass constructor, though this is implicit
+    }
 	static public void main(String[] args) throws ConfigurationException, MalformedURLException, IOException {
 		// Some paramters added from AdPT
 
 		
 		CommandLine cmd = new CommandLine.Builder(args) //
-				.requireOptions("config-path") // --config-path "path-to-your-config-file/config.xml" is required
+				.requireOptions("config-path","output-directory","output-sim-name") // --config-path "path-to-your-config-file/config.xml" is required
 				.allowPrefixes( "mode-parameter", "cost-parameter") //
 				.build();
-		
+				
 		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), AstraConfigurator_DRT.getConfigGroups());
 		AstraConfigurator_DRT.configure(config);
 		cmd.applyConfiguration(config);
 		
 		// Set output directory to a unique directory
-		String baseDirPath = "/home/muaa/SAVED_OUTPUTS";
-        String baseDir = "Sim_1pct_Thurgau_Drt";
-        Path path = Paths.get(baseDirPath, baseDir);
+		String outputDirectory = cmd.getOptionStrict("output-directory");
+		String outputSimName = cmd.getOptionStrict("output-sim-name");
+        Path path = Paths.get(outputDirectory, outputSimName);
         int index = 0;
 
         while (Files.exists(path)) {
             index++;
-            path = Paths.get(baseDirPath, baseDir + index);
+            path = Paths.get(outputDirectory, outputSimName + index);
         }
 
         config.controler().setOutputDirectory(path.toString());
-    	config.controler().setLastIteration(4); // Taking value from config file when commented out
+    	config.controler().setLastIteration(80); // Taking value from config file when commented out
         
         DvrpConfigGroup dvrpConfig = new DvrpConfigGroup();
         config.addModule(dvrpConfig);
