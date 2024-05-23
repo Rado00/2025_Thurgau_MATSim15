@@ -611,6 +611,4 @@ jdk-11/bin/java
 jdk-11/bin/jarsigner
 jdk-11/bin/jar
 jdk-11/bin/jaotc
-abmt2023/slurm-4664.out
-abmt2023/slurm-4664.out
-abmt2023/slurm-4664.out
+abmt2023/slurm-*.out
