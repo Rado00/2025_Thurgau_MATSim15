@@ -8,9 +8,9 @@ mvn -Pstandalone package
   You need to be in the project’s root directory when you are executing the package command
 
 --------------(((PATHS DA MODIFICARE TRA PC E CLUSTER)))------------------
-1) RunBaselineSim -> Output Dir 
-2) autoRun.sh 
-3) runSimulation in cartella DRT
+1) RunBaselineSim -> Per Iterations
+2) autoRun.sh -> Data Path
+3) runSimulation in cartella DRT -> Output Path
 3) Config -> DRT vehicles
 
 ---------------(((CLUSTER UZH)))-----------------------
