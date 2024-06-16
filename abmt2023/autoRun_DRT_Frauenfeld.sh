@@ -25,7 +25,7 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2023"
-    DATA_PATH="/home/muaa/Thurgau_Scenario"
+    DATA_PATH="/home/muaa/DATA_ABM/Thurgau/Thurgau_Scenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/DATA_ABM/Weinfelden/WeinfeldenScenario"
     # DATA_PATH="/home/comura/data/DATA_ABM/Frauenfeld/FrauenfeldScenario"
