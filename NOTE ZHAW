@@ -42,8 +42,9 @@ IMPUTE HEADWAYS GPR
 sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/100pct/configOriginaleTaglio.xml --output-path /home/muaa/Thurgau_Scenario/hdw"
 sbatch -n 1 --cpus-per-task=12 --time=50:00:00 --job-name="abmt2023" --mem-per-cpu=5000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/muaa/Thurgau_Scenario/1pct/configThurgauMod1.xml --output-path /home/muaa/Thurgau_Scenario/pop_hdwy.xml.gz"
 
-GENERATE VEHIVLES ALL THURGAU
-sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/muaa/Thurgau_Scenario/1pct/network.xml.gz --outputpath /home/muaa/Thurgau_Scenario/1pct --fleetSize 10000 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"
+GENERATE VEHIVLES
+sbatch -n 1 --cpus-per-task=1 --time=10:00:00 --job-name="abmt2024" --mem-per-cpu=1000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/muaa/ABM_DATA/Frauenfeld/FrauenfeldScenario/network.xml.gz --outputpath /home/muaa/ABM_DATA/Frauenfeld/FrauenfeldScenario --fleetSize 1000 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"
+sbatch -n 1 --cpus-per-task=1 --time=10:00:00 --job-name="abmt2024" --mem-per-cpu=1000 --wrap="/home/muaa/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/muaa/ABM_DATA/Weinfelden/WeinfeldenScenario/network.xml.gz --outputpath /home/muaa/ABM_DATA/Weinfelden/WeinfeldenScenario --fleetSize 100 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"
 
 <!-- Check All the Space in Cluster -->
 lquota
