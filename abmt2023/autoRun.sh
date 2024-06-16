@@ -28,9 +28,9 @@ elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     # DATA_PATH="/home/muaa/Thurgau_Scenario"
     DATA_PATH="/home/muaa/ABM_DATA/Frauenfeld/FrauenfeldScenario"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    # DATA_PATH="/home/comura/DATA_ABM/WeinfeldenScenario"
-    # DATA_PATH="/home/comura/DATA_ABM/FrauenfeldScenario"
-    DATA_PATH="/home/comura/DATA_ABM/ThurgauScenario/100pct"
+    # DATA_PATH="/home/comura/data/DATA_ABM/Weinfelden/WeinfeldenScenario"
+    # DATA_PATH="/home/comura/data/DATA_ABM/Frauenfeld/FrauenfeldScenario"
+    DATA_PATH="/home/comura/data/DATA_ABM/Thurgau/ThurgauScenario/100pct"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2023_ABMT_Data/Zurich"
 else
