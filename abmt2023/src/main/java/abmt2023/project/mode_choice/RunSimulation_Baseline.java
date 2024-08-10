@@ -60,7 +60,7 @@ public class RunSimulation_Baseline {
         }
 
         config.controler().setOutputDirectory(path.toString());
-    	config.controler().setLastIteration(80); // Taking value from config file when commented out
+    	config.controler().setLastIteration(3); // Taking value from config file when commented out
         		
 		Scenario scenario = ScenarioUtils.createScenario(config);  
 		
