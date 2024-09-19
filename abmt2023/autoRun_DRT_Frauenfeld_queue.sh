@@ -61,25 +61,39 @@ DRT_VEHICLES_PATH_ARRAY=(
     "/home/comura/data/DATA_ABM/Thurgau/ThurgauScenario/1pct/FrauenfeldDRT/drt_100_6.xml"
     "/home/comura/data/DATA_ABM/Thurgau/ThurgauScenario/1pct/FrauenfeldDRT/drt_1000_6.xml"
 )
+# CHECK!!! that DRT Vehicles and DRT Shape files have the same number of elements
+DRT_SHAPE_FILE_PATH_ARRAY=(
+    "/home/comura/data/DATA_ABM/Thurgau/ThurgauScenario/1pct/FrauenfeldDRT/ShapeFiles/Frauenfeld_proj.shp"
+    "/home/comura/data/DATA_ABM/Thurgau/ThurgauScenario/1pct/FrauenfeldDRT/ShapeFiles/Frauenfeld_proj.shp"
+)
 
 # Loop through each combination of DRT vehicles and shape files
 for i in "${!DRT_VEHICLES_PATH_ARRAY[@]}"; do
     DRT_VEHICLES_PATH=${DRT_VEHICLES_PATH_ARRAY[$i]}
+    DRT_SHAPE_FILE_PATH=${DRT_SHAPE_FILE_PATH_ARRAY[$i]}
 
     # Extract the filename without extension
     removedBasename="${DRT_VEHICLES_PATH_ARRAY[$i]##*/}"   # Remove everything before the last /
     NUM_DRT_VEHICLES="${removedBasename%.xml}"  # Remove the .xml extension
 
+    # Extract the shape file name
+    removedShapeBasename="${DRT_SHAPE_FILE_PATH_ARRAY[$i]##*/}"   # Remove everything before the last /
+    SHAPE_FILE_NAME="${removedShapeBasename%.shp}"  # Remove the .xml extension
+
     # Output the results
     echo "$NUM_DRT_VEHICLES"  # Outputs: drt_100_6
+    echo "$SHAPE_FILE_NAME"  # Outputs: Frauenfeld_proj
+
 
     # Create a unique config file for this run by replacing placeholders
     CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_${NUM_DRT_VEHICLES}_queue.xml"
-    sed "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" \
-        "$DATA_PATH/Thurgau_config_base_02_DRT_queue.xml" > "$CONFIG_FILE_PATH"
+sed -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" \
+    -e "s|\${DRT_SHAPE_FILE_PATH}|$DRT_SHAPE_FILE_PATH|g" \
+    "$DATA_PATH/Thurgau_config_base_02_DRT_queue.xml" > "$CONFIG_FILE_PATH"
 
 
-    echo "Running simulation with $DRT_VEHICLES_PATH_ARRAY DRT vehicles and shape file SHAPE_FILE_PATH"
+
+    echo "Running simulation with $NUM_DRT_VEHICLES DRT vehicles and shape file $DRT_SHAPE_FILE_PATH"
 
     cp "$MAVEN_PATH/target/abmt2023-0.0.1-SNAPSHOT.jar" "$DATA_PATH"
 
@@ -92,7 +106,7 @@ for i in "${!DRT_VEHICLES_PATH_ARRAY[@]}"; do
     --time=100:00:00 \
     --job-name="abmt2024_$DRT_VEHICLES_PATH_ARRAY" \
     --mem-per-cpu=10000 \
-    --wrap="java -Xmx128G -cp abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.mode_choice.RunSimulation_DRT --config-path $CONFIG_FILE_PATH --output-directory /home/comura/data/OUTPUTS/Thurgau --output-sim-name Thurgau_DRT_${NUM_DRT_VEHICLES}"
+    --wrap="java -Xmx128G -cp abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.mode_choice.RunSimulation_DRT --config-path $CONFIG_FILE_PATH --output-directory /home/comura/data/OUTPUTS/Prova --output-sim-name Prova_DRT_${SHAPE_FILE_NAME}_${NUM_DRT_VEHICLES}"
 
     echo "Sent Simulation $DRT_VEHICLES_PATH_ARRAY "
 
