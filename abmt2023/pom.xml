@@ -1,107 +1,139 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>matsim.eth</groupId>
-	<artifactId>abmt2023</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>matsim.eth</groupId>
+    <artifactId>abmt2023</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
-	<properties>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
-	</properties>
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
 
+    <repositories>
+        <repository>
+            <id>matsim</id>
+            <name>MATSim Maven repository</name>
+            <url>https://repo.matsim.org/repository/matsim/</url>
+        </repository>
 
-	<repositories>
-		<repository>
-			<id>matsim</id>
-			<name>MATSim Maven repository</name>
-			<url>https://repo.matsim.org/repository/matsim/</url>
-		</repository>
+        <repository>
+            <id>eqasim</id>
+            <url>https://packagecloud.io/eth-ivt/eqasim/maven2</url>
+        </repository>
 
-		<repository>
-			<id>eqasim</id>
-			<url>https://packagecloud.io/eth-ivt/eqasim/maven2</url>
-		</repository>
+        <repository>
+            <id>eth-ivt-sharing</id>
+            <url>https://packagecloud.io/eth-ivt/sharing/maven2</url>
+        </repository>
+    </repositories>
 
-		<repository>
-			<id>eth-ivt-sharing</id>
-			<url>https://packagecloud.io/eth-ivt/sharing/maven2</url>
-		</repository>
+    <dependencies>
+        <!-- Update MATSim version to 15.0 -->
+        <dependency>
+            <groupId>org.matsim</groupId>
+            <artifactId>matsim</artifactId>
+            <version>15.0</version>
+        </dependency>
 
-	    <repository>
-    	    <id>eqasim-tools</id>
-       		<url>https://github.com/kaghog/matsim-tools/tree/master/src/main/java/eqasim</url>
-   		</repository>
+        <dependency>
+            <groupId>org.eqasim</groupId>
+            <artifactId>core</artifactId>
+            <version>1.5.0</version>
+        </dependency>
 
-	</repositories>
+        <dependency>
+            <groupId>org.eqasim</groupId>
+            <artifactId>switzerland</artifactId>
+            <version>1.5.0</version>
+        </dependency>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.matsim</groupId>
-			<artifactId>matsim</artifactId>
-			<version>13.0</version>
-		</dependency>
+        <dependency>
+            <groupId>com.github.jai-imageio</groupId>
+            <artifactId>jai-imageio-core</artifactId>
+            <version>1.4.0</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.eqasim</groupId>
-			<artifactId>core</artifactId>
-			<version>1.3.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eqasim</groupId>
-			<artifactId>switzerland</artifactId>
-			<version>1.3.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.matsim.contrib</groupId>
-			<artifactId>drt</artifactId>
-			<version>13.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.matsim.contrib</groupId>
-			<artifactId>sharing</artifactId>
-			<version>1.0.2</version>
-		</dependency>
-
-	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<build>
-				<plugins>
-					<plugin>
-						<configuration>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
-							<!-- Additional configuration. -->
-						</configuration>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-shade-plugin</artifactId>
-						<version>3.2.0</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>shade</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+        <dependency>
+            <groupId>com.github.jai-imageio</groupId>
+            <artifactId>jai-imageio-core</artifactId>
+            <version>1.4.0</version>
+        </dependency>
 
 
+        <!-- Update DRT module to match MATSim version -->
+        <dependency>
+            <groupId>org.matsim.contrib</groupId>
+            <artifactId>drt</artifactId>
+            <version>15.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.matsim.contrib</groupId>
+            <artifactId>sharing</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+            <!-- 2 dependencies below added for matsim 15 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.2</version> <!-- You can update to the latest version if needed -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+    </dependencies>
+
+
+    <profiles>
+        <profile>
+            <id>standalone</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <configuration>
+                        <transformers>
+										<transformer
+											implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+										<transformer
+											implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+											<manifestEntries>
+												<Implementation-Vendor>Eqasim</Implementation-Vendor>
+												<Implementation-Version>
+													${parent.groupId}</Implementation-Version>
+											</manifestEntries>
+										</transformer>
+									</transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.2.4</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
+
+<!-- Run mvn clean install to download the required dependencies and ensure everything is correctly set up. -->

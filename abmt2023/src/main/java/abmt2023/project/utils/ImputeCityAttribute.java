@@ -3,7 +3,9 @@ package abmt2023.project.utils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;	// ToChange for MATSim 15
+import org.apache.logging.log4j.Logger; 	// ToChange for MATSim 15
+// import org.apache.log4j.Logger;			// ToChange for MATSim 13
 import org.eqasim.core.scenario.cutter.extent.ScenarioExtent;
 import org.matsim.api.core.v01.population.Activity;
 import org.matsim.api.core.v01.population.Person;
@@ -12,7 +14,9 @@ import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.api.core.v01.population.Population;
 
 public class ImputeCityAttribute {
-	private final static Logger logger = Logger.getLogger(ImputeCityAttribute.class);
+    private static final Logger logger = LogManager.getLogger(ImputeCityAttribute.class); // ToChange for MATSim 15
+	
+	// private final static Logger logger = Logger.getLogger(ImputeCityAttribute.class); ToChange for MATSim 13
 
 	private final ScenarioExtent extent;
 

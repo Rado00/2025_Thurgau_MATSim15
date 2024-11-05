@@ -29,3 +29,8 @@ sbatch -n 1 --cpus-per-task=1 --time=100:00:00 --job-name="abmt2024" --mem-per-c
 python
 
 /home/comura/DATA_ABM/FrauenfeldScenario/Thurgau_config_base_01.xml
+
+
+PER MATSIM 15
+USARE JAVA 17
+sbatch autoRun_DRT_Frauenfeld_queue.sh

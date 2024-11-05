@@ -102,11 +102,14 @@ sed -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" \
 
     # Submit the job
     sbatch -n 1 \
-    --cpus-per-task=12 \
+    --cpus-per-task=16 \
     --time=100:00:00 \
     --job-name="abmt2024_$DRT_VEHICLES_PATH_ARRAY" \
     --mem-per-cpu=10000 \
-    --wrap="java -Xmx128G -cp abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.mode_choice.RunSimulation_DRT --config-path $CONFIG_FILE_PATH --output-directory /home/comura/data/OUTPUTS/Prova --output-sim-name Prova_DRT_${SHAPE_FILE_NAME}_${NUM_DRT_VEHICLES}"
+    --wrap="java -Xmx128G -cp abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.mode_choice.RunSimulation_DRT --config-path $CONFIG_FILE_PATH --output-directory /home/comura/data/OUTPUTS/Prova2 --output-sim-name Prova_DRT_${SHAPE_FILE_NAME}_${NUM_DRT_VEHICLES}"
+
+    # --output="output_%j.out" \
+    # --error="error_%j.err" \
 
     echo "Sent Simulation $DRT_VEHICLES_PATH_ARRAY "
 

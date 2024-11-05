@@ -37,6 +37,7 @@ abmt2023/project/mode_choice/estimators/AstraBikeUtilityEstimator_Baseline.class
 abmt2023/project/mode_choice/estimators/AstraBikeUtilityEstimator_DRT.class
 abmt2023/project/utils/OutputPathConfigurator.class
 abmt2023/project/config/AstraConfigurator_Baseline.class
+abmt2023/project/mode_choice/LocalScenarioAdjuster.class
 abmt2023/project/utils/headway/HeadwayCalculator.class
 abmt2023/project/mode_choice/estimators/AstraPtUtilityEstimator_Baseline.class
 abmt2023/week9/lectures/drt/RunDrt.class

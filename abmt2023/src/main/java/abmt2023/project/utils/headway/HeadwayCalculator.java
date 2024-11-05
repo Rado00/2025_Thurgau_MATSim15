@@ -2,6 +2,8 @@ package abmt2023.project.utils.headway;
 
 import java.util.List;
 
+// *** Added necessary imports ***
+import org.matsim.api.core.v01.population.Person;  // <--- Added this line ToChange MATSim 15
 import org.matsim.facilities.Facility;
 
 import ch.sbb.matsim.routing.pt.raptor.RaptorRoute;
@@ -20,12 +22,14 @@ public class HeadwayCalculator {
 		this.afterDepartureOffset = afterDepartureOffset;
 	}
 
-	public double calculateHeadway_min(Facility originFacility, Facility destinationFacilty, double departureTime) {
-		double earliestDepartureTime = departureTime - beforeDepartureOffset;
-		double latestDepartureTime = departureTime + afterDepartureOffset;
+    // *** Modified this method signature to accept a Person object ***
+    public double calculateHeadway_min(Facility originFacility, Facility destinationFacility, double departureTime, Person person) {  // <--- Changed signature ToChange MATSim 15
+        double earliestDepartureTime = departureTime - beforeDepartureOffset;
+        double latestDepartureTime = departureTime + afterDepartureOffset;
 
-		List<RaptorRoute> routes = raptor.calcRoutes(originFacility, destinationFacilty, earliestDepartureTime,
-				departureTime, latestDepartureTime, null);
+		// *** Modified the calcRoutes call to include person and attributes ***
+		List<RaptorRoute> routes = raptor.calcRoutes(originFacility, destinationFacility, earliestDepartureTime,
+				departureTime, latestDepartureTime, person, null);  // <--- Changed call to include person, attributes ToChange MATSim 15
 
 		int numberOfPtRoutes = 0;
 
