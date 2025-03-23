@@ -7,98 +7,102 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.eqasim.core.components.config.EqasimConfigGroup;
+import org.eqasim.core.simulation.analysis.EqasimAnalysisModule;
 import org.eqasim.core.simulation.mode_choice.EqasimModeChoiceModule;
 import org.eqasim.switzerland.SwitzerlandConfigurator;
 import org.eqasim.switzerland.mode_choice.SwissModeChoiceModule;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.Leg;
+import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.Plan;
+import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.config.CommandLine;
 import org.matsim.core.config.CommandLine.ConfigurationException;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.Controler;
+import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.scenario.ScenarioUtils;
+import org.matsim.core.controler.events.IterationEndsEvent;
+import org.matsim.core.controler.listener.IterationEndsListener;
 
 import abmt2023.project.config.AstraConfigurator_Baseline;
 import abmt2023.project.travel_time.SmoothingTravelTimeModule;
+import org.eqasim.core.simulation.mode_choice.EqasimModeChoiceModule;
 
 public class RunSimulation_Baseline {
+	public RunSimulation_Baseline() {
+        super(); // Explicitly call the superclass constructor, though this is implicit
+    }
+	static public void main(String[] args) throws ConfigurationException, MalformedURLException, IOException {
+		// Some paramters added from AdPT
 
-    public static void main(String[] args) throws ConfigurationException, MalformedURLException, IOException {
-        CommandLine cmd = new CommandLine.Builder(args) //
-                .requireOptions("config-path", "output-directory", "output-sim-name") // --config-path "path-to-your-config-file/config.xml" is required
-                .allowPrefixes("mode-parameter", "cost-parameter") //
-                .build();
-
-        // Create an instance of AstraConfigurator_Baseline
-        AstraConfigurator_Baseline astraConfigurator = new AstraConfigurator_Baseline();
-
-        // Load and configure MATSim config
-        Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), astraConfigurator.getConfigGroups());
-        astraConfigurator.configure(config);  
-        cmd.applyConfiguration(config);
-
-        // Set output directory
-        String outputDirectory = cmd.getOptionStrict("output-directory");
-        String outputSimName = cmd.getOptionStrict("output-sim-name");
+		
+		CommandLine cmd = new CommandLine.Builder(args) //
+				.requireOptions("config-path","output-directory","output-sim-name") // --config-path "path-to-your-config-file/config.xml" is required
+				.allowPrefixes( "mode-parameter", "cost-parameter") //
+				.build();
+				
+		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), AstraConfigurator_Baseline.getConfigGroups());
+		AstraConfigurator_Baseline.configure(config);
+		cmd.applyConfiguration(config);
+		
+		// Set output directory to a unique directory
+		String outputDirectory = cmd.getOptionStrict("output-directory");
+		String outputSimName = cmd.getOptionStrict("output-sim-name");
         Path path = Paths.get(outputDirectory, outputSimName);
         int index = 0;
+
         while (Files.exists(path)) {
             index++;
             path = Paths.get(outputDirectory, outputSimName + index);
         }
+
         config.controler().setOutputDirectory(path.toString());
+    	config.controler().setLastIteration(60); // Taking value from config file when commented out
+        		
+		Scenario scenario = ScenarioUtils.createScenario(config);  
+		
+		
+		SwitzerlandConfigurator.configureScenario(scenario);
+		ScenarioUtils.loadScenario(scenario);
+		SwitzerlandConfigurator.adjustScenario(scenario);
+		AstraConfigurator_Baseline.adjustScenario(scenario);
 
-        // Load scenario
-        Scenario scenario = ScenarioUtils.createScenario(config);
-        
-        // Create an instance of SwitzerlandConfigurator and configure the scenario
-        SwitzerlandConfigurator switzerlandConfigurator = new SwitzerlandConfigurator();
-        switzerlandConfigurator.configureScenario(scenario);  // Non-static method call
+		EqasimConfigGroup eqasimConfig = EqasimConfigGroup.get(config);
 
-        ScenarioUtils.loadScenario(scenario);
+		for (Link link : scenario.getNetwork().getLinks().values()) {
+			double maximumSpeed = link.getFreespeed();
+			boolean isMajor = true;
 
-        // Adjust the scenario using the instance
-        astraConfigurator.adjustScenario(scenario);  
+			for (Link other : link.getToNode().getInLinks().values()) {
+				if (other.getCapacity() >= link.getCapacity()) {
+					isMajor = false;
+				}
+			}
 
-        EqasimConfigGroup eqasimConfig = EqasimConfigGroup.get(config);
+			if (!isMajor && link.getToNode().getInLinks().size() > 1) {
+				double travelTime = link.getLength() / maximumSpeed;
+				travelTime += eqasimConfig.getCrossingPenalty();
+				link.setFreespeed(link.getLength() / travelTime);
+			}
+		}
 
-        // Adjust link speeds based on eqasimConfig settings
-        for (Link link : scenario.getNetwork().getLinks().values()) {
-            double maximumSpeed = link.getFreespeed();
-            boolean isMajor = true;
+		// EqasimLinkSpeedCalcilator deactivated!
 
-            for (Link other : link.getToNode().getInLinks().values()) {
-                if (other.getCapacity() >= link.getCapacity()) {
-                    isMajor = false;
-                }
-            }
+		Controler controller = new Controler(scenario); // add something to run DRT controllers
+		SwitzerlandConfigurator.configureController(controller);
+		//controller.addOverridingModule(new EqasimAnalysisModule());
+		// controller.addOverridingModule(new CustomEqasimModeChoiceModule());
+		controller.addOverridingModule(new EqasimModeChoiceModule());
+		controller.addOverridingModule(new SwissModeChoiceModule(cmd));
+		controller.addOverridingModule(new AstraModule_Baseline(cmd));
 
-            if (!isMajor && link.getToNode().getInLinks().size() > 1) {
-                double travelTime = link.getLength() / maximumSpeed;
-                travelTime += eqasimConfig.getCrossingPenalty();
-                link.setFreespeed(link.getLength() / travelTime);
-            }
-        }
+		AstraConfigurator_Baseline.configureController(controller, cmd);
 
-        // Create MATSim controller
-        Controler controller = new Controler(scenario);
-
-        // Configure the controller using the SwitzerlandConfigurator instance
-        switzerlandConfigurator.configureController(controller);  // Non-static method call
-
-        // Add EQASIM mode choice and analysis modules
-        controller.addOverridingModule(new EqasimModeChoiceModule());
-        controller.addOverridingModule(new SwissModeChoiceModule(cmd));
-        controller.addOverridingModule(new AstraModule_Baseline(cmd));
-
-        // Configure controller using the instance of astraConfigurator
-        astraConfigurator.configureController(controller, cmd);  
-
-        // Add smoothing travel time module
-        controller.addOverridingModule(new SmoothingTravelTimeModule());
-
-        // Run the simulation
-        controller.run();
-    }
+		controller.addOverridingModule(new SmoothingTravelTimeModule());
+		
+		controller.run();
+	}
 }

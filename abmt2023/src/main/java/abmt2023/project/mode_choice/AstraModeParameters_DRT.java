@@ -74,7 +74,7 @@ public class AstraModeParameters_DRT extends SwissModeParameters {
 		parameters.astraBike.betaAgeOver60 = -2.6588;
 
 		// Car
-		parameters.car.alpha_u = -0.8; // Original from fb model: 0.2235;
+		parameters.car.alpha_u = 0.2235; // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
 		parameters.car.betaTravelTime_u_min = -0.0192;
 
 		parameters.astraCar.betaWork = -1.1606;

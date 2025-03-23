@@ -15,7 +15,7 @@ public class DrtCostParameters extends SwissCostParameters {
 	public double DRTCost_CHF_trip = 0.0;
 	public double DRTCost_CHF_vehicle = 0.0;
 	public double DRTFare_CHF = 0.0;
-	public double DRTCost_CHF_km = 0.0;
+	public double DRTFare_CHF_km = 0.0;
 	
 	//TODO: add your own cost parameters
 	public static DrtCostParameters buildDefault() {
@@ -35,7 +35,7 @@ public class DrtCostParameters extends SwissCostParameters {
 
 		// price = 0.6 CHF/km * invehicle_distance + 2 CHF
 		parameters.DRTFare_CHF = 0; // fixed constant price DRT 2.0
-		parameters.DRTCost_CHF_km = 0; // km price DRT  0.7
+		parameters.DRTFare_CHF_km = 0; // km price DRT  0.7
 		
 
 		return parameters;

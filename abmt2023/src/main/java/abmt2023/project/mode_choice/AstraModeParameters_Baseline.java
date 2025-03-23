@@ -52,14 +52,22 @@ public class AstraModeParameters_Baseline extends SwissModeParameters {
 		parameters.referenceEuclideanDistance_km = 39.0;
 		parameters.referenceHouseholdIncome_MU = 12260.0;
 
+		//The ones for Modal Split Calibration
+		parameters.walk.alpha_u = 0.19; //--------
+		parameters.bike.alpha_u = 5.1; //--------
+		parameters.pt.alpha_u = -6.5; //--------
+		parameters.car.alpha_u = 7.5; // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
+		parameters.astraCar.betaCity = -0.459; //--------
+
+
+
 		// Public transport
-		parameters.pt.alpha_u = 0.0;
-		parameters.pt.betaWaitingTime_u_min = -0.0124;
+		parameters.pt.betaWaitingTime_u_min = -0.0124; //--------
 		parameters.pt.betaAccessEgressTime_u_min = -0.0142;
 
 		parameters.astraPt.betaFeederTravelTime_u_min = -0.0452;
-		parameters.astraPt.betaBusTravelTime_u_min = -0.0124;
-		parameters.astraPt.betaRailTravelTime_u_min = -0.0072;
+		parameters.astraPt.betaBusTravelTime_u_min = -0.0124; //--------
+		parameters.astraPt.betaRailTravelTime_u_min = -0.0072; //--------
 		parameters.astraPt.betaHeadway_u_min = -0.0301;
 
 		parameters.astraPt.betaOvgkB_u = -1.7436;
@@ -68,21 +76,17 @@ public class AstraModeParameters_Baseline extends SwissModeParameters {
 		parameters.astraPt.betaOvgkNone_u = -1.0889;
 
 		// Bicycle
-		parameters.bike.alpha_u = 0.1522;
 		parameters.bike.betaTravelTime_u_min = -0.1258;
 
 		parameters.astraBike.betaAgeOver60 = -2.6588;
 
 		// Car
-		parameters.car.alpha_u = -0.8; // Original from fb model: 0.2235;
-		parameters.car.betaTravelTime_u_min = -0.0192;
+		parameters.car.betaTravelTime_u_min = -0.0192; //--------
 
 		parameters.astraCar.betaWork = -1.1606;
-		parameters.astraCar.betaCity = -0.4590;
 
 		// Walking
-		parameters.walk.alpha_u = 0.5903;
-		parameters.walk.betaTravelTime_u_min = -0.0457;
+		parameters.walk.betaTravelTime_u_min = -0.0457; //--------
 
 		parameters.astraWalk.travelTimeThreshold_min = 120.0;
 		

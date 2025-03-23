@@ -6,8 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import org.matsim.api.core.v01.Scenario;
 import abmt2023.project.mode_choice.DrtCostParameters;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class OperatorCostCalculator {
+    private static final Logger LOG = LogManager.getLogger(OperatorCostCalculator.class);
     private DrtCostParameters costParameters;
     private Scenario scenario;
 
@@ -17,38 +20,68 @@ public class OperatorCostCalculator {
     }
 
     public void calculateAndWriteOperatorCosts() {
-        // Here you need to implement the logic to calculate the total distance, number of trips, and number of vehicles
-        // For demonstration, these are set to example values
-        double totalDistance = calculateTotalDRTDistance(); // Implement this method
-        int totalTrips = calculateTotalDRTTrips(); // Implement this method
-        int totalVehicles = getTotalDRTVehicles(); // Implement this method
+        try {
+            // Calculate values
+            double totalDistance = calculateTotalDRTDistance();
+            LOG.info("Total distance is " + totalDistance);
 
-        double distanceCost = totalDistance * costParameters.DRTCost_CHF_km;
-        double tripCost = totalTrips * costParameters.DRTCost_CHF_trip;
-        double vehicleCost = totalVehicles * costParameters.DRTCost_CHF_vehicle;
+            int totalTrips = calculateTotalDRTTrips();
+            LOG.info("Total Trips is " + totalTrips);
 
-        double totalCost = distanceCost + tripCost + vehicleCost;
+            int totalVehicles = getTotalDRTVehicles();
+            LOG.info("Total Vehicles is " + totalVehicles);
 
-        // Write the total cost to a file in the output directory
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(scenario.getConfig().controler().getOutputDirectory(), "operator_costs.txt")))) {
-            writer.write("Total Operator Cost: " + totalCost);
-        } catch (IOException e) {
-            e.printStackTrace();
+            double distanceCost = totalDistance * costParameters.DRTFare_CHF_km;
+            double tripCost = totalTrips * costParameters.DRTCost_CHF_trip;
+            double vehicleCost = totalVehicles * costParameters.DRTCost_CHF_vehicle;
+            LOG.info("Vehicle Cost is " + vehicleCost);
+
+            double totalCost = distanceCost + tripCost + vehicleCost;
+            LOG.info("Total Cost is " + totalCost);
+            LOG.info("Directory Path is " + scenario.getConfig().controler().getOutputDirectory());
+
+            // Write the total cost to a file in the output directory
+            try (BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(new File(scenario.getConfig().controler().getOutputDirectory(), "operator_costs.txt")))) {
+                writer.write("Total Operator Cost: " + totalCost);
+            } catch (IOException e) {
+                LOG.warn("Error writing to file: ", e);
+            }
+
+            LOG.info("Operator cost calculation completed successfully.");
+
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred: ", e);
         }
     }
 
     private double calculateTotalDRTDistance() {
-        // Implement the logic to calculate total DRT distance
-        return 0.0; // Placeholder value
+        return scenario.getPopulation().getPersons().values().stream()
+            .flatMap(person -> person.getSelectedPlan().getPlanElements().stream())
+            .filter(element -> element instanceof org.matsim.api.core.v01.population.Leg)
+            .map(element -> (org.matsim.api.core.v01.population.Leg) element)
+            .filter(leg -> leg.getMode().equals("drt"))
+            .mapToDouble(leg -> leg.getRoute().getDistance())
+            .sum();
     }
 
     private int calculateTotalDRTTrips() {
-        // Implement the logic to calculate total number of DRT trips
-        return 0; // Placeholder value
-    }
+        return (int) scenario.getPopulation().getPersons().values().stream()
+            .flatMap(person -> person.getSelectedPlan().getPlanElements().stream())
+            .filter(element -> element instanceof org.matsim.api.core.v01.population.Leg)
+            .map(element -> (org.matsim.api.core.v01.population.Leg) element)
+            .filter(leg -> leg.getMode().equals("drt"))
+            .count();
+    }   
 
     private int getTotalDRTVehicles() {
-        // Implement the logic to get the total number of DRT vehicles
-        return 0; // Placeholder value
+        return (int) scenario.getPopulation().getPersons().values().stream()
+            .flatMap(person -> person.getSelectedPlan().getPlanElements().stream())
+            .filter(element -> element instanceof org.matsim.api.core.v01.population.Leg)
+            .map(element -> (org.matsim.api.core.v01.population.Leg) element)
+            .filter(leg -> leg.getMode().equals("drt"))
+            .map(leg -> leg.getRoute().getStartLinkId()) // Assuming one vehicle per unique start point
+            .distinct()
+            .count();
     }
 }

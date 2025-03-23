@@ -18,18 +18,18 @@ public class CreatePopulationSample {
 		double sample = 0.01;
 
 		// input population file
-		reader.readFile("/home/muaa/Thurgau_Scenario/1pct/population.xml.gz");
+		reader.readFile("/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct/imputed_population.xml.gz");
 
 		MutableScenario sc2 = ScenarioUtils.createMutableScenario(ConfigUtils.createConfig());
 
 		for (Person person : sc.getPopulation().getPersons().values()) {
 
-			if (MatsimRandom.getRandom().nextDouble() < sample)
+			if (MatsimRandom.getRandom().nextDouble() < sample)	
 				sc2.getPopulation().addPerson(person);
 		}
 
 		// output population file
-		new PopulationWriter(sc2.getPopulation()).write(args[1]);
+		new PopulationWriter(sc2.getPopulation()).write("/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct/imputed_population.xml.gz");
 
 	}
 

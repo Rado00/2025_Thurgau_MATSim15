@@ -18,6 +18,18 @@
                 <goals>
                   <goal>shade</goal>
                 </goals>
+                <configuration>
+                  <filters>
+                    <filter>
+                      <artifact>*:*</artifact>
+                      <excludes>
+                        <exclude>META-INF/*.SF</exclude>
+                        <exclude>META-INF/*.DSA</exclude>
+                        <exclude>META-INF/*.RSA</exclude>
+                      </excludes>
+                    </filter>
+                  </filters>
+                </configuration>
               </execution>
             </executions>
             <configuration>
@@ -50,6 +62,10 @@
     <repository>
       <id>eth-ivt-sharing</id>
       <url>https://packagecloud.io/eth-ivt/sharing/maven2</url>
+    </repository>
+    <repository>
+      <id>eqasim-tools</id>
+      <url>https://github.com/kaghog/matsim-tools/tree/master/src/main/java/eqasim</url>
     </repository>
   </repositories>
   <properties>

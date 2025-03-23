@@ -24,10 +24,27 @@ public class AstraModeAvailability_DRT implements ModeAvailability {
 		Collection<String> modes = delegate.getAvailableModes(person, trips);
 		// TODO: modes.add(NAME)
 		// Comment out the following line to remove the DRT mode
-		if (modes.contains(TransportMode.walk)) {
-			modes.add(TransportMode.drt);
-		}
+
+		// This was mine
+		// if (modes.contains(TransportMode.walk)) {
+		// 	modes.add(TransportMode.drt);
+		// }
+		// modes.add(TransportMode.drt);
 		// modes.add("drt");
-		return modes;
+		// return modes;
+
+		// This is from GPT
+		// Convert to a mutable list GPT
+
+		List<String> mutableModes = new java.util.ArrayList<>(modes);
+
+		if (modes.contains(TransportMode.walk)) {
+			mutableModes.add(TransportMode.drt);
+		}
+		mutableModes.add("drt");
+
+		return mutableModes;
+
+
 	}
 }

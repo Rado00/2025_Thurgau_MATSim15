@@ -30,7 +30,7 @@ public class DRTCostModel extends AbstractCostModel {
 		double Alpha = 1;
 		
 	
-		return parameters.DRTFare_CHF + parameters.DRTCost_CHF_km * getInVehicleDistance_km(elements) * Alpha;
+		return parameters.DRTFare_CHF + parameters.DRTFare_CHF_km * getInVehicleDistance_km(elements) * Alpha;
 	}
 
 }

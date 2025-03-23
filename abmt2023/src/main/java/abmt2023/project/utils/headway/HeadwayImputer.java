@@ -94,7 +94,7 @@ public class HeadwayImputer {
 								Facility destinationFacility = new LinkWrapperFacility(destinationLink);
 
 								double headway_min = calculator.calculateHeadway_min(originFacility,
-										destinationFacility, trip.getOriginActivity().getEndTime().seconds(), person); //To Change MATSim 15
+										destinationFacility, trip.getOriginActivity().getEndTime().seconds());
 
 								trip.getOriginActivity().getAttributes().putAttribute("headway_min", headway_min);
 							}
