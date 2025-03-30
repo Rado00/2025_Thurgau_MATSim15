@@ -1,4 +1,4 @@
-package abmt2023.project.utils;
+package abmt2025.project.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,9 +27,9 @@ public class GenerateDrtVehiclesCustom {
 
        // Construct file paths using the pctValue variable
     //    String networkfile = "/cluster/scratch/cmuratori/data/scenarios/" + pctValue + "/zurich_network.xml.gz";
-       String networkfile = "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/Zurich/" + pctValue + "/zurich_network.xml.gz";
+       String networkfile = "C:/Users/muaa/Documents/3_MIEI/2025_ABMT_Data/Zurich/" + pctValue + "/zurich_network.xml.gz";
     //    String outputPath = "/cluster/scratch/cmuratori/data/scenarios/" + pctValue;
-    String outputPath = "C:/Users/muaa/Documents/3_MIEI/2023_ABMT_Data/Zurich/" + pctValue;
+    String outputPath = "C:/Users/muaa/Documents/3_MIEI/2025_ABMT_Data/Zurich/" + pctValue;
 
 
        String nameSuffix = "drt_vehicles";

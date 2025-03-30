@@ -1,4 +1,4 @@
-package abmt2023.project.config;
+package abmt2025.project.config;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;

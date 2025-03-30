@@ -1,4 +1,4 @@
-package abmt2023.project.utils;
+package abmt2025.project.utils;
 
 import java.io.File;
 
@@ -15,7 +15,7 @@ public class OutputPathConfigurator {
         String outputFolder = "/home/muaa/SAVED_OUTPUTS";
 
         if (osType.contains("win") && userName.equals("muaa")) {
-            outputFolder = "C:/Users/" + userName + "/Documents/3_MIEI/2023_ABMT_Data/Zurich/0_Outputs/";
+            outputFolder = "C:/Users/" + userName + "/Documents/3_MIEI/2025_ABMT_Data/Zurich/0_Outputs/";
         } else if (osType.contains("nix") || osType.contains("nux") || osType.contains("aix") && userName.equals("cmuratori")) {
             outputFolder = "/cluster/scratch/cmuratori/data/output_euler";
         } else if (osType.contains("nix") || osType.contains("nux") || osType.contains("aix") && userName.equals("muaa")) {
@@ -27,7 +27,7 @@ public class OutputPathConfigurator {
         }
 
         // if (osType.contains("win") && userName.equals("muaa")) {
-        //     outputFolder = "C:/Users/" + userName + "/Documents/3_MIEI/2023_ABMT_Data/Zurich/0_Outputs/";
+        //     outputFolder = "C:/Users/" + userName + "/Documents/3_MIEI/2025_ABMT_Data/Zurich/0_Outputs/";
         // } else if (osType.contains("nix") || osType.contains("nux") || osType.contains("aix")) {
         //     if (userName.equals("cmuratori")) {
         //         outputFolder = "/cluster/scratch/cmuratori/data/output_euler";

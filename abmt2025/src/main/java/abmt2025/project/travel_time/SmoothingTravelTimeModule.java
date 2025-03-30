@@ -1,4 +1,4 @@
-package abmt2023.project.travel_time;
+package abmt2025.project.travel_time;
 
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.core.config.groups.TravelTimeCalculatorConfigGroup;
@@ -7,7 +7,7 @@ import org.matsim.core.controler.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
-import abmt2023.project.config.AstraConfigGroup;
+import abmt2025.project.config.AstraConfigGroup;
 
 public class SmoothingTravelTimeModule extends AbstractModule {
 	@Override

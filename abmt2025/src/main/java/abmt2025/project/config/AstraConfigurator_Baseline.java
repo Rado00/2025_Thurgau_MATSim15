@@ -1,4 +1,4 @@
-package abmt2023.project.config;
+package abmt2025.project.config;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -21,12 +21,12 @@ import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
 import org.matsim.core.controler.Controler;
 import org.matsim.households.Household;
 
-import abmt2023.project.mode_choice.AstraModeAvailability_Baseline;
-import abmt2023.project.mode_choice.InfiniteHeadwayConstraint;
-import abmt2023.project.mode_choice.estimators.AstraBikeUtilityEstimator_Baseline;
-import abmt2023.project.mode_choice.estimators.AstraCarUtilityEstimator_Baseline;
-import abmt2023.project.mode_choice.estimators.AstraPtUtilityEstimator_Baseline;
-import abmt2023.project.mode_choice.estimators.AstraWalkUtilityEstimator_Baseline;
+import abmt2025.project.mode_choice.AstraModeAvailability_Baseline;
+import abmt2025.project.mode_choice.InfiniteHeadwayConstraint;
+import abmt2025.project.mode_choice.estimators.AstraBikeUtilityEstimator_Baseline;
+import abmt2025.project.mode_choice.estimators.AstraCarUtilityEstimator_Baseline;
+import abmt2025.project.mode_choice.estimators.AstraPtUtilityEstimator_Baseline;
+import abmt2025.project.mode_choice.estimators.AstraWalkUtilityEstimator_Baseline;
 import ch.sbb.matsim.config.SwissRailRaptorConfigGroup;
 
 public class AstraConfigurator_Baseline extends EqasimConfigurator {
