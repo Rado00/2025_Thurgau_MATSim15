@@ -1,8 +1,8 @@
-package abmt2023.project.mode_choice.variables;
+package abmt2025.project.mode_choice.variables;
 
 import org.eqasim.core.simulation.mode_choice.utilities.variables.BaseVariables;
 
-import abmt2023.project.mode_choice.variables.AstraTripVariables;
+import abmt2025.project.mode_choice.variables.AstraTripVariables;
 
 public class DRTVariables implements BaseVariables {
 	

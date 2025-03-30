@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples.counter;
+package abmt2025.project.utils.classSamples.counter;
 
 import org.matsim.api.core.v01.events.LinkEnterEvent;
 import org.matsim.api.core.v01.events.LinkLeaveEvent;

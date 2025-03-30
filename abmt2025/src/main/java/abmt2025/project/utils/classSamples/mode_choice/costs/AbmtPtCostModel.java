@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples.mode_choice.costs;
+package abmt2025.project.utils.classSamples.mode_choice.costs;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.utils.classSamples.mode_choice.parameters.AbmtCostParameters;
+import abmt2025.project.utils.classSamples.mode_choice.parameters.AbmtCostParameters;
 
 public class AbmtPtCostModel extends AbstractCostModel {
     private final AbmtCostParameters costParameters;

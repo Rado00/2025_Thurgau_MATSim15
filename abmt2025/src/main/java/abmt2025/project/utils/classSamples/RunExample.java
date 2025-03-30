@@ -1,9 +1,9 @@
-package abmt2023.project.utils.classSamples;
+package abmt2025.project.utils.classSamples;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import abmt2023.project.utils.classSamples.injection.LinkModule;
+import abmt2025.project.utils.classSamples.injection.LinkModule;
 
 public class RunExample {
 

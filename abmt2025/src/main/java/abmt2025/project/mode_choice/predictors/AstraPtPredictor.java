@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice.predictors;
+package abmt2025.project.mode_choice.predictors;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import org.matsim.pt.transitSchedule.api.TransitSchedule;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.mode_choice.variables.AstraPtVariables;
+import abmt2025.project.mode_choice.variables.AstraPtVariables;
 
 public class AstraPtPredictor extends CachedVariablePredictor<AstraPtVariables> {
 	public final PtPredictor delegate;

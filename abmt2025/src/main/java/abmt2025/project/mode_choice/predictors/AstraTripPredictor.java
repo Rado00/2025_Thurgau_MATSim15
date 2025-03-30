@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice.predictors;
+package abmt2025.project.mode_choice.predictors;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
-import abmt2023.project.mode_choice.variables.AstraTripVariables;
+import abmt2025.project.mode_choice.variables.AstraTripVariables;
 
 public class AstraTripPredictor extends CachedVariablePredictor<AstraTripVariables> {
 	@Override

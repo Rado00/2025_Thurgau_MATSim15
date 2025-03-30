@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples;
+package abmt2025.project.utils.classSamples;
 
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.population.Population;

@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples;
+package abmt2025.project.utils.classSamples;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -19,8 +19,8 @@ import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 import org.matsim.core.scenario.ScenarioUtils;
 
-import abmt2023.project.utils.OutputPathConfigurator;
-import abmt2023.project.utils.classSamples.mode_choice.AbmtModeChoiceModule;
+import abmt2025.project.utils.OutputPathConfigurator;
+import abmt2025.project.utils.classSamples.mode_choice.AbmtModeChoiceModule;
 
 public class RunCustomEqasim {
 	

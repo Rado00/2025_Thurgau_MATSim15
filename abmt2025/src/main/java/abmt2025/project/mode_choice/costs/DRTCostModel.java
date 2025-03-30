@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice.costs;
+package abmt2025.project.mode_choice.costs;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.mode_choice.DrtCostParameters;
-import abmt2023.project.mode_choice.predictors.AstraPersonPredictor;
+import abmt2025.project.mode_choice.DrtCostParameters;
+import abmt2025.project.mode_choice.predictors.AstraPersonPredictor;
 
 public class DRTCostModel extends AbstractCostModel {
 

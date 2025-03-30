@@ -1,12 +1,12 @@
 <!-- -----1 ZH PCT BASELINE EULER-->
-sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2023_ABMT_DATA/1pct/zurich_config_eqasim_baseline_1pct.xml"
+sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2025" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2025_Thurgau_MATSim15_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2025_ABMT_DATA/1pct/zurich_config_eqasim_baseline_1pct.xml"
 
 <!-- -----25 ZH PCT BASELINE -->
-sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2023_ABMT_DATA/25pct/zurich_config_eqasim_baseline_25pct.xml"
+sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2025" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2025_Thurgau_MATSim15_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2025_ABMT_DATA/25pct/zurich_config_eqasim_baseline_25pct.xml"
 
 <!-- -----100 ZH PCT BASELINE -->
-sbatch -n 1 --cpus-per-task=12 --time=72:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2023_ABMT_DATA/100pct/zurich_config_eqasim_baseline_100pct.xml"
+sbatch -n 1 --cpus-per-task=12 --time=72:00:00 --job-name="abmt2025" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2025_Thurgau_MATSim15_Muratori-1.0-SNAPSHOT.jar project.mode_choice.RunBaselineSimulation --config-path /cluster/home/cmuratori/2025_ABMT_DATA/100pct/zurich_config_eqasim_baseline_100pct.xml"
 
 <!-- ------SAMPLE--------------- -->
-sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2023" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2023_ABMT_Corrado_Muratori-1.0-SNAPSHOT.jar project/utils/CreatePopulationSample"
+sbatch -n 1 --cpus-per-task=12 --time=24:00:00 --job-name="abmt2025" --mem-per-cpu=9000 --wrap="/cluster/home/cmuratori/jdk-11/bin/java -Xmx64G -cp target/2025_Thurgau_MATSim15_Muratori-1.0-SNAPSHOT.jar project/utils/CreatePopulationSample"
 

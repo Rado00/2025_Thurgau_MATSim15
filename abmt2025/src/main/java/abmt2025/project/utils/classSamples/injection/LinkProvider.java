@@ -1,8 +1,8 @@
-package abmt2023.project.utils.classSamples.injection;
+package abmt2025.project.utils.classSamples.injection;
 
 import com.google.inject.Provider;
 
-import abmt2023.project.utils.classSamples.Link;
+import abmt2025.project.utils.classSamples.Link;
 
 public class LinkProvider implements Provider<Link> {
 

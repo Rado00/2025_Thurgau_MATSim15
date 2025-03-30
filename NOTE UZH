@@ -1,4 +1,4 @@
-<!-- git clone https://github.com/Rado00/2023_ABMT_Corrado_Muratori.git 2023_ABMT_Corrado_Muratori
+<!-- git clone https://github.com/Rado00/2025_Thurgau_MATSim15_Muratori.git 2025_Thurgau_MATSim15_Muratori
 "git config --global user.email ""corrado.muratori0@gmail.com""
 
   git config --global user.name ""Rado00""" -->
@@ -13,21 +13,21 @@ CLUSTER UZH
 cluster.s3it.uzh.ch
 
 CUTTER GPRO
-sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/comura/DATA_ABM/Switzerland_2020_baseline/switzerland_config_mod_output.xml --output-path /home/comura/OUTPUTS/FrauenfeldScenario --extent-path /home/comura/DATA_ABM/ShapeFiles/Frauenfeld_proj/Frauenfeld_proj.shp"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2025" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2025-0.0.1-SNAPSHOT.jar abmt2025.project.utils.RunSwitzerlandScenarioCutter --config-path /home/comura/DATA_ABM/Switzerland_2020_baseline/switzerland_config_mod_output.xml --output-path /home/comura/OUTPUTS/FrauenfeldScenario --extent-path /home/comura/DATA_ABM/ShapeFiles/Frauenfeld_proj/Frauenfeld_proj.shp"
 
-sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunSwitzerlandScenarioCutter --config-path /home/comura/DATA_ABM/Switzerland_2020_baseline/switzerland_config_mod_output.xml --output-path /home/comura/OUTPUTS/WeinfeldenScenario --extent-path /home/comura/DATA_ABM/ShapeFiles/Weinfelden_proj/Weinfelden_proj.shp"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2025" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2025-0.0.1-SNAPSHOT.jar abmt2025.project.utils.RunSwitzerlandScenarioCutter --config-path /home/comura/DATA_ABM/Switzerland_2020_baseline/switzerland_config_mod_output.xml --output-path /home/comura/OUTPUTS/WeinfeldenScenario --extent-path /home/comura/DATA_ABM/ShapeFiles/Weinfelden_proj/Weinfelden_proj.shp"
 
 IMPUTE HEADWAYS
-sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/comura/DATA_ABM/FrauenfeldScenario/Thurgau_config_base_01.xml --output-path /home/comura/OUTPUTS/FrauenfeldScenario.xml.gz"
-sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2023" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/comura/DATA_ABM/WeinfeldenScenario/Thurgau_config_base_01.xml --output-path /home/comura/OUTPUTS/WeinfeldenScenario.xml.gz"
-sbatch -n 1 --cpus-per-task=4 --time=100:00:00 --job-name="abmt2024" --mem-per-cpu=5000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.RunImputeHeadway --config-path /home/comura/data/DATA_ABM/Thurgau/ThurgauScenario/1pct/Thurgau_config_base_01.xml --output-path /home/comura/data/OUTPUTS/imputed_population_2.xml.gz"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2025" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2025-0.0.1-SNAPSHOT.jar abmt2025.project.utils.RunImputeHeadway --config-path /home/comura/DATA_ABM/FrauenfeldScenario/Thurgau_config_base_01.xml --output-path /home/comura/OUTPUTS/FrauenfeldScenario.xml.gz"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2025" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2025-0.0.1-SNAPSHOT.jar abmt2025.project.utils.RunImputeHeadway --config-path /home/comura/DATA_ABM/WeinfeldenScenario/Thurgau_config_base_01.xml --output-path /home/comura/OUTPUTS/WeinfeldenScenario.xml.gz"
+sbatch -n 1 --cpus-per-task=4 --time=100:00:00 --job-name="abmt2024" --mem-per-cpu=5000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2025-0.0.1-SNAPSHOT.jar abmt2025.project.utils.RunImputeHeadway --config-path /home/comura/data/DATA_ABM/Thurgau/ThurgauScenario/1pct/Thurgau_config_base_01.xml --output-path /home/comura/data/OUTPUTS/imputed_population_2.xml.gz"
 
 GENERATE VEHIVLES ALL THURGAU
-sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2024" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/comura/DATA_ABM/FrauenfeldScenario/network.xml.gz --outputpath /home/comura/OUTPUTS/Frauenfeld --fleetSize 100 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"
-sbatch -n 1 --cpus-per-task=1 --time=100:00:00 --job-name="abmt2024" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/comura/DATA_ABM/WeinfeldenScenario/network.xml.gz --outputpath /home/comura/OUTPUTS/Weinfelden --fleetSize 100 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"
+sbatch -n 1 --cpus-per-task=12 --time=100:00:00 --job-name="abmt2024" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2025-0.0.1-SNAPSHOT.jar abmt2025.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/comura/DATA_ABM/FrauenfeldScenario/network.xml.gz --outputpath /home/comura/OUTPUTS/Frauenfeld --fleetSize 100 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"
+sbatch -n 1 --cpus-per-task=1 --time=100:00:00 --job-name="abmt2024" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2025-0.0.1-SNAPSHOT.jar abmt2025.week9.lectures.drt.GenerateDrtVehicles --networkFile /home/comura/DATA_ABM/WeinfeldenScenario/network.xml.gz --outputpath /home/comura/OUTPUTS/Weinfelden --fleetSize 100 --operationStartTime 0 --operationEndTime 86400 --seats 6 --name_suffix drt"
 
 
-sbatch -n 1 --cpus-per-task=1 --time=100:00:00 --job-name="abmt2024" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.utils.CreatePopulationSample"
+sbatch -n 1 --cpus-per-task=1 --time=100:00:00 --job-name="abmt2024" --mem-per-cpu=10000 --wrap="/home/comura/jdk-11/bin/java -Xmx128G -cp target/abmt2025-0.0.1-SNAPSHOT.jar abmt2025.project.utils.CreatePopulationSample"
 
 python
 

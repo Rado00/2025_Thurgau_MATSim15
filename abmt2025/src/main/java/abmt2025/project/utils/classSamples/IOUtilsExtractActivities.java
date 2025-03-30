@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples;
+package abmt2025.project.utils.classSamples;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

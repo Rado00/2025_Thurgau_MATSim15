@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice;
+package abmt2025.project.mode_choice;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,8 +27,8 @@ import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.controler.events.IterationEndsEvent;
 import org.matsim.core.controler.listener.IterationEndsListener;
 
-import abmt2023.project.config.AstraConfigurator_Baseline;
-import abmt2023.project.travel_time.SmoothingTravelTimeModule;
+import abmt2025.project.config.AstraConfigurator_Baseline;
+import abmt2025.project.travel_time.SmoothingTravelTimeModule;
 import org.eqasim.core.simulation.mode_choice.EqasimModeChoiceModule;
 
 public class RunSimulation_Baseline {

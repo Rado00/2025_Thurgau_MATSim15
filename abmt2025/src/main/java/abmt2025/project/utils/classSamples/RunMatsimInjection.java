@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples;
+package abmt2025.project.utils.classSamples;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
@@ -8,8 +8,8 @@ import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 
 import com.google.inject.name.Names;
 
-import abmt2023.project.utils.classSamples.counter.MyEventHandler;
-import abmt2023.project.utils.classSamples.injection.LinkProvider;
+import abmt2025.project.utils.classSamples.counter.MyEventHandler;
+import abmt2025.project.utils.classSamples.injection.LinkProvider;
 
 public class RunMatsimInjection {
 

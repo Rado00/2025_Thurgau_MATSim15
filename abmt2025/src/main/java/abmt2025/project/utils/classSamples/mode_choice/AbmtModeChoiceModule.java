@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples.mode_choice;
+package abmt2025.project.utils.classSamples.mode_choice;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,11 +11,11 @@ import org.eqasim.core.simulation.mode_choice.parameters.ModeParameters;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
-import abmt2023.project.utils.classSamples.mode_choice.costs.AbmtCarCostModel;
-import abmt2023.project.utils.classSamples.mode_choice.costs.AbmtPtCostModel;
-import abmt2023.project.utils.classSamples.mode_choice.estimators.AbmtCarUtilityEstimator;
-import abmt2023.project.utils.classSamples.mode_choice.parameters.AbmtCostParameters;
-import abmt2023.project.utils.classSamples.mode_choice.parameters.AbmtModeParameters;
+import abmt2025.project.utils.classSamples.mode_choice.costs.AbmtCarCostModel;
+import abmt2025.project.utils.classSamples.mode_choice.costs.AbmtPtCostModel;
+import abmt2025.project.utils.classSamples.mode_choice.estimators.AbmtCarUtilityEstimator;
+import abmt2025.project.utils.classSamples.mode_choice.parameters.AbmtCostParameters;
+import abmt2025.project.utils.classSamples.mode_choice.parameters.AbmtModeParameters;
 
 public class AbmtModeChoiceModule extends AbstractEqasimExtension {
 

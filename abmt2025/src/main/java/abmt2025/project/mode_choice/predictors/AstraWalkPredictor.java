@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice.predictors;
+package abmt2025.project.mode_choice.predictors;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.mode_choice.variables.AstraWalkVariables;
+import abmt2025.project.mode_choice.variables.AstraWalkVariables;
 
 public class AstraWalkPredictor extends CachedVariablePredictor<AstraWalkVariables> {
 	public final WalkPredictor delegate;

@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice.predictors;
+package abmt2025.project.mode_choice.predictors;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import abmt2023.project.mode_choice.variables.DRTVariables;
+import abmt2025.project.mode_choice.variables.DRTVariables;
 
 public class DRTPredictor extends CachedVariablePredictor<DRTVariables> {
 

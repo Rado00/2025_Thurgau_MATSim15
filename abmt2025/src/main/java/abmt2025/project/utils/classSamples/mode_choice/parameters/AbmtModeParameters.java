@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples.mode_choice.parameters;
+package abmt2025.project.utils.classSamples.mode_choice.parameters;
 
 import org.eqasim.core.simulation.mode_choice.parameters.ModeParameters;
 

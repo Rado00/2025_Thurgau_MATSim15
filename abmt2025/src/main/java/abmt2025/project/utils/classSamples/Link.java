@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples;
+package abmt2025.project.utils.classSamples;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

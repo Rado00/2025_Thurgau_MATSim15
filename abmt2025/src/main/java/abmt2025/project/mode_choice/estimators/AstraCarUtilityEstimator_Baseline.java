@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice.estimators;
+package abmt2025.project.mode_choice.estimators;
 
 import java.util.List;
 
@@ -13,11 +13,11 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.mode_choice.AstraModeParameters_Baseline;
-import abmt2023.project.mode_choice.predictors.AstraPersonPredictor;
-import abmt2023.project.mode_choice.predictors.AstraTripPredictor;
-import abmt2023.project.mode_choice.variables.AstraPersonVariables;
-import abmt2023.project.mode_choice.variables.AstraTripVariables;
+import abmt2025.project.mode_choice.AstraModeParameters_Baseline;
+import abmt2025.project.mode_choice.predictors.AstraPersonPredictor;
+import abmt2025.project.mode_choice.predictors.AstraTripPredictor;
+import abmt2025.project.mode_choice.variables.AstraPersonVariables;
+import abmt2025.project.mode_choice.variables.AstraTripVariables;
 
 public class AstraCarUtilityEstimator_Baseline extends CarUtilityEstimator {
 	static public final String NAME = "AstraCarEstimator";

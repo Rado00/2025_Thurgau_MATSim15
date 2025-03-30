@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples.average_time;
+package abmt2025.project.utils.classSamples.average_time;
 
 import java.util.Map.Entry;
 

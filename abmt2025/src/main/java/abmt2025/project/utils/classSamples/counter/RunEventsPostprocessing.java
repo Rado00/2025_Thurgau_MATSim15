@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples.counter;
+package abmt2025.project.utils.classSamples.counter;
 
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.events.EventsUtils;

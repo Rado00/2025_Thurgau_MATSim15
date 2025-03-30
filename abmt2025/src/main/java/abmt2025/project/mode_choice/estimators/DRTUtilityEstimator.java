@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice.estimators;
+package abmt2025.project.mode_choice.estimators;
 
 import java.util.List;
 
@@ -12,15 +12,15 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.mode_choice.AstraModeParameters_DRT;
-import abmt2023.project.mode_choice.costs.DRTCostModel;
-import abmt2023.project.mode_choice.predictors.AstraPersonPredictor;
-import abmt2023.project.mode_choice.predictors.AstraTripPredictor;
-import abmt2023.project.mode_choice.predictors.DRTPredictor;
-import abmt2023.project.mode_choice.variables.AstraBikeVariables;
-import abmt2023.project.mode_choice.variables.AstraPersonVariables;
-import abmt2023.project.mode_choice.variables.AstraTripVariables;
-import abmt2023.project.mode_choice.variables.DRTVariables;
+import abmt2025.project.mode_choice.AstraModeParameters_DRT;
+import abmt2025.project.mode_choice.costs.DRTCostModel;
+import abmt2025.project.mode_choice.predictors.AstraPersonPredictor;
+import abmt2025.project.mode_choice.predictors.AstraTripPredictor;
+import abmt2025.project.mode_choice.predictors.DRTPredictor;
+import abmt2025.project.mode_choice.variables.AstraBikeVariables;
+import abmt2025.project.mode_choice.variables.AstraPersonVariables;
+import abmt2025.project.mode_choice.variables.AstraTripVariables;
+import abmt2025.project.mode_choice.variables.DRTVariables;
 
 public class DRTUtilityEstimator implements UtilityEstimator {
 	

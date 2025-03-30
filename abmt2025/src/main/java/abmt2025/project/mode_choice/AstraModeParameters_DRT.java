@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice;
+package abmt2025.project.mode_choice;
 
 import org.eqasim.switzerland.mode_choice.parameters.SwissModeParameters;
 

@@ -1,4 +1,4 @@
-package abmt2023.project.utils.classSamples.mode_choice.estimators;
+package abmt2025.project.utils.classSamples.mode_choice.estimators;
 
 import java.util.List;
 
@@ -13,8 +13,8 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 
 import com.google.inject.Inject;
 
-import abmt2023.project.utils.classSamples.mode_choice.parameters.AbmtCostParameters;
-import abmt2023.project.utils.classSamples.mode_choice.parameters.AbmtModeParameters;
+import abmt2025.project.utils.classSamples.mode_choice.parameters.AbmtCostParameters;
+import abmt2025.project.utils.classSamples.mode_choice.parameters.AbmtModeParameters;
 
 public class AbmtCarUtilityEstimator extends CarUtilityEstimator {
 	

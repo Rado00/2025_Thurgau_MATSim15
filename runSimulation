@@ -3,4 +3,4 @@ sbatch -n 1 \
 --time=100:00:00 \
 --job-name="abmt2024" \
 --mem-per-cpu=10000 \
---wrap="java -Xmx128G -cp abmt2023-0.0.1-SNAPSHOT.jar abmt2023.project.mode_choice.RunBaselineSimulation --config-path config_drt.xml"
+--wrap="java -Xmx128G -cp abmt2025-0.0.1-SNAPSHOT.jar abmt2025.project.mode_choice.RunBaselineSimulation --config-path config_drt.xml"

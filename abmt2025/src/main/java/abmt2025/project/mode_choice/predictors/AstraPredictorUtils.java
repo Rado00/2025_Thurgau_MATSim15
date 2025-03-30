@@ -1,4 +1,4 @@
-package abmt2023.project.mode_choice.predictors;
+package abmt2025.project.mode_choice.predictors;
 
 import org.matsim.api.core.v01.population.Activity;
 import org.matsim.api.core.v01.population.Person;

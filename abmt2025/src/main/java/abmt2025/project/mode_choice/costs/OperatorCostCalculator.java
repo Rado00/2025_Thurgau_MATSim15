@@ -1,11 +1,11 @@
-package abmt2023.project.mode_choice.costs;
+package abmt2025.project.mode_choice.costs;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import org.matsim.api.core.v01.Scenario;
-import abmt2023.project.mode_choice.DrtCostParameters;
+import abmt2025.project.mode_choice.DrtCostParameters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
