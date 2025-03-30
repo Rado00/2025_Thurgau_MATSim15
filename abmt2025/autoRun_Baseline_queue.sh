@@ -6,16 +6,16 @@ USER_NAME=$(whoami)
 
 # MAVEN PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
-    MAVEN_PATH="/cluster/home/cmuratori/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/cluster/home/cmuratori/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    MAVEN_PATH="/home/muaa/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    MAVEN_PATH="/home/comura/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
     # Set Maven options for memory management
     export MAVEN_OPTS="-Xmx2G -XX:MaxMetaspaceSize=512M"
     source ~/use-java11.sh
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
-    MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2023_ABMT_Corrado_Muratori/abmt2023"
+    MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_Thurgau_MATSim15_Muratori/abmt2025"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -27,14 +27,14 @@ echo "Maven folder is set to: $MAVEN_PATH"
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2023"
+    # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2025"
     DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/DATA_ABM/Weinfelden/WeinfeldenScenario"
     # DATA_PATH="/home/comura/data/DATA_ABM/Frauenfeld/FrauenfeldScenario"
     DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2023_ABMT_Data/Zurich"
+    DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -75,7 +75,7 @@ cp "$DATA_PATH/Thurgau_config_base_03_queue.xml" "$CONFIG_FILE_PATH" || { echo "
 
 echo "Running simulation"
 
-cp "$MAVEN_PATH/target/abmt2023-0.0.1-SNAPSHOT.jar" "$DATA_PATH/abmt2023-Baseline83.jar"
+cp "$MAVEN_PATH/target/abmt2025-0.0.1-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline83.jar"
 
 # Navigate to the scenario directory
 cd "$DATA_PATH"
@@ -88,6 +88,6 @@ sbatch -n 1 \
     --mem-per-cpu=64G \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
-    --wrap="java -Xmx128G -cp abmt2023-Baseline83.jar abmt2023.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH  --output-sim-name BaselineCalibration83"
+    --wrap="java -Xmx128G -cp abmt2025-Baseline83.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH  --output-sim-name BaselineCalibration83"
 
 echo "Simulation submitted"

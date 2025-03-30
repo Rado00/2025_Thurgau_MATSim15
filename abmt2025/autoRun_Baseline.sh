@@ -6,13 +6,13 @@ USER_NAME=$(whoami)
 
 # MAVEN PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
-    MAVEN_PATH="/cluster/home/cmuratori/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/cluster/home/cmuratori/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    MAVEN_PATH="/home/muaa/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    MAVEN_PATH="/home/comura/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
-    MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2023_ABMT_Corrado_Muratori/abmt2023"
+    MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_Thurgau_MATSim15_Muratori/abmt2025"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -24,14 +24,14 @@ echo "Maven folder is set to: $MAVEN_PATH"
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2023"
+    # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2025"
     DATA_PATH="/home/muaa/DATA_ABM/Paper2/Paper2_ThurgauScenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/DATA_ABM/Weinfelden/WeinfeldenScenario"
     # DATA_PATH="/home/comura/data/DATA_ABM/Frauenfeld/FrauenfeldScenario"
     DATA_PATH="/home/comura/data/DATA_ABM/Thurgau/ThurgauScenario/1pct"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2023_ABMT_Data/Zurich"
+    DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -56,7 +56,7 @@ else
 fi
 
 # Copy the .jar file to the 10pct scenario directory
-cp "$MAVEN_PATH/target/abmt2023-0.0.1-SNAPSHOT.jar" "$DATA_PATH"
+cp "$MAVEN_PATH/target/abmt2025-0.0.1-SNAPSHOT.jar" "$DATA_PATH"
 
 # Navigate to the 10pct scenario directory
 cd "$DATA_PATH"

@@ -28,11 +28,11 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2025"
-    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
+    # DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
+    DATA_PATH="/home/muaa/DATA_ABM/Thurgau/Thurgau_Scenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
-    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
-
+    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
@@ -62,7 +62,8 @@ fi
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     OUTPUT_DIRECTORY_PATH="$DATA_PATH/Paper2_Outputs/1_ModalSplitCalibration"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/2_FleetSizeCalibration"
+    # OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/2_FleetSizeCalibration"
+    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/Thurgau/Thurgau_Scenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/2024_Paper2_SimsOutputs/2_FleetSizeCalibration"
 else
@@ -70,50 +71,13 @@ else
     exit 1
 fi
 
-# Define DRT Vehicles and Shape File Paths
-if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
-    OUTPUT_DIRECTORY_PATH="$DATA_PATH/Paper2_Outputs/1_ModalSplitCalibration"
-elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DRT_VEHICLES_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_105.xml"
-    DRT_SHAPE_FILE_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95/01_Weinfelden_Affeltrangen/01_Weinfelden_Affeltrangen.shp"
-elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    DRT_VEHICLES_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_105.xml"
-    DRT_SHAPE_FILE_PATH="/home/comura/data/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95/01_Weinfelden_Affeltrangen/01_Weinfelden_Affeltrangen.shp"
-else
-    echo "Unsupported system configuration"
-    exit 1
-fi
+CONFIG_FILE_PATH="/home/muaa/DATA_ABM/Thurgau/Thurgau_Scenario/100pct/Thurgau_config_base_02_DRT.xml"
 
+# CONFIG_FILE_PATH="/home/muaa/DATA_ABM/Thurgau/Thurgau_Scenario/1pct/Thurgau_config_01_drt_8_105.xml"
 
-
-# Extract file names (without extension)
-FLEET_FILENAME=$(basename "$DRT_VEHICLES_PATH" .xml)
-SHAPE_FILENAME=$(basename "$DRT_SHAPE_FILE_PATH" .shp)
-
-echo "$FLEET_FILENAME"
-echo "$SHAPE_FILENAME"
-
-# Generate unique config file name
-CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_${FLEET_FILENAME}.xml"
-if [[ ! -f "$DATA_PATH/Thurgau_config_DRT_03_queue.xml" ]]; then
-    echo "ERROR: Base config file missing!"
-    exit 1
-fi
-
-# Substitute variables into the new config file
-sed -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" \
-    -e "s|\${DRT_SHAPE_FILE_PATH}|$DRT_SHAPE_FILE_PATH|g" \
-    "$DATA_PATH/Thurgau_config_DRT_03_queue.xml" > "$CONFIG_FILE_PATH"
-
-# DEBUG
-if [[ ! -f "$CONFIG_FILE_PATH" ]]; then
-    echo "ERROR: Config file was not created."
-    exit 1
-fi
-echo "Created config file: $CONFIG_FILE_PATH"
 
 # Generate unique JAR file name
-JAR_FILE="abmt2024-${FLEET_FILENAME}.jar"
+JAR_FILE="abmt2024-prova.jar"
 cp "$MAVEN_PATH/target/abmt2025-0.0.1-SNAPSHOT.jar" "$DATA_PATH/$JAR_FILE"
 
 # Navigate to the scenario directory
@@ -127,17 +91,19 @@ fi
 # DEBUG
 echo "Submitting job with config file: ${CONFIG_FILE_PATH}"
 ls -l "${CONFIG_FILE_PATH}"  # Ensure the file exists
-echo "Java command: java -Xmx128G -cp ${JAR_FILE} abmt2025.project.mode_choice.RunSimulation_DRT --config-path ${CONFIG_FILE_PATH} --output-directory ${OUTPUT_DIRECTORY_PATH} --output-sim-name Prova_DRT_${FLEET_FILENAME}"
+echo "Java command: java -Xmx128G -cp ${JAR_FILE} abmt2025.project.mode_choice.RunSimulation_DRT --config-path ${CONFIG_FILE_PATH} --output-directory ${OUTPUT_DIRECTORY_PATH} --output-sim-name Prova_DRT_prova"
 
     # Submit the job
     sbatch -n 1 \
-    --cpus-per-task=4 \
+    --cpus-per-task=12 \
     --time=100:00:00 \
-    --job-name="abmt2024_${FLEET_FILENAME}" \
-    --mem-per-cpu=64G \
+    --job-name="abmt2024_Prova" \
+    --mem-per-cpu=10G \
     --mail-type=END,FAIL --mail-user=muaa@zhaw.ch \
-    --wrap="/bin/bash -c 'java -Xmx128G -cp ${JAR_FILE} abmt2025.project.mode_choice.RunSimulation_DRT --config-path ${CONFIG_FILE_PATH} --output-directory ${OUTPUT_DIRECTORY_PATH} --output-sim-name Prova_DRT_${FLEET_FILENAME}'"
-    # --wrap="java -Xmx128G -cp ${JAR_FILE} abmt2025.project.mode_choice.RunSimulation_DRT --config-path ${CONFIG_FILE_PATH} --output-directory ${OUTPUT_DIRECTORY_PATH} --output-sim-name Prova_DRT_${FLEET_FILENAME}"
+    --wrap="java -Xmx128G -cp ${JAR_FILE} abmt2025.project.mode_choice.RunSimulation_DRT --config-path ${CONFIG_FILE_PATH} --output-directory ${OUTPUT_DIRECTORY_PATH} --output-sim-name Prova_DRT_$Prova"
+
+    # GPT version
+    # --wrap="/bin/bash -c 'java -Xmx128G -cp ${JAR_FILE} abmt2025.project.mode_choice.RunSimulation_DRT --config-path ${CONFIG_FILE_PATH} --output-directory ${OUTPUT_DIRECTORY_PATH} --output-sim-name Prova_DRT_${FLEET_FILENAME}'"
 
 # DEBUG
 if [[ $? -ne 0 ]]; then

@@ -6,16 +6,16 @@ USER_NAME=$(whoami)
 
 # MAVEN PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
-    MAVEN_PATH="/cluster/home/cmuratori/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/cluster/home/cmuratori/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    MAVEN_PATH="/home/muaa/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    MAVEN_PATH="/home/comura/2023_ABMT_Corrado/abmt2023/"
+    MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
     # Set Maven options for memory management
     export MAVEN_OPTS="-Xmx2G -XX:MaxMetaspaceSize=512M"
     source ~/use-java11.sh
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
-    MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2023_ABMT_Corrado_Muratori/abmt2023"
+    MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_Thurgau_MATSim15_Muratori/abmt2025"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -27,14 +27,14 @@ echo "Maven folder is set to: $MAVEN_PATH"
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2023"
+    # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2025"
     DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
     DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
 
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2023_ABMT_Data/Zurich"
+    DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -73,7 +73,7 @@ fi
 
 # Array of DRT vehicles paths (assuming you have different shape files for each simulation) - METTERE A CAPO SENZA virgola o altro
 DRT_VEHICLES_PATH_ARRAY=(
-    "/home/comura/2023_ABMT_Corrado/abmt2023/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_60.xml"
+    "/home/comura/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_60.xml"
 )
 # CHECK!!! that DRT Vehicles and DRT Shape files have the same number of elements
 DRT_SHAPE_FILE_PATH_ARRAY=(
@@ -109,7 +109,7 @@ sed -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" \
     echo "Running simulation with $NUM_DRT_VEHICLES DRT vehicles and shape file $DRT_SHAPE_FILE_PATH"
 
     #CHANGE JAR NAME HERE TO PARALLEL SIMULATIONS
-    cp "$MAVEN_PATH/target/abmt2023-0.0.1-SNAPSHOT.jar" "$DATA_PATH/abmt2023-DRT_01_1.jar"
+    cp "$MAVEN_PATH/target/abmt2025-0.0.1-SNAPSHOT.jar" "$DATA_PATH/abmt2025-DRT_01_1.jar"
 
     # Navigate to the 10pct scenario directory
     cd "$DATA_PATH"
@@ -121,7 +121,7 @@ sed -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" \
     --job-name="abmt2024_$DRT_VEHICLES_PATH_ARRAY" \
     --mem-per-cpu=10G \
     --mail-type=END,FAIL --mail-user=muaa@zhaw.ch \
-    --wrap="java -Xmx128G -cp abmt2023-DRT_01_1.jar abmt2023.project.mode_choice.RunSimulation_DRT --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH --output-sim-name Prova_DRT_${SHAPE_FILE_NAME}_${NUM_DRT_VEHICLES}"
+    --wrap="java -Xmx128G -cp abmt2025-DRT_01_1.jar abmt2025.project.mode_choice.RunSimulation_DRT --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH --output-sim-name Prova_DRT_${SHAPE_FILE_NAME}_${NUM_DRT_VEHICLES}"
     #CHANGE JAR NAME HERE TO PARALLEL SIMULATIONS
 
     echo "Sent Simulation $DRT_VEHICLES_PATH_ARRAY "
