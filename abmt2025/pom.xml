@@ -66,6 +66,14 @@
 			<version>1.0.2</version>
 		</dependency> -->
 
+
+<!-- GPT ADDED BECAUSE [ERROR] /home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/java/abmt2025/project/utils/ImputeCityAttribute.java:[6,24] package org.apache.log4j does not exist -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+
 	</dependencies>
 
 	<profiles>

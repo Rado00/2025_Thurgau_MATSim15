@@ -7,7 +7,9 @@ import java.util.Set;
 import org.eqasim.core.components.config.EqasimConfigGroup;
 import org.eqasim.core.components.transit.EqasimTransitQSimModule;
 import org.eqasim.core.simulation.EqasimConfigurator;
-import org.eqasim.core.simulation.calibration.CalibrationConfigGroup;
+// import org.eqasim.core.simulation.calibration.CalibrationConfigGroup; ToDo SUBSTITUTE IF NEEDED
+import org.eqasim.core.simulation.EqasimConfigurator; //Added for MATSim 15
+import org.eqasim.core.simulation.termination.EqasimTerminationConfigGroup; //Added for MATSim 15
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
