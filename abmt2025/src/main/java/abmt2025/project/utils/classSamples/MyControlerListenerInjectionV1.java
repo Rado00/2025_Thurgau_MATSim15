@@ -21,8 +21,8 @@ public class MyControlerListenerInjectionV1 implements IterationEndsListener{
 	
 	@Inject
 	public MyControlerListenerInjectionV1(Scenario scenario, MyEventHandler eventHandler) {
-		enterEvents = new int[scenario.getConfig().controler().getLastIteration() + 1];
-		leaveEvents = new int[scenario.getConfig().controler().getLastIteration() + 1];
+		enterEvents = new int[scenario.getConfig().controller().getLastIteration() + 1];
+		leaveEvents = new int[scenario.getConfig().controller().getLastIteration() + 1];
 		this.scenario = scenario;
 		this.eventHandler = eventHandler;
 
@@ -33,7 +33,7 @@ public class MyControlerListenerInjectionV1 implements IterationEndsListener{
 		this.enterEvents[event.getIteration()] = this.eventHandler.getCounterEnter();
 		this.leaveEvents[event.getIteration()] = this.eventHandler.getCounterLeave();	
 		
-		if (event.getIteration() == scenario.getConfig().controler().getLastIteration()) {
+		if (event.getIteration() == scenario.getConfig().controller().getLastIteration()) {
 			// write all data gathered in csv files
 			String path = event.getServices().getControlerIO().getOutputPath() + "/events.csv";
 			try {

@@ -35,7 +35,7 @@ public class RunMatsimUtils {
         //First load the Siouxfalls scenario
         String configPath = args[0];
         Config config = ConfigUtils.loadConfig(configPath);
-        config.controler().setOutputDirectory("output4");
+        config.controller().setOutputDirectory("output4");
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
@@ -102,7 +102,7 @@ public class RunMatsimUtils {
         Controler controler = new Controler(scenario);
 
 
-        controler.getConfig().controler().setLastIteration(1);
+        controler.getConfig().controller().setLastIteration(1);
 
 
         controler.run();

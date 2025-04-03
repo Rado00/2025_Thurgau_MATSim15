@@ -20,8 +20,8 @@ public class MyControlerListener implements StartupListener, IterationEndsListen
 	private final Scenario scenario;
 	
 	public MyControlerListener(Scenario scenario) {
-		enterEvents = new int[scenario.getConfig().controler().getLastIteration() + 1];
-		leaveEvents = new int[scenario.getConfig().controler().getLastIteration() + 1];
+		enterEvents = new int[scenario.getConfig().controller().getLastIteration() + 1];
+		leaveEvents = new int[scenario.getConfig().controller().getLastIteration() + 1];
 		this.scenario = scenario;
 
 	}
@@ -35,7 +35,7 @@ public class MyControlerListener implements StartupListener, IterationEndsListen
 		this.enterEvents[event.getIteration()] = this.eventHandler.getCounterEnter();
 		this.leaveEvents[event.getIteration()] = this.eventHandler.getCounterLeave();	
 		
-		if (event.getIteration() == scenario.getConfig().controler().getLastIteration()) {
+		if (event.getIteration() == scenario.getConfig().controller().getLastIteration()) {
 			// write all data gathered in csv files
 			String path = event.getServices().getControlerIO().getOutputPath() + "\\events.csv";
 			try {

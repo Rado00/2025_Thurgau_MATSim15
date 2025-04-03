@@ -1,116 +1,118 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>matsim.eth</groupId>
-	<artifactId>abmt2025</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<properties>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
-	</properties>
+    <groupId>org.eth</groupId>
+    <artifactId>abmt2025</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-
-	<repositories>
-		<repository>
-			<id>matsim</id>
-			<name>MATSim Maven repository</name>
-			<url>https://repo.matsim.org/repository/matsim/</url>
-		</repository>
-
-		<repository>
-			<id>eqasim</id>
-			<url>https://packagecloud.io/eth-ivt/eqasim/maven2</url>
-		</repository>
-
-		<repository>
-			<id>eth-ivt-sharing</id>
-			<url>https://packagecloud.io/eth-ivt/sharing/maven2</url>
-		</repository>
-
-	    <repository>
-    	    <id>eqasim-tools</id>
-       		<url>https://github.com/kaghog/matsim-tools/tree/master/src/main/java/eqasim</url>
-   		</repository>
-
-	</repositories>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.matsim</groupId>
-			<artifactId>matsim</artifactId>
-			<version>15.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eqasim</groupId>
-			<artifactId>core</artifactId>
-			<version>1.5.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eqasim</groupId>
-			<artifactId>switzerland</artifactId>
-			<version>1.5.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.matsim.contrib</groupId>
-			<artifactId>drt</artifactId>
-			<version>15.0</version>
-		</dependency>
-
-<!--  	I THINK NOT AVAILABLE FOR MATSim 15
-		<dependency>
-			<groupId>org.matsim.contrib</groupId>
-			<artifactId>sharing</artifactId>
-			<version>1.0.2</version>
-		</dependency> -->
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
 
-<!-- GPT ADDED BECAUSE [ERROR] /home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/java/abmt2025/project/utils/ImputeCityAttribute.java:[6,24] package org.apache.log4j does not exist -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>matsim</id>
+            <name>MATSim Maven repository</name>
+            <url>https://repo.matsim.org/repository/matsim/</url>
+        </repository>
 
-	</dependencies>
+        <repository>
+            <id>eqasim</id>
+            <url>https://packagecloud.io/eth-ivt/eqasim/maven2</url>
+        </repository>
 
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<build>
-				<plugins>
-					<plugin>
-						<configuration>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
-							<!-- Additional configuration. -->
-						</configuration>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-shade-plugin</artifactId>
-						<version>3.2.0</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>shade</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
 
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.matsim</groupId>
+            <artifactId>matsim</artifactId>
+            <version>2025.0-PR3223</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.eqasim-org.eqasim-java</groupId>
+            <artifactId>core</artifactId>
+            <version>ad293ff</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.eqasim-org.eqasim-java</groupId>
+            <artifactId>switzerland</artifactId>
+            <version>ad293ff</version>
+        </dependency>
+        <dependency>
+            <groupId>org.matsim.contrib</groupId>
+            <artifactId>drt</artifactId>
+            <version>2025.0-PR3223</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.eth.RunSimulation</mainClass>
+
+                                    <manifestEntries>
+                                        <Implementation-Vendor>Eqasim</Implementation-Vendor>
+                                        <Implementation-Version>
+                                            ${parent.groupId}
+                                        </Implementation-Version>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
+

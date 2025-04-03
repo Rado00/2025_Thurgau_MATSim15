@@ -1,53 +1,55 @@
-package abmt2025.project.utils;
+// CLASS CODE FOR MATSIM 13 - COMMENTED TO AVOID ERRORS WHEN COMPILING
 
-// import org.eqasim.RunImputeHeadway
+// package abmt2025.project.utils;
 
-// adapted from @sebastianHorl's code for ASTRA16
-import abmt2025.project.utils.headway.HeadwayImputer;
-import abmt2025.project.utils.headway.HeadwayImputerModule;
+// // import org.eqasim.RunImputeHeadway
 
-import org.eqasim.core.misc.InjectorBuilder;
-import org.eqasim.core.simulation.EqasimConfigurator;
-import org.matsim.api.core.v01.Scenario;
-import org.matsim.core.config.CommandLine;
-import org.matsim.core.config.CommandLine.ConfigurationException;
-import org.matsim.core.config.Config;
-import org.matsim.core.config.ConfigUtils;
-import org.matsim.core.population.io.PopulationWriter;
-import org.matsim.core.scenario.ScenarioUtils;
+// // adapted from @sebastianHorl's code for ASTRA16
+// import abmt2025.project.utils.headway.HeadwayImputer;
+// import abmt2025.project.utils.headway.HeadwayImputerModule;
 
-import com.google.inject.Injector;
-import org.matsim.pt.routes.DefaultTransitPassengerRouteFactory;
-import org.matsim.pt.routes.TransitPassengerRoute;
+// import org.eqasim.core.misc.InjectorBuilder;
+// import org.eqasim.core.simulation.EqasimConfigurator;
+// import org.matsim.api.core.v01.Scenario;
+// import org.matsim.core.config.CommandLine;
+// import org.matsim.core.config.CommandLine.ConfigurationException;
+// import org.matsim.core.config.Config;
+// import org.matsim.core.config.ConfigUtils;
+// import org.matsim.core.population.io.PopulationWriter;
+// import org.matsim.core.scenario.ScenarioUtils;
 
-public class RunImputeHeadway {
-    static public void main(String[] args) throws ConfigurationException, InterruptedException {
-        CommandLine cmd = new CommandLine.Builder(args) //
-                .requireOptions("config-path", "output-path") //
-                .allowOptions("threads", "batch-size") //
-                .build();
+// import com.google.inject.Injector;
+// import org.matsim.pt.routes.DefaultTransitPassengerRouteFactory;
+// import org.matsim.pt.routes.TransitPassengerRoute;
 
-        Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"),
-                EqasimConfigurator.getConfigGroups());
-        cmd.applyConfiguration(config);
-        config.strategy().clearStrategySettings();
+// public class RunImputeHeadway {
+//     static public void main(String[] args) throws ConfigurationException, InterruptedException {
+//         CommandLine cmd = new CommandLine.Builder(args) //
+//                 .requireOptions("config-path", "output-path") //
+//                 .allowOptions("threads", "batch-size") //
+//                 .build();
 
-        int batchSize = cmd.getOption("batch-size").map(Integer::parseInt).orElse(100);
-        int numberOfThreads = cmd.getOption("threads").map(Integer::parseInt)
-                .orElse(Runtime.getRuntime().availableProcessors());
+//         Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"),
+//                 EqasimConfigurator.getConfigGroups());
+//         cmd.applyConfiguration(config);
+//         config.replanning().clearStrategySettings();
 
-        Scenario scenario = ScenarioUtils.createScenario(config);
-        scenario.getPopulation().getFactory().getRouteFactories().setRouteFactory(TransitPassengerRoute.class, new DefaultTransitPassengerRouteFactory());
-        ScenarioUtils.loadScenario(scenario);
+//         int batchSize = cmd.getOption("batch-size").map(Integer::parseInt).orElse(100);
+//         int numberOfThreads = cmd.getOption("threads").map(Integer::parseInt)
+//                 .orElse(Runtime.getRuntime().availableProcessors());
 
-        Injector injector = new InjectorBuilder(scenario) //
-                .addOverridingModules(EqasimConfigurator.getModules()) //
-                .addOverridingModule(new HeadwayImputerModule(numberOfThreads, batchSize, true, 2.0 * 3600.0)) //
-                .build();
+//         Scenario scenario = ScenarioUtils.createScenario(config);
+//         scenario.getPopulation().getFactory().getRouteFactories().setRouteFactory(TransitPassengerRoute.class, new DefaultTransitPassengerRouteFactory());
+//         ScenarioUtils.loadScenario(scenario);
 
-        HeadwayImputer headwayImputer = injector.getInstance(HeadwayImputer.class);
-        headwayImputer.run(scenario.getPopulation());
+//         Injector injector = new InjectorBuilder(scenario) //
+//                 .addOverridingModules(EqasimConfigurator.getModules()) //
+//                 .addOverridingModule(new HeadwayImputerModule(numberOfThreads, batchSize, true, 2.0 * 3600.0)) //
+//                 .build();
 
-        new PopulationWriter(scenario.getPopulation()).write(cmd.getOptionStrict("output-path"));
-    }
-}
+//         HeadwayImputer headwayImputer = injector.getInstance(HeadwayImputer.class);
+//         headwayImputer.run(scenario.getPopulation());
+
+//         new PopulationWriter(scenario.getPopulation()).write(cmd.getOptionStrict("output-path"));
+//     }
+// }

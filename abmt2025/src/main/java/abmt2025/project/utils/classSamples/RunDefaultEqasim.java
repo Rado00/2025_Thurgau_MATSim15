@@ -26,11 +26,11 @@ public class RunDefaultEqasim {
         Config config = ConfigUtils.loadConfig(configPath, new EqasimConfigGroup(), new DiscreteModeChoiceConfigGroup());
         
 
-        config.controler().setLastIteration(2);
+        config.controller().setLastIteration(2);
         
         
         //config.controler().setOutputDirectory("output3110");
-        config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
+        config.controller().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
 
 
 		//load scenario

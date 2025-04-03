@@ -28,8 +28,8 @@ public class MyControlerListenerInjectionV2 implements StartupListener, Iteratio
 
 	@Inject
 	public MyControlerListenerInjectionV2(Scenario scenario, MyEventHandler myEventHandler, EventsManager eventsManager) {
-		enterEvents = new int[scenario.getConfig().controler().getLastIteration() + 1];
-		leaveEvents = new int[scenario.getConfig().controler().getLastIteration() + 1];
+		enterEvents = new int[scenario.getConfig().controller().getLastIteration() + 1];
+		leaveEvents = new int[scenario.getConfig().controller().getLastIteration() + 1];
 		this.scenario = scenario;
 		this.eventHandler = myEventHandler;
 		this.eventsManager = eventsManager;
@@ -50,7 +50,7 @@ public class MyControlerListenerInjectionV2 implements StartupListener, Iteratio
 		this.enterEvents[event.getIteration()] = this.eventHandler.getCounterEnter();
 		this.leaveEvents[event.getIteration()] = this.eventHandler.getCounterLeave();
 
-		if (event.getIteration() == scenario.getConfig().controler().getLastIteration()) {
+		if (event.getIteration() == scenario.getConfig().controller().getLastIteration()) {
 			// write all data gathered in csv files
 			String path = event.getServices().getControlerIO().getOutputPath() + "/events.csv";
 			try {

@@ -25,7 +25,7 @@ public class HeadwayCalculator {
 		double latestDepartureTime = departureTime + afterDepartureOffset;
 
 		List<RaptorRoute> routes = raptor.calcRoutes(originFacility, destinationFacilty, earliestDepartureTime,
-				departureTime, latestDepartureTime, null);
+				departureTime, latestDepartureTime, null, null);
 
 		int numberOfPtRoutes = 0;
 

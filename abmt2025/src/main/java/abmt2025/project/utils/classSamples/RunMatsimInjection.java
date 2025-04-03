@@ -21,11 +21,11 @@ public class RunMatsimInjection {
 		// on your computer
 		Config config = ConfigUtils.loadConfig(args[0]);
 		// we only want to simulate one iteration to see if our code works
-		config.controler().setLastIteration(1);
+		config.controller().setLastIteration(1);
 		// as we are testing our code we can always delete the output directory before
 		// starting the simulation
-		config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
-		// we now create the Controler object
+		config.controller().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
+		// we now create the controller object
 		Controler controler = new Controler(config);
 
 		// MATSim uses an addOverridingModule() method in the controler

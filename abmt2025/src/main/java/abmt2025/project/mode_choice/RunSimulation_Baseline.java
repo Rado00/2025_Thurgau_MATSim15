@@ -43,8 +43,9 @@ public class RunSimulation_Baseline {
 				.requireOptions("config-path","output-directory","output-sim-name") // --config-path "path-to-your-config-file/config.xml" is required
 				.allowPrefixes( "mode-parameter", "cost-parameter") //
 				.build();
-				
-		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), AstraConfigurator_Baseline.getConfigGroups());
+
+		AstraConfigurator_Baseline astraConfigurator_Baseline = new AstraConfigurator_Baseline();
+		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), astraConfigurator_Baseline.getConfigGroups());
 		AstraConfigurator_Baseline.configure(config);
 		cmd.applyConfiguration(config);
 		
@@ -59,16 +60,17 @@ public class RunSimulation_Baseline {
             path = Paths.get(outputDirectory, outputSimName + index);
         }
 
-        config.controler().setOutputDirectory(path.toString());
-    	config.controler().setLastIteration(60); // Taking value from config file when commented out
+        config.controller().setOutputDirectory(path.toString());
+    	config.controller().setLastIteration(60); // Taking value from config file when commented out
         		
 		Scenario scenario = ScenarioUtils.createScenario(config);  
 		
-		
-		SwitzerlandConfigurator.configureScenario(scenario);
+		SwitzerlandConfigurator switzerlandConfigurator = new SwitzerlandConfigurator();
+
+		switzerlandConfigurator.configureScenario(scenario);
 		ScenarioUtils.loadScenario(scenario);
-		SwitzerlandConfigurator.adjustScenario(scenario);
-		AstraConfigurator_Baseline.adjustScenario(scenario);
+		switzerlandConfigurator.adjustScenario(scenario);
+		astraConfigurator_Baseline.adjustScenario(scenario);
 
 		EqasimConfigGroup eqasimConfig = EqasimConfigGroup.get(config);
 
@@ -92,7 +94,7 @@ public class RunSimulation_Baseline {
 		// EqasimLinkSpeedCalcilator deactivated!
 
 		Controler controller = new Controler(scenario); // add something to run DRT controllers
-		SwitzerlandConfigurator.configureController(controller);
+		switzerlandConfigurator.configureController(controller);
 		//controller.addOverridingModule(new EqasimAnalysisModule());
 		// controller.addOverridingModule(new CustomEqasimModeChoiceModule());
 		controller.addOverridingModule(new EqasimModeChoiceModule());

@@ -9,11 +9,12 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     MAVEN_PATH="/cluster/home/cmuratori/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     MAVEN_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/"
+    source ~/use-java17.sh
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
     # Set Maven options for memory management
     export MAVEN_OPTS="-Xmx2G -XX:MaxMetaspaceSize=512M"
-    source ~/use-java11.sh
+    source ~/use-java17.sh
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_Thurgau_MATSim15_Muratori/abmt2025"
 else
@@ -29,7 +30,8 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2025"
     # DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
-    DATA_PATH="/home/muaa/DATA_ABM/Thurgau/Thurgau_Scenario/100pct"
+    DATA_PATH= "/home/muaa/DATA_ABM/Thurgau/Thurgau_Scenario/1pct"
+    # DATA_PATH="/home/muaa/DATA_ABM/Thurgau/Thurgau_Scenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
     DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"

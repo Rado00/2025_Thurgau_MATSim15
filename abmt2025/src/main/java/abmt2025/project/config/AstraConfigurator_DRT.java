@@ -5,10 +5,10 @@ import java.util.Random;
 import java.util.Set;
 
 import org.eqasim.core.components.config.EqasimConfigGroup;
+import org.eqasim.core.components.raptor.EqasimRaptorConfigGroup; // ADD IN WHEN I WANT TO USE SWISS RAIL RAPTOR
 import org.eqasim.core.components.transit.EqasimTransitQSimModule;
 import org.eqasim.core.simulation.EqasimConfigurator;
-// import org.eqasim.core.simulation.calibration.CalibrationConfigGroup; ToDo SUBSTITUTE IF NEEDED
-import org.eqasim.core.simulation.EqasimConfigurator; //Added for MATSim 15
+// import org.eqasim.core.simulation.calibration.CalibrationConfigGroup; TODO SUBSTITUTE IF NEEEDED
 import org.eqasim.core.simulation.termination.EqasimTerminationConfigGroup; //Added for MATSim 15
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
@@ -19,7 +19,7 @@ import org.matsim.contribs.discrete_mode_choice.modules.config.DiscreteModeChoic
 import org.matsim.core.config.CommandLine;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigGroup;
-import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
+import org.matsim.core.config.groups.ReplanningConfigGroup.StrategySettings;
 import org.matsim.core.controler.Controler;
 import org.matsim.households.Household;
 
@@ -32,16 +32,18 @@ import abmt2025.project.mode_choice.estimators.AstraWalkUtilityEstimator_DRT;
 import ch.sbb.matsim.config.SwissRailRaptorConfigGroup;
 
 public class AstraConfigurator_DRT extends EqasimConfigurator {
-	private AstraConfigurator_DRT() {
+	public AstraConfigurator_DRT() {
 	}
 
-	static public ConfigGroup[] getConfigGroups() {
+	public ConfigGroup[] getConfigGroups() {
 		return new ConfigGroup[] { //
 				new SwissRailRaptorConfigGroup(), //
 				new EqasimConfigGroup(), //
 				new DiscreteModeChoiceConfigGroup(), //
-				new CalibrationConfigGroup(), //
-				new AstraConfigGroup()
+				// new CalibrationConfigGroup(), //
+				new AstraConfigGroup(), //
+				new EqasimTerminationConfigGroup(),
+				new EqasimRaptorConfigGroup()
 		};
 	}
 
@@ -51,7 +53,7 @@ public class AstraConfigurator_DRT extends EqasimConfigurator {
 		config.qsim().setNumberOfThreads(Math.min(12, Runtime.getRuntime().availableProcessors()));
 		config.global().setNumberOfThreads(Runtime.getRuntime().availableProcessors());
 
-		for (StrategySettings strategy : config.strategy().getStrategySettings()) {
+		for (StrategySettings strategy : config.replanning().getStrategySettings()) {
 			if (strategy.getStrategyName().equals(DiscreteModeChoiceModule.STRATEGY_NAME)) {
 				strategy.setWeight(0.05);
 			} else {
@@ -60,7 +62,7 @@ public class AstraConfigurator_DRT extends EqasimConfigurator {
 		}
 
 		// General eqasim
-		eqasimConfig.setTripAnalysisInterval(config.controler().getWriteEventsInterval());
+		eqasimConfig.setAnalysisInterval(config.controller().getWriteEventsInterval());
 
 		// Estimators
 		eqasimConfig.setEstimator(TransportMode.car, AstraCarUtilityEstimator_DRT.NAME);
@@ -78,7 +80,7 @@ public class AstraConfigurator_DRT extends EqasimConfigurator {
 		dmcConfig.setModeAvailability(AstraModeAvailability_DRT.NAME);		
 	}	
 
-	static public void adjustScenario(Scenario scenario) {
+	public void adjustScenario(Scenario scenario) {
 		for (Household household : scenario.getHouseholds().getHouseholds().values()) {
 			for (Id<Person> memberId : household.getMemberIds()) {
 				Person person = scenario.getPopulation().getPersons().get(memberId);

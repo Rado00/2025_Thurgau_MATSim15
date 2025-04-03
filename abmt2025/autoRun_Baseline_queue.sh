@@ -9,6 +9,7 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     MAVEN_PATH="/cluster/home/cmuratori/2025_Thurgau_MATSim15/abmt2025/"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     MAVEN_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/"
+    source ~/use-java17.sh 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
     # Set Maven options for memory management
@@ -28,11 +29,14 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2025"
-    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
+    # DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
+    DATA_PATH= "/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/DATA_ABM/Weinfelden/WeinfeldenScenario"
     # DATA_PATH="/home/comura/data/DATA_ABM/Frauenfeld/FrauenfeldScenario"
-    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
+    # DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
+    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
+
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
@@ -61,7 +65,8 @@ fi
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     OUTPUT_DIRECTORY_PATH="$DATA_PATH/Paper2_Outputs/1_ModalSplitCalibration"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
+    # OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
+    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/Prova"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/2024_Paper2_SimsOutputs/1_ModalSplitCalibration"
 else
@@ -70,12 +75,13 @@ else
 fi
 
 # Create a unique config file for this run by replacing placeholders
-CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_Baseline_queue.xml"
+# CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_Baseline_queue.xml"
+CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base_03_queue.xml"
 cp "$DATA_PATH/Thurgau_config_base_03_queue.xml" "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Running simulation"
 
-cp "$MAVEN_PATH/target/abmt2025-0.0.1-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline83.jar"
+cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline83.jar"
 
 # Navigate to the scenario directory
 cd "$DATA_PATH"
@@ -84,10 +90,10 @@ cd "$DATA_PATH"
 sbatch -n 1 \
     --cpus-per-task=4 \
     --time=100:00:00 \
-    --job-name="abmt2024_Baseline" \
+    --job-name="abmt2025_Baseline" \
     --mem-per-cpu=64G \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
-    --wrap="java -Xmx128G -cp abmt2025-Baseline83.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH  --output-sim-name BaselineCalibration83"
+    --wrap="java -Xmx128G -cp abmt2025-Baseline83.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH  --output-sim-name BaselineCalibrationPROVA1"
 
 echo "Simulation submitted"

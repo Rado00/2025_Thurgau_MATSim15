@@ -20,11 +20,11 @@ public class RunSimulationObjects {
         //We can access and change the config file directly here, change the iteration number or even the output directory
         System.out.println("********************************************************************************");
         System.out.println("********************************************************************************");
-        System.out.println("the old last iteration setting is: " + config.controler().getLastIteration());
+        System.out.println("the old last iteration setting is: " + config.controller().getLastIteration());
         
-        config.controler().setLastIteration(1);
+        config.controller().setLastIteration(1);
         
-        System.out.println("the new last iteration setting is: " + config.controler().getLastIteration());
+        System.out.println("the new last iteration setting is: " + config.controller().getLastIteration());
         
         /*
         config.controler().setOutputDirectory("output3");

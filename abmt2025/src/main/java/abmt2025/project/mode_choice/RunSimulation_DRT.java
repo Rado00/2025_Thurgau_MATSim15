@@ -34,10 +34,10 @@ import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.controler.events.IterationEndsEvent;
 import org.matsim.core.controler.listener.IterationEndsListener;
 
+import abmt2025.project.config.AstraConfigurator_Baseline;
 import abmt2025.project.config.AstraConfigurator_DRT;
 import abmt2025.project.config.AstraConfigurator_DRT;
 import abmt2025.project.travel_time.SmoothingTravelTimeModule;
-import abmt2025.project.utils.OutputPathConfigurator;
 import abmt2025.project.mode_choice.CustomEqasimModeChoiceModule;
 import abmt2025.project.mode_choice.estimators.DRTUtilityEstimator;
 import abmt2025.project.mode_choice.costs.OperatorCostCalculator;
@@ -65,7 +65,8 @@ public class RunSimulation_DRT {
 			throw new RuntimeException("ERROR: No config-path provided! The simulation will now exit.");
 		}		
 		
-		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), AstraConfigurator_DRT.getConfigGroups());
+		AstraConfigurator_DRT astraConfigurator_DRT = new AstraConfigurator_DRT();
+		Config config = ConfigUtils.loadConfig(cmd.getOptionStrict("config-path"), astraConfigurator_DRT.getConfigGroups());
 		AstraConfigurator_DRT.configure(config);
 		cmd.applyConfiguration(config);
 		
@@ -80,8 +81,8 @@ public class RunSimulation_DRT {
             path = Paths.get(outputDirectory, outputSimName + index);
         }
 
-        config.controler().setOutputDirectory(path.toString());
-    	config.controler().setLastIteration(3); // Taking value from config file when commented out
+        config.controller().setOutputDirectory(path.toString());
+    	config.controller().setLastIteration(3); // Taking value from config file when commented out
         
         DvrpConfigGroup dvrpConfig = new DvrpConfigGroup();
         config.addModule(dvrpConfig);
@@ -91,11 +92,12 @@ public class RunSimulation_DRT {
 		
 		Scenario scenario = ScenarioUtils.createScenario(config);  
 		
-		
-		SwitzerlandConfigurator.configureScenario(scenario);
+		SwitzerlandConfigurator switzerlandConfigurator = new SwitzerlandConfigurator();
+
+		switzerlandConfigurator.configureScenario(scenario);
 		ScenarioUtils.loadScenario(scenario);
-		SwitzerlandConfigurator.adjustScenario(scenario);
-		AstraConfigurator_DRT.adjustScenario(scenario);
+		switzerlandConfigurator.adjustScenario(scenario);
+		astraConfigurator_DRT.adjustScenario(scenario);
 		
 		// 🔍 Debugging: Log all loaded DRT vehicles in the log file
 		scenario.getVehicles().getVehicles().values().stream()
@@ -128,7 +130,7 @@ public class RunSimulation_DRT {
 		// EqasimLinkSpeedCalcilator deactivated!
 
 		Controler controller = new Controler(scenario); // add something to run DRT controllers
-		SwitzerlandConfigurator.configureController(controller);
+		switzerlandConfigurator.configureController(controller);
 		//controller.addOverridingModule(new EqasimAnalysisModule());
 		// controller.addOverridingModule(new CustomEqasimModeChoiceModule());
 		controller.addOverridingModule(new EqasimModeChoiceModule());
@@ -148,7 +150,7 @@ public class RunSimulation_DRT {
 		controller.addControlerListener(new IterationEndsListener() {
 			@Override
 			public void notifyIterationEnds(IterationEndsEvent event) {
-				if (event.getIteration() == event.getServices().getConfig().controler().getLastIteration()) {
+				if (event.getIteration() == event.getServices().getConfig().controller().getLastIteration()) {
 					costCalculator.calculateAndWriteOperatorCosts();
 				}
 			}

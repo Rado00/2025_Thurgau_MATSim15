@@ -38,11 +38,11 @@ public class OperatorCostCalculator {
 
             double totalCost = distanceCost + tripCost + vehicleCost;
             LOG.info("Total Cost is " + totalCost);
-            LOG.info("Directory Path is " + scenario.getConfig().controler().getOutputDirectory());
+            LOG.info("Directory Path is " + scenario.getConfig().controller().getOutputDirectory());
 
             // Write the total cost to a file in the output directory
             try (BufferedWriter writer = new BufferedWriter(
-                    new FileWriter(new File(scenario.getConfig().controler().getOutputDirectory(), "operator_costs.txt")))) {
+                    new FileWriter(new File(scenario.getConfig().controller().getOutputDirectory(), "operator_costs.txt")))) {
                 writer.write("Total Operator Cost: " + totalCost);
             } catch (IOException e) {
                 LOG.warn("Error writing to file: ", e);
