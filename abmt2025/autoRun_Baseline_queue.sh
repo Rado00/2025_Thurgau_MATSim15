@@ -14,7 +14,7 @@ elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
     # Set Maven options for memory management
     export MAVEN_OPTS="-Xmx2G -XX:MaxMetaspaceSize=512M"
-    source ~/use-java11.sh
+    source ~/use-java17.sh 
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_Thurgau_MATSim15_Muratori/abmt2025"
 else
@@ -30,7 +30,7 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     # DATA_PATH="/home/muaa/Zurich_Scenarios_ABM_2025"
     # DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
-    DATA_PATH= "/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
+    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/DATA_ABM/Weinfelden/WeinfeldenScenario"
     # DATA_PATH="/home/comura/data/DATA_ABM/Frauenfeld/FrauenfeldScenario"
@@ -76,7 +76,7 @@ fi
 
 # Create a unique config file for this run by replacing placeholders
 # CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_Baseline_queue.xml"
-CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base_03_queue.xml"
+CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base_queue.xml"
 cp "$DATA_PATH/Thurgau_config_base_03_queue.xml" "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Running simulation"
