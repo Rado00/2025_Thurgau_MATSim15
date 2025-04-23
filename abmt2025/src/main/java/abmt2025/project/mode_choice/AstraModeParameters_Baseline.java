@@ -53,10 +53,10 @@ public class AstraModeParameters_Baseline extends SwissModeParameters {
 		parameters.referenceHouseholdIncome_MU = 12260.0;
 
 		//The ones for Modal Split Calibration
-		parameters.walk.alpha_u = 0.19; //--------
-		parameters.bike.alpha_u = 5.1; //--------
-		parameters.pt.alpha_u = -6.5; //--------
-		parameters.car.alpha_u = 7.5; // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
+		parameters.walk.alpha_u = 0.5903; //--------
+		parameters.bike.alpha_u = 0.1522; //--------
+		parameters.pt.alpha_u = 0; //--------
+		parameters.car.alpha_u = -0.8; // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
 		parameters.astraCar.betaCity = -0.459; //--------
 
 

@@ -15,10 +15,10 @@ public class CreatePopulationSample {
 
 		PopulationReader reader = new PopulationReader(sc);
 		
-		double sample = 0.01;
+		double sample = 0.5;
 
 		// input population file
-		reader.readFile("/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct/imputed_population.xml.gz");
+		reader.readFile("/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct/population.xml.gz");
 
 		MutableScenario sc2 = ScenarioUtils.createMutableScenario(ConfigUtils.createConfig());
 
@@ -29,7 +29,7 @@ public class CreatePopulationSample {
 		}
 
 		// output population file
-		new PopulationWriter(sc2.getPopulation()).write("/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct/imputed_population.xml.gz");
+		new PopulationWriter(sc2.getPopulation()).write("/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/50pct/population.xml.gz");
 
 	}
 
