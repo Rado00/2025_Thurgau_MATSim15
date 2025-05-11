@@ -28,12 +28,12 @@ echo "Maven folder is set to: $MAVEN_PATH"
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
+    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/DATA_ABM/Weinfelden/WeinfeldenScenario"
     # DATA_PATH="/home/comura/data/DATA_ABM/Frauenfeld/FrauenfeldScenario"
     # DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
-    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
+    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
@@ -48,11 +48,11 @@ cd "$MAVEN_PATH" || { echo "Maven path not found"; exit 1; }
 
 # Package the Maven project
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
-    mvn -Pstandalone package || { echo "Maven build failed"; exit 1; }
+    mvn package || { echo "Maven build failed"; exit 1; }
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    mvn -Pstandalone package || { echo "Maven build failed"; exit 1; }
+    mvn package || { echo "Maven build failed"; exit 1; }
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    /home/comura/apache-maven-3.9.6/apache-maven-3.9.6/bin/mvn -Pstandalone package || { echo "Maven build failed"; exit 1; }
+    /home/comura/apache-maven-3.9.6/apache-maven-3.9.6/bin/mvn package || { echo "Maven build failed"; exit 1; }
 else
     echo "Unsupported system configuration"
     exit 1
@@ -79,10 +79,10 @@ cp "$DATA_PATH/Thurgau_config_base_M15_03.xml" "$CONFIG_FILE_PATH" || { echo "Co
 echo "Running simulation"
 
 # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
-SIM_ID="02"
+SIM_ID="09_NV"
 
 # USE YOUR JAR NAME IN THE FIRST STRING. CHANGE THE NUMBER OF THE SECOND STRING IF RUNNING SIMULATIONS IN PARALLEL 
-cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline${SIM_ID}_NV.jar" 
+cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline${SIM_ID}.jar" 
 
 # Navigate to the scenario directory
 cd "$DATA_PATH"
@@ -91,10 +91,10 @@ cd "$DATA_PATH"
 sbatch -n 1 \
     --cpus-per-task=4 \
     --time=100:00:00 \
-    --job-name="abmt2025_Baseline_${SIM_ID}" \
+    --job-name="${SIM_ID}" \
     --mem-per-cpu=64G \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
-    --wrap="java -Xmx128G -cp abmt2025-Baseline${SIM_ID}_NV.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH  --output-sim-name BaselineCalibration${SIM_ID}_NV"
+    --wrap="java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH  --output-sim-name BaselineCalibration${SIM_ID}"
 
 echo "Simulation submitted"
