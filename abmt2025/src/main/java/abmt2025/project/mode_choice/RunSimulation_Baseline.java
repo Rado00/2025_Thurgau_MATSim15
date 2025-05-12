@@ -61,7 +61,7 @@ public class RunSimulation_Baseline {
         }
 
         config.controller().setOutputDirectory(path.toString());
-    	config.controller().setLastIteration(60); // Taking value from config file when commented out
+    	// config.controller().setLastIteration(60); // PASSING IT THROUGH THE autoRun SHELL FILE
         		
 		Scenario scenario = ScenarioUtils.createScenario(config);  
 		

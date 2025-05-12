@@ -70,13 +70,17 @@ else
     exit 1
 fi
 
-# Create a unique config file for this run by replacing placeholders
-CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base.xml" # DON'T CHANGE WITH YOUR CONFIG NAME
+# Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+LAST_ITERATION=3
 
-# USE YOUR ACTUAL CONFIG FILE NAME
-cp "$DATA_PATH/Thurgau_config_base_M15_03.xml" "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
+# Define the path for the new temporary config file
+CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base.xml"
 
-echo "Running simulation"
+# Create config by replacing LAST_ITERATION placeholder in the template
+sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" \
+    "$DATA_PATH/Thurgau_config_base_M15_04.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
+
+echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
 
 # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
 SIM_ID="try"
@@ -95,5 +99,5 @@ sbatch -n 1 \
     --mem-per-cpu=64G \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
-    --wrap="java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH --output-sim-name BaselineCalibration${SIM_ID} && for i in \$(seq 0 59); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration${SIM_ID}/ITERS/it.\$i; done"
+    --wrap="java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH --output-sim-name BaselineCalibration${SIM_ID} && for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration${SIM_ID}/ITERS/it.\$i; done"
 echo "Simulation submitted"
