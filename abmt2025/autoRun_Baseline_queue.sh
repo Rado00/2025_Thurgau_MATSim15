@@ -28,7 +28,7 @@ echo "Maven folder is set to: $MAVEN_PATH"
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
     DATA_PATH="/cluster/scratch/cmuratori/data/scenarios" 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
+    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     # DATA_PATH="/home/comura/data/DATA_ABM/Weinfelden/WeinfeldenScenario"
     # DATA_PATH="/home/comura/data/DATA_ABM/Frauenfeld/FrauenfeldScenario"
@@ -79,7 +79,7 @@ cp "$DATA_PATH/Thurgau_config_base_M15_03.xml" "$CONFIG_FILE_PATH" || { echo "Co
 echo "Running simulation"
 
 # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
-SIM_ID="09_NV"
+SIM_ID="try"
 
 # USE YOUR JAR NAME IN THE FIRST STRING. CHANGE THE NUMBER OF THE SECOND STRING IF RUNNING SIMULATIONS IN PARALLEL 
 cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline${SIM_ID}.jar" 
@@ -95,6 +95,5 @@ sbatch -n 1 \
     --mem-per-cpu=64G \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
-    --wrap="java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH  --output-sim-name BaselineCalibration${SIM_ID}"
-
+    --wrap="java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH --output-sim-name BaselineCalibration${SIM_ID} && for i in \$(seq 0 59); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration${SIM_ID}/ITERS/it.\$i; done"
 echo "Simulation submitted"
