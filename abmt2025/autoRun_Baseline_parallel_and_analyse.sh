@@ -99,5 +99,13 @@ sbatch -n 1 \
     --mem-per-cpu=64G \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
-    --wrap="java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline --config-path $CONFIG_FILE_PATH --output-directory $OUTPUT_DIRECTORY_PATH --output-sim-name BaselineCalibration${SIM_ID} && for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration${SIM_ID}/ITERS/it.\$i; done"
+    --wrap=" \
+    java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline \
+    --config-path $CONFIG_FILE_PATH \
+    --output-directory $OUTPUT_DIRECTORY_PATH \
+    --output-sim-name BaselineCalibration${SIM_ID} \
+    && for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration${SIM_ID}/ITERS/it.\$i; done \
+    && sed -i 's|^sim_output_folder *=.*|sim_output_folder = Paper2_SimsOutputs/1_ModalSplitCalibration/BaselineCalibration_${SIM_ID}|' /home/comura/ThurgauPaperAnalysisAM/config/config.ini \
+    && bash /home/comura/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
+    
 echo "Simulation submitted"
