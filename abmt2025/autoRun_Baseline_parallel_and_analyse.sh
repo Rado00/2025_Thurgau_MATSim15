@@ -122,8 +122,8 @@ sbatch -n 1 \
     java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \
-    --output-sim-name BaselineCalibration${SIM_ID} \
-    $(if $CLEAN_ITERATIONS; then echo "&& for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration${SIM_ID}/ITERS/it.\$i; done"; fi) \
+    --output-sim-name BaselineCalibration_${SIM_ID} \
+    $(if $CLEAN_ITERATIONS; then echo "&& for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration_${SIM_ID}/ITERS/it.\$i; done"; fi) \
     && sed -i 's|^sim_output_folder *=.*|sim_output_folder = Paper2_SimsOutputs/1_ModalSplitCalibration/BaselineCalibration_${SIM_ID}|' $CONFIG_INI_PATH \
     $(if $RUN_ANALYSIS; then echo "&& bash $ANALYSIS_SCRIPT"; fi)
     "
