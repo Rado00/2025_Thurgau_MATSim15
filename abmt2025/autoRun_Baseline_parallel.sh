@@ -64,7 +64,7 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/2024_Paper2_SimsOutputs/1_ModalSplitCalibration"
+    OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -83,7 +83,7 @@ sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" \
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
 
 # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
-SIM_ID="NV_24"
+SIM_ID="NV_40"
 
 # USE YOUR JAR NAME IN THE FIRST STRING. CHANGE THE NUMBER OF THE SECOND STRING IF RUNNING SIMULATIONS IN PARALLEL 
 cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline${SIM_ID}.jar" 

@@ -71,7 +71,7 @@ else
 fi
 
 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-LAST_ITERATION=60
+LAST_ITERATION=3
 
 # Define the path for the new temporary config file
 CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base.xml"
@@ -91,6 +91,25 @@ cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline$
 # Navigate to the scenario directory
 cd "$DATA_PATH"
 
+# --- User flags ---
+RUN_ANALYSIS=true
+CLEAN_ITERATIONS=true
+
+# Set script/config paths based on user and OS
+if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
+    ANALYSIS_SCRIPT="/home/comura/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
+    CONFIG_INI_PATH="/home/comura/ThurgauPaperAnalysisAM/config/config.ini"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
+    ANALYSIS_SCRIPT="/home/muaa/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
+    CONFIG_INI_PATH="/home/muaa/ThurgauPaperAnalysisAM/config/config.ini"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "cmuratori" ]]; then
+    ANALYSIS_SCRIPT="/cluster/home/cmuratori/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
+    CONFIG_INI_PATH="/cluster/home/cmuratori/ThurgauPaperAnalysisAM/config/config.ini"
+else
+    echo "Unsupported system configuration for analysis script/config path"
+    exit 1
+fi
+
 # Submit the job
 sbatch -n 1 \
     --cpus-per-task=4 \
@@ -104,8 +123,9 @@ sbatch -n 1 \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \
     --output-sim-name BaselineCalibration${SIM_ID} \
-    && for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration${SIM_ID}/ITERS/it.\$i; done \
-    && sed -i 's|^sim_output_folder *=.*|sim_output_folder = Paper2_SimsOutputs/1_ModalSplitCalibration/BaselineCalibration_${SIM_ID}|' /home/comura/ThurgauPaperAnalysisAM/config/config.ini \
-    && bash /home/comura/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
-    
+    $(if $CLEAN_ITERATIONS; then echo "&& for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/BaselineCalibration${SIM_ID}/ITERS/it.\$i; done"; fi) \
+    && sed -i 's|^sim_output_folder *=.*|sim_output_folder = Paper2_SimsOutputs/1_ModalSplitCalibration/BaselineCalibration_${SIM_ID}|' $CONFIG_INI_PATH \
+    $(if $RUN_ANALYSIS; then echo "&& bash $ANALYSIS_SCRIPT"; fi)
+    "
+
 echo "Simulation submitted"
