@@ -131,7 +131,6 @@ public class RunSimulation_DRT {
 
 		Controler controller = new Controler(scenario); // add something to run DRT controllers
 		switzerlandConfigurator.configureController(controller);
-		//controller.addOverridingModule(new EqasimAnalysisModule());
 		// controller.addOverridingModule(new CustomEqasimModeChoiceModule());
 		controller.addOverridingModule(new EqasimModeChoiceModule());
 		controller.addOverridingModule(new SwissModeChoiceModule(cmd));

@@ -34,6 +34,7 @@ abmt2025/project/mode_choice/costs/DRTCostModel.class
 abmt2025/project/utils/headway/HeadwayImputerModule.class
 abmt2025/project/mode_choice/predictors/AstraTripPredictor.class
 abmt2025/project/utils/classSamples/RunScript.class
+abmt2025/project/utils/cutNetwork.class
 abmt2025/project/config/AstraConfigurator_Baseline.class
 abmt2025/project/utils/classSamples/Dispatcher.class
 abmt2025/project/utils/classSamples/injection/RunInjection.class

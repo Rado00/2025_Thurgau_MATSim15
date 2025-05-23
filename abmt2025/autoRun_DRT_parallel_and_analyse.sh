@@ -54,7 +54,7 @@ fi
 
 # Define DRT Vehicles and Shape File Paths
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DRT_VEHICLES_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_105.xml"
+    DRT_VEHICLES_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_DRT_1000.xml"
     DRT_SHAPE_FILE_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95/01_Weinfelden_Affeltrangen/01_Weinfelden_Affeltrangen.shp"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     DRT_VEHICLES_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_105.xml"
