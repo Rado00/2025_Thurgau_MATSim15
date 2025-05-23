@@ -51,17 +51,36 @@ else
     exit 1
 fi
 
-# Set OUTPUT_DIRECTORY_PATH
+
+# Define DRT Vehicles and Shape File Paths
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
+    DRT_VEHICLES_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_105.xml"
+    DRT_SHAPE_FILE_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95/01_Weinfelden_Affeltrangen/01_Weinfelden_Affeltrangen.shp"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
+    DRT_VEHICLES_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_105.xml"
+    DRT_SHAPE_FILE_PATH="/home/comura/data/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95/01_Weinfelden_Affeltrangen/01_Weinfelden_Affeltrangen.shp"
 else
     echo "Unsupported system configuration"
     exit 1
 fi
 
-# PYTHON ANALYSIS PATH (you can set to false the RUN_ANALYSIS option later in this code)
+# Extract filenames for substitution
+FLEET_FILENAME=$(basename "$DRT_VEHICLES_PATH" .xml)
+SHAPE_FILENAME=$(basename "$DRT_SHAPE_FILE_PATH" .shp)
+echo "$FLEET_FILENAME"
+echo "$SHAPE_FILENAME"
+
+# Set OUTPUT_DIRECTORY_PATH
+if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
+    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/2_FleetSizeCalibration"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
+    OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/2_FleetSizeCalibration"
+else
+    echo "Unsupported system configuration"
+    exit 1
+fi
+
+# Set script/config paths based on user and OS
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     ANALYSIS_SCRIPT="/home/comura/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
     CONFIG_INI_PATH="/home/comura/ThurgauPaperAnalysisAM/config/config.ini"
@@ -77,27 +96,29 @@ fi
 
 LAST_ITERATION=3 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 
-SIM_ID="NV_PROVA_12" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
+SIM_ID="NV_35" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
 
-OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
+OUTPUT_SIM_NAME=DRT_${SHAPE_FILENAME}_${FLEET_FILENAME}_${SIM_ID}
+
 
 
 ########################## CREATE UNIQUE CONFIG AND JAR ###########################################
 
 # Define the path for the new temporary config file
-CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base.xml"
+CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_${FLEET_FILENAME}.xml"
 
 # Create config by replacing LAST_ITERATION placeholder in the template
-sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" \
-    "$DATA_PATH/Thurgau_config_base_M15_04.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
+sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" -e "s|\${DRT_SHAPE_FILE_PATH}|$DRT_SHAPE_FILE_PATH|g" \
+    "$DATA_PATH/Thurgau_config_DRT_M15_04.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
 
+
 # USE YOUR JAR NAME IN THE FIRST STRING. CHANGE THE NUMBER OF THE SECOND STRING IF RUNNING SIMULATIONS IN PARALLEL 
-cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-Baseline${SIM_ID}.jar" 
+cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-DRT${SIM_ID}.jar" 
 
 # Navigate to the scenario directory
 cd "$DATA_PATH"
@@ -113,13 +134,13 @@ sbatch -n 1 \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
     --wrap=" \
-    java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline \
+    java -Xmx128G -cp abmt2025-DRT${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_DRT \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \
-    --output-sim-name ${OUTPUT_SIM_NAME} \
-    $(if $CLEAN_ITERATIONS; then echo "&& for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.\$i; done"; fi) \
-    && sed -i 's|^sim_output_folder *=.*|sim_output_folder = Paper2_SimsOutputs/1_ModalSplitCalibration/${OUTPUT_SIM_NAME}|' $CONFIG_INI_PATH \
+    --output-sim-name $OUTPUT_SIM_NAME \
+    $(if $CLEAN_ITERATIONS; then echo "&& for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME/ITERS/it.\$i; done"; fi) \
+    && sed -i 's|^sim_output_folder *=.*|sim_output_folder = Paper2_SimsOutputs/2_FleetSizeCalibration/$OUTPUT_SIM_NAME|' $CONFIG_INI_PATH \
     $(if $RUN_ANALYSIS; then echo "&& bash $ANALYSIS_SCRIPT"; fi)
     "
 
-echo "Simulation submitted"
+echo "Simulation submitted" 
