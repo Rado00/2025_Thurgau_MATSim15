@@ -45,6 +45,12 @@ import abmt2025.project.mode_choice.DrtCostParameters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.matsim.core.router.util.TravelTime;
+import org.matsim.contrib.dvrp.run.DvrpMode;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
+import org.matsim.core.controler.AbstractModule;
+
 
 public class RunSimulation_DRT {
 	public RunSimulation_DRT() {
@@ -156,8 +162,17 @@ public class RunSimulation_DRT {
 		});
 		
 
-		controller.addOverridingModule(new DvrpModule());
-		controller.addOverridingModule(new MultiModeDrtModule());
+		controller.addOverridingModule(new AbstractModule() {
+			@Override
+			public void install() {
+				bind(TravelTime.class)
+					.annotatedWith(Names.named("drt"))
+					.to(Key.get(TravelTime.class, Names.named("dvrp_estimated")));
+			}
+		});
+
+
+
 		controller.configureQSimComponents(components -> {
             DvrpQSimComponents.activateAllModes(MultiModeDrtConfigGroup.get(config)).configure(components);
         });
