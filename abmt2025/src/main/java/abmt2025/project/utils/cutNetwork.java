@@ -13,11 +13,15 @@ import java.util.Collection;
 
 public class cutNetwork {
 
-    public static void main(String[] args) {
-        String inputNetwork = "/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct/network.xml.gz";
-        String shapefile = "/home/muaa/DATA_ABM/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95/01_Weinfelden_Affeltrangen/01_Weinfelden_Affeltrangen.shp";
-        String outputNetwork = "/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/network/01_network.xml.gz";
+    public static void main(String[] args) throws Exception {
+        if (args.length != 3) {
+            System.out.println("Usage: java cutNetwork <inputNetwork> <shapefile> <outputNetwork>");
+            return;
+        }
 
+        String inputNetwork = args[0];
+        String shapefile = args[1];
+        String outputNetwork = args[2];
         // Load the scenario and original network
         Scenario scenario = ScenarioUtils.createScenario(org.matsim.core.config.ConfigUtils.createConfig());
         Network originalNetwork = NetworkUtils.readNetwork(inputNetwork);
