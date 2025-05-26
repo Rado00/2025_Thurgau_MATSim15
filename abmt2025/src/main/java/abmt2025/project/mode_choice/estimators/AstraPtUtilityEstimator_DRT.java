@@ -19,7 +19,7 @@ import abmt2025.project.mode_choice.variables.AstraPtVariables;
 import abmt2025.project.mode_choice.variables.AstraTripVariables;
 
 public class AstraPtUtilityEstimator_DRT extends PtUtilityEstimator {
-	static public final String NAME = "AstraPtEstimator";
+	static public final String NAME = "AstraPtUtilityEstimator_DRT";
 
 	private final AstraModeParameters_DRT parameters;
 	private final AstraPtPredictor predictor;

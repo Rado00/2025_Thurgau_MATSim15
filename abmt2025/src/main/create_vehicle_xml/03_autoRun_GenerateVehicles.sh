@@ -35,13 +35,13 @@ fi
 PYTHON_SCRIPT="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/generate_vehicles_from_network.py"
 
 # Adjust these paths and values to your case
-NETWORK_FILE="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct/network.xml.gz"
-# NETWORK_FILE="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/network/01_network.xml.gz"
-NUM_VEHICLES=1000
+# NETWORK_FILE="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct/network.xml.gz"
+NETWORK_FILE="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/small_networks/01_network.xml.gz"
+NUM_VEHICLES=2
 T0=0
 T1=86400
-CAPACITY=4
-OUTPUT_FILE="drt_vehicles_all.xml"
+CAPACITY=8
+OUTPUT_FILE="01_Fleet_files/01_drt_${NUM_VEHICLES}_${CAPACITY}.xml"
 
 python 03_generate_vehicles_from_network.py "$NETWORK_FILE" "$NUM_VEHICLES" "$T0" "$T1" "$CAPACITY" "$OUTPUT_FILE"
 

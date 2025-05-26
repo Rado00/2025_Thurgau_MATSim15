@@ -88,7 +88,7 @@ public class RunSimulation_DRT {
         }
 
         config.controller().setOutputDirectory(path.toString());
-    	config.controller().setLastIteration(3); // Taking value from config file when commented out
+    	// config.controller().setLastIteration(60); // PASSING IT THROUGH THE autoRun SHELL FILE
         
         DvrpConfigGroup dvrpConfig = new DvrpConfigGroup();
         config.addModule(dvrpConfig);

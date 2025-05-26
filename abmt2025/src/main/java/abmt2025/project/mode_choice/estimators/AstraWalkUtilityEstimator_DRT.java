@@ -19,7 +19,7 @@ import abmt2025.project.mode_choice.variables.AstraTripVariables;
 import abmt2025.project.mode_choice.variables.AstraWalkVariables;
 
 public class AstraWalkUtilityEstimator_DRT extends WalkUtilityEstimator {
-	static public final String NAME = "AstraWalkEstimator";
+	static public final String NAME = "AstraWalkUtilityEstimator_DRT";
 
 	private final AstraModeParameters_DRT parameters;
 	private final AstraWalkPredictor predictor;

@@ -20,7 +20,7 @@ import abmt2025.project.mode_choice.variables.AstraPersonVariables;
 import abmt2025.project.mode_choice.variables.AstraTripVariables;
 
 public class AstraCarUtilityEstimator_DRT extends CarUtilityEstimator {
-	static public final String NAME = "AstraCarEstimator";
+	static public final String NAME = "AstraCarUtilityEstimator_DRT";
 
 	private final AstraModeParameters_DRT parameters;
 	private final AstraPersonPredictor personPredictor;

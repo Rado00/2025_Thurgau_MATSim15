@@ -19,7 +19,7 @@ import abmt2025.project.mode_choice.variables.AstraPersonVariables;
 import abmt2025.project.mode_choice.variables.AstraTripVariables;
 
 public class AstraBikeUtilityEstimator_DRT extends SwissBikeUtilityEstimator {
-	static public final String NAME = "AstraBikeEstimator";
+	static public final String NAME = "AstraBikeUtilityEstimator_DRT";
 
 	private final AstraModeParameters_DRT parameters;
 	private final AstraBikePredictor predictor;

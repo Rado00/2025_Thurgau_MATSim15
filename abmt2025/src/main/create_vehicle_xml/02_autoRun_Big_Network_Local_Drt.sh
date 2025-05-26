@@ -12,7 +12,6 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     source ~/use-java17.sh 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
-    # Set Maven options for memory management
     export MAVEN_OPTS="-Xmx2G -XX:MaxMetaspaceSize=512M"
     source ~/use-java17.sh 
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
@@ -30,7 +29,7 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     DATA_PATH="/home/comura/data/2024_Paper2_Data"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
+    DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -54,15 +53,12 @@ fi
 # Set paths
 SHAPEFILE_PATH="$DATA_PATH/Paper2_ShapeFiles_CH1903+_LV95/25_Weinfelden_Entire_Bezirke/25_Weinfelden_Entire_Bezirke.shp"
 INPUT_NETWORK="$DATA_PATH/MATSim_Thurgau/Baseline_Scenario/100pct/network.xml.gz"
-OUTPUT_NETWORK="$MAVEN_PATH/src/main/create_vehicle_xml/small_networks/25_network.xml.gz"
+OUTPUT_NETWORK="$MAVEN_PATH/src/main/create_vehicle_xml/sim_network_w_DRT_area/25_network_wDRT.xml.gz"
 
-# Compile the Java clipping tool
-javac -cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" -d "$MAVEN_PATH/target" "$MAVEN_PATH/src/main/java/abmt2025/project/utils/cutNetwork.java" || { echo "Compilation failed"; exit 1; }
+# Compile the Java tool
+javac -cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" -d "$MAVEN_PATH/target" "$MAVEN_PATH/src/main/java/abmt2025/project/utils/createBigNetworkWithDrtFilter.java" || { echo "Compilation failed"; exit 1; }
 
-# Run the clipping tool
-java -cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar:$MAVEN_PATH/target" abmt2025.project.utils.cutNetwork "$INPUT_NETWORK" "$SHAPEFILE_PATH" "$OUTPUT_NETWORK" || { echo "Java clipping failed"; exit 1; }
+# Run the Java tool
+java -cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar:$MAVEN_PATH/target" abmt2025.project.utils.createBigNetworkWithDrtFilter "$INPUT_NETWORK" "$SHAPEFILE_PATH" "$OUTPUT_NETWORK" || { echo "Java execution failed"; exit 1; }
 
-echo "Clipped network written to: $OUTPUT_NETWORK"
-
-
-echo "Cut Network"
+echo "Filtered network with 'drt' written to: $OUTPUT_NETWORK"
