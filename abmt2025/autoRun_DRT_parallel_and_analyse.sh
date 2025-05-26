@@ -4,7 +4,26 @@
 OS_TYPE=$(uname)
 USER_NAME=$(whoami)
 
-########################## CHECK PATHS ###########################################
+
+########################## CHECK AUTORUN SETTING ###########################################
+
+
+
+LAST_ITERATION=2 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+DRT_CONFIG="Thurgau_config_DRT_M15_04.xml"
+RUN_ANALYSIS=false
+CLEAN_ITERATIONS=false
+
+BASELINE_PCT="1pct"
+
+
+SIM_ID="prova_weinfelden_con_Shp_v" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="15_drt_1000_8.xml"
+SHAPE_FILE="15_ShapeFile.shp"
+
+
+
+########################## PATHS ###########################################
 
 # MAVEN PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
@@ -26,9 +45,9 @@ echo "Maven folder is set to: $MAVEN_PATH"
 
 # DATA PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
+    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/${BASELINE_PCT}"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
+    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/${BASELINE_PCT}"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
@@ -54,11 +73,11 @@ fi
 
 # Define DRT Vehicles and Shape File Paths
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DRT_VEHICLES_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_100_8.xml"
-    DRT_SHAPE_FILE_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95/01_Weinfelden_Affeltrangen/01_Weinfelden_Affeltrangen.shp"
+    DRT_VEHICLES_PATH="/home/muaa/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/${FLEET_FILE}"
+    DRT_SHAPE_FILE_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95_easyNames/${SHAPE_FILE}"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    DRT_VEHICLES_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/01_drt_8_105.xml"
-    DRT_SHAPE_FILE_PATH="/home/comura/data/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95/01_Weinfelden_Affeltrangen/01_Weinfelden_Affeltrangen.shp"
+    DRT_VEHICLES_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/${FLEET_FILE}"
+    DRT_SHAPE_FILE_PATH="/home/comura/data/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95_easyNames/${SHAPE_FILE}"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -69,6 +88,8 @@ FLEET_FILENAME=$(basename "$DRT_VEHICLES_PATH" .xml)
 SHAPE_FILENAME=$(basename "$DRT_SHAPE_FILE_PATH" .shp)
 echo "$FLEET_FILENAME"
 echo "$SHAPE_FILENAME"
+OUTPUT_SIM_NAME=DRT_${SHAPE_FILENAME}_${FLEET_FILENAME}_${SIM_ID}
+
 
 # Set OUTPUT_DIRECTORY_PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
@@ -92,19 +113,6 @@ else
     exit 1
 fi
 
-########################## CHECK AUTORUN SETTING ###########################################
-
-LAST_ITERATION=2 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-
-SIM_ID="prova_subnetwork" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
-
-RUN_ANALYSIS=false
-CLEAN_ITERATIONS=false
-
-OUTPUT_SIM_NAME=DRT_${SHAPE_FILENAME}_${FLEET_FILENAME}_${SIM_ID}
-
-
-
 ########################## CREATE UNIQUE CONFIG AND JAR ###########################################
 
 # Define the path for the new temporary config file
@@ -112,7 +120,7 @@ CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_${FLEET_FILENAME}.xml"
 
 # Create config by replacing LAST_ITERATION placeholder in the template
 sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" -e "s|\${DRT_SHAPE_FILE_PATH}|$DRT_SHAPE_FILE_PATH|g" \
-    "$DATA_PATH/Thurgau_config_DRT_M15_04.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
+    "$DATA_PATH/${DRT_CONFIG}" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
 

@@ -29,9 +29,9 @@ public class DrtCostParameters extends SwissCostParameters {
 
 		parameters.ptRegionalRadius_km = 15.0;
 		
-		parameters.DRTCost_CHF_distance = 0.098;
-		parameters.DRTCost_CHF_trip = 0.375;
-		parameters.DRTCost_CHF_vehicle = 33.30;
+		parameters.DRTCost_CHF_distance = 0.098; // 
+		parameters.DRTCost_CHF_trip = 0.375; // 
+		parameters.DRTCost_CHF_vehicle = 33.30; // 
 
 		// price = 0.6 CHF/km * invehicle_distance + 2 CHF
 		parameters.DRTFare_CHF = 0; // fixed constant price DRT 2.0

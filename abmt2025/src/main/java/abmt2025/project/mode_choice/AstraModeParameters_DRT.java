@@ -53,11 +53,11 @@ public class AstraModeParameters_DRT extends SwissModeParameters {
 		parameters.referenceHouseholdIncome_MU = 12260.0;
 
 		//The ones for Modal Split Calibration
-		parameters.walk.alpha_u = 0; //--------
-		parameters.bike.alpha_u = 0.9; //--------
+		parameters.walk.alpha_u = 1.4; //-------- 0,5903
+		parameters.bike.alpha_u = 1.5; //-------- 0,1522
 		parameters.pt.alpha_u = 0; //--------
-		parameters.car.alpha_u = 0.6; // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
-		parameters.astraCar.betaCity = -0.459; //-------- -0.459
+		parameters.car.alpha_u = 1.4; // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
+		parameters.astraCar.betaCity = -0.2; //-------- -0.459
 
 		// Public transport
 		parameters.pt.betaWaitingTime_u_min = -0.0124;

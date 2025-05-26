@@ -51,9 +51,9 @@ else
 fi
 
 # Set paths
-SHAPEFILE_PATH="$DATA_PATH/Paper2_ShapeFiles_CH1903+_LV95/25_Weinfelden_Entire_Bezirke/25_Weinfelden_Entire_Bezirke.shp"
+SHAPEFILE_PATH="$DATA_PATH/Paper2_ShapeFiles_CH1903+_LV95_easyNames/01_ShapeFile.shp"
 INPUT_NETWORK="$DATA_PATH/MATSim_Thurgau/Baseline_Scenario/100pct/network.xml.gz"
-OUTPUT_NETWORK="$MAVEN_PATH/src/main/create_vehicle_xml/sim_network_w_DRT_area/25_network_wDRT.xml.gz"
+OUTPUT_NETWORK="$MAVEN_PATH/src/main/create_vehicle_xml/sim_network_w_DRT_area/01_network_wDRT.xml.gz"
 
 # Compile the Java tool
 javac -cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" -d "$MAVEN_PATH/target" "$MAVEN_PATH/src/main/java/abmt2025/project/utils/createBigNetworkWithDrtFilter.java" || { echo "Compilation failed"; exit 1; }

@@ -28,6 +28,9 @@ import org.geotools.feature.FeatureIterator;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.matsim.core.network.NetworkUtils;
+import org.matsim.core.network.algorithms.NetworkCleaner;
+
 public class createBigNetworkWithDrtFilter {
 
     public static void main(String[] args) {
@@ -89,6 +92,55 @@ public class createBigNetworkWithDrtFilter {
             }
         }
 
+                // Step 1: Create a new subnetwork with only drt links
+        Network drtSubnetwork = NetworkUtils.createNetwork();
+
+        // First, add all nodes referenced by drt links to the subnetwork
+        network.getLinks().values().stream()
+            .filter(link -> link.getAllowedModes().contains("drt"))
+            .forEach(link -> {
+                if (!drtSubnetwork.getNodes().containsKey(link.getFromNode().getId())) {
+                    drtSubnetwork.addNode(link.getFromNode());
+                }
+                if (!drtSubnetwork.getNodes().containsKey(link.getToNode().getId())) {
+                    drtSubnetwork.addNode(link.getToNode());
+                }
+            });
+
+        for (Link link : network.getLinks().values()) {
+            if (link.getAllowedModes().contains("drt")) {
+                NetworkUtils.createAndAddLink(
+                    drtSubnetwork,
+                    link.getId(),
+                    link.getFromNode(),
+                    link.getToNode(),
+                    link.getLength(),
+                    link.getFreespeed(),
+                    link.getCapacity(),
+                    link.getNumberOfLanes()
+                ).setAllowedModes(Set.of("drt"));
+            }
+        }
+
+        // Step 2: Clean the DRT subnetwork (keep only largest connected component)
+        new NetworkCleaner().run(drtSubnetwork);
+
+        // Step 3: Collect IDs of all valid drt links
+        Set<String> connectedDrtLinkIds = new HashSet<>();
+        for (Link link : drtSubnetwork.getLinks().values()) {
+            connectedDrtLinkIds.add(link.getId().toString());
+        }
+
+        // Step 4: Apply the clean result back to the original network
+        for (Link link : network.getLinks().values()) {
+            if (link.getAllowedModes().contains("drt")
+                && !connectedDrtLinkIds.contains(link.getId().toString())) {
+                // Remove drt mode from disconnected links
+                Set<String> newModes = new HashSet<>(link.getAllowedModes());
+                newModes.remove("drt");
+                link.setAllowedModes(newModes);
+            }
+        }
         // Write the updated network to file
         new NetworkWriter(network).write(outputNetworkFile);
         System.out.println("Modified network written to: " + outputNetworkFile);

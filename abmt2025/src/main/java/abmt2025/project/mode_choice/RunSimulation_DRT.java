@@ -38,7 +38,7 @@ import abmt2025.project.config.AstraConfigurator_Baseline;
 import abmt2025.project.config.AstraConfigurator_DRT;
 import abmt2025.project.config.AstraConfigurator_DRT;
 import abmt2025.project.travel_time.SmoothingTravelTimeModule;
-import abmt2025.project.mode_choice.CustomEqasimModeChoiceModule;
+// import abmt2025.project.mode_choice.CustomEqasimModeChoiceModule;
 import abmt2025.project.mode_choice.estimators.DRTUtilityEstimator;
 import abmt2025.project.mode_choice.costs.OperatorCostCalculator;
 import abmt2025.project.mode_choice.DrtCostParameters;
