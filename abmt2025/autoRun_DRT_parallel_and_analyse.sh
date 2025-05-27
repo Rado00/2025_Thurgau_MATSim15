@@ -17,9 +17,9 @@ CLEAN_ITERATIONS=false
 BASELINE_PCT="100pct"
 
 
-SIM_ID="prova_weinfelden_con_Shp_v" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="15_drt_1000_8.xml"
-SHAPE_FILE="15_ShapeFile.shp"
+SIM_ID="a3" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="01_drt_6_8.xml"
+SHAPE_FILE="01_ShapeFile.shp"
 
 
 
@@ -101,7 +101,7 @@ else
     exit 1
 fi
 
-# Set script/config paths based on user and OS
+# THERE IS OPTION TO NOT USE IT
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     ANALYSIS_SCRIPT="/home/comura/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
     CONFIG_INI_PATH="/home/comura/ThurgauPaperAnalysisAM/config/config.ini"
