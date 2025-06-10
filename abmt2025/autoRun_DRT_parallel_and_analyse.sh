@@ -101,7 +101,7 @@ else
     exit 1
 fi
 
-# Set script/config paths based on user and OS
+# THERE IS OPTION TO NOT USE IT
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     ANALYSIS_SCRIPT="/home/comura/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
     CONFIG_INI_PATH="/home/comura/ThurgauPaperAnalysisAM/config/config.ini"
