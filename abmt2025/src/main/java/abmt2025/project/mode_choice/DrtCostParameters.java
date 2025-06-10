@@ -14,8 +14,8 @@ public class DrtCostParameters extends SwissCostParameters {
 	public double DRTCost_CHF_distance = 0.0;
 	public double DRTCost_CHF_trip = 0.0;
 	public double DRTCost_CHF_vehicle = 0.0;
-	public double DRTFare_CHF = 0.0;
-	public double DRTFare_CHF_km = 0.0;
+	public double DRTFare_CHF = 2;
+	public double DRTFare_CHF_km = 0.5;
 	
 	//TODO: add your own cost parameters
 	public static DrtCostParameters buildDefault() {
