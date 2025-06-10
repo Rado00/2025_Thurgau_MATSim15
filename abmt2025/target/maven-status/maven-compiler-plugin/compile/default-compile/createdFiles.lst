@@ -88,7 +88,6 @@ abmt2025/project/mode_choice/InfiniteHeadwayConstraint$Factory.class
 abmt2025/project/utils/classSamples/counter/RunEventsPostprocessing.class
 abmt2025/project/mode_choice/estimators/AstraPtUtilityEstimator_DRT.class
 abmt2025/project/mode_choice/variables/AstraPersonVariables.class
-abmt2025/project/mode_choice/CustomEqasimModeChoiceModule.class
 abmt2025/project/mode_choice/AstraModeParameters_DRT.class
 abmt2025/project/travel_time/SmoothingTravelTime.class
 abmt2025/project/utils/classSamples/mode_choice/parameters/AbmtModeParameters.class

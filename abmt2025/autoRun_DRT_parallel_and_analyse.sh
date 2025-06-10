@@ -12,14 +12,14 @@ USER_NAME=$(whoami)
 LAST_ITERATION=60 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 DRT_CONFIG="Thurgau_config_DRT_M15_05.xml"
 RUN_ANALYSIS=false
-CLEAN_ITERATIONS=false
+CLEAN_ITERATIONS=true
 
 BASELINE_PCT="100pct"
 
 
-SIM_ID="prova_weinfelden_con_Shp_v" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="15_drt_1000_8.xml"
-SHAPE_FILE="15_ShapeFile.shp"
+SIM_ID="Wein5" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="25_drt_20_8.xml"
+SHAPE_FILE="25_ShapeFile.shp"
 
 
 
