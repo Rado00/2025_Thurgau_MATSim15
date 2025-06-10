@@ -26,7 +26,7 @@ echo "Maven folder is set to: $MAVEN_PATH"
 
 # DATA PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/1pct"
+    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
@@ -75,11 +75,11 @@ fi
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=3 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+LAST_ITERATION=60 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 
-SIM_ID="NV_PROVA_12" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
+SIM_ID="28_onlyUseEndtime" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
 
-RUN_ANALYSIS=true
+RUN_ANALYSIS=false
 CLEAN_ITERATIONS=true
 
 OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
@@ -92,7 +92,7 @@ CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base.xml"
 
 # Create config by replacing LAST_ITERATION placeholder in the template
 sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" \
-    "$DATA_PATH/Thurgau_config_base_M15_04.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
+    "$DATA_PATH/Thurgau_config_base_M15_05.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
 
@@ -107,7 +107,7 @@ cd "$DATA_PATH"
 
 sbatch -n 1 \
     --cpus-per-task=4 \
-    --time=100:00:00 \
+    --time=500:00:00 \
     --job-name="${SIM_ID}" \
     --mem-per-cpu=64G \
     --mail-type=END,FAIL \
