@@ -7,12 +7,10 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-
-
 LAST_ITERATION=60 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 DRT_CONFIG="Thurgau_config_DRT_M15_05.xml"
 RUN_ANALYSIS=false
-CLEAN_ITERATIONS=false
+CLEAN_ITERATIONS=true
 
 BASELINE_PCT="100pct"
 
@@ -123,7 +121,6 @@ sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" -e "s|\${DRT_VEHICLES_PATH}|$DRT
     "$DATA_PATH/${DRT_CONFIG}" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
-
 
 # USE YOUR JAR NAME IN THE FIRST STRING. CHANGE THE NUMBER OF THE SECOND STRING IF RUNNING SIMULATIONS IN PARALLEL 
 cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-DRT${SIM_ID}.jar" 
