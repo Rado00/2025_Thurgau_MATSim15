@@ -7,17 +7,17 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=60 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-DRT_CONFIG="Thurgau_config_DRT_M15_05.xml"
+LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+DRT_CONFIG="Thurgau_config_DRT_M15_06.xml"
 RUN_ANALYSIS=false
-CLEAN_ITERATIONS=true
+CLEAN_ITERATIONS=false
 
 BASELINE_PCT="100pct"
 
 
-SIM_ID="A4p" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="01_drt_3_8.xml"
-SHAPE_FILE="01_ShapeFile.shp"
+SIM_ID="HohentanenTest100Iter" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="10_drt_1_8.xml"
+SHAPE_FILE="10_ShapeFile.shp"
 
 
 

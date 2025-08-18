@@ -75,12 +75,12 @@ fi
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=60 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 
-SIM_ID="28_onlyUseEndtime" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
+SIM_ID="28_maxOf_100iter" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
 
 RUN_ANALYSIS=false
-CLEAN_ITERATIONS=true
+CLEAN_ITERATIONS=false
 
 OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
 
@@ -92,7 +92,7 @@ CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base.xml"
 
 # Create config by replacing LAST_ITERATION placeholder in the template
 sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" \
-    "$DATA_PATH/Thurgau_config_base_M15_05.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
+    "$DATA_PATH/Thurgau_config_base_M15_06.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
 
@@ -107,7 +107,7 @@ cd "$DATA_PATH"
 
 sbatch -n 1 \
     --cpus-per-task=4 \
-    --time=500:00:00 \
+    --time=200:00:00 \
     --job-name="${SIM_ID}" \
     --mem-per-cpu=64G \
     --mail-type=END,FAIL \
