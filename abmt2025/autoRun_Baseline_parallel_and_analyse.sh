@@ -77,7 +77,7 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "sarf" ]]; then
-    DATA_PATH="$HOME/projects/corrado_matsim/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
+    OUTPUT_DIRECTORY_PATH="$HOME/projects/corrado_matsim/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 else
     echo "Unsupported system configuration"
     exit 1
