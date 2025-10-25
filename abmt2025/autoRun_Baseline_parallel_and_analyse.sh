@@ -4,7 +4,20 @@
 OS_TYPE=$(uname)
 USER_NAME=$(whoami)
 
-########################## CHECK PATHS ###########################################
+########################## CHECK AUTORUN SETTING ###########################################
+
+LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+
+SIM_ID="28_onlyUse_100iter_s1234" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
+
+RUN_ANALYSIS=false
+CLEAN_ITERATIONS=false
+
+OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
+
+BASELINE_PCT="100pct"
+
+########################## PATHS ###########################################
 
 # MAVEN PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
@@ -14,9 +27,12 @@ elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
     # Set Maven options for memory management
     export MAVEN_OPTS="-Xmx2G -XX:MaxMetaspaceSize=512M"
-    source ~/use-java17.sh 
+    source ~/use-java17.sh
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_Thurgau_MATSim15_Muratori/abmt2025"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "sarf" ]]; then
+    MAVEN_PATH="$HOME/projects/corrado_matsim/2025_Thurgau_MATSim15/abmt2025"
+    MAVEN_BIN="/usr/bin/mvn"  
 else
     echo "Unsupported system configuration"
     exit 1
@@ -26,11 +42,13 @@ echo "Maven folder is set to: $MAVEN_PATH"
 
 # DATA PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
+    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/${BASELINE_PCT}"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/100pct"
+    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/${BASELINE_PCT}"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "sarf" ]]; then
+    DATA_PATH="$HOME/projects/corrado_matsim/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/${BASELINE_PCT}"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -46,6 +64,8 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     mvn package || { echo "Maven build failed"; exit 1; }
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     /home/comura/apache-maven-3.9.6/apache-maven-3.9.6/bin/mvn package || { echo "Maven build failed"; exit 1; }
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "sarf" ]]; then
+    mvn package || { echo "Maven build failed"; exit 1; }
 else
     echo "Unsupported system configuration"
     exit 1
@@ -56,6 +76,8 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "sarf" ]]; then
+    DATA_PATH="$HOME/projects/corrado_matsim/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -68,21 +90,13 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     ANALYSIS_SCRIPT="/home/muaa/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
     CONFIG_INI_PATH="/home/muaa/ThurgauPaperAnalysisAM/config/config.ini"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "sarf" ]]; then
+    ANALYSIS_SCRIPT="$HOME/projects/corrado_paper/ThurgauPaperAnalysisAM/scripts/run_all_analysis.sh"
+    CONFIG_INI_PATH="$HOME/projects/corrado_paper/ThurgauPaperAnalysisAM/config/config.ini"
 else
     echo "Unsupported system configuration for analysis script/config path"
     exit 1
 fi
-
-########################## CHECK AUTORUN SETTING ###########################################
-
-LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-
-SIM_ID="28_onlyUse_100iter_s1234" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
-
-RUN_ANALYSIS=false
-CLEAN_ITERATIONS=false
-
-OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
 
 
 ########################## CREATE UNIQUE CONFIG AND JAR ###########################################
