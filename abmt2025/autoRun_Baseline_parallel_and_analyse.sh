@@ -15,7 +15,7 @@ CLEAN_ITERATIONS=false
 
 OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
 
-BASELINE_PCT="100pct"
+BASELINE_PCT="1pct"
 
 ########################## PATHS ###########################################
 
