@@ -6,12 +6,13 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+LAST_ITERATION=4 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 
-SIM_ID="28_onlyUse_100iter_s1234" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
+SIM_ID="testClean_tt" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
 
 RUN_ANALYSIS=false
-CLEAN_ITERATIONS=false
+CLEAN_ITERATIONS=true
+DELETE_EVENTS_FILE=true
 
 OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
 
@@ -82,6 +83,8 @@ else
     echo "Unsupported system configuration"
     exit 1
 fi
+# Extract relative path automatically (everything after "MATSim_Thurgau/")
+RELATIVE_OUTPUT_PATH="${OUTPUT_DIRECTORY_PATH#*MATSim_Thurgau/}"
 
 # PYTHON ANALYSIS PATH (you can set to false the RUN_ANALYSIS option later in this code)
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
@@ -118,6 +121,15 @@ cd "$DATA_PATH"
 
 
 ########################## SUBMIT THE JOB ###########################################
+# SENDS SIMS
+# CLEAN_ITERATIONS: Progressive waiting strategy to safely delete intermediate iteration folders
+# Phase 1 (T=0-90s): Initial wait after simulation completion
+# Phase 2 (T=90s): First check - files modified in last minute?
+# Phase 3 (T=90-210s): Wait 2 more minutes if files still being modified
+# Phase 4 (T=210s): Second check - files still being modified?
+# Phase 5 (T=210-390s): Wait 3 more minutes as final safety buffer
+# Phase 6: Delete all iteration folders except the last one
+# Phase 7 Delete large event files if DELETE_EVENTS_FILE=true - non funziona se il nome SIM SIM_ID${1}
 
 sbatch -n 1 \
     --cpus-per-task=4 \
@@ -131,9 +143,11 @@ sbatch -n 1 \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \
     --output-sim-name ${OUTPUT_SIM_NAME} \
-    $(if $CLEAN_ITERATIONS; then echo "&& for i in \$(seq 0 $((LAST_ITERATION - 1))); do rm -rf $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.\$i; done"; fi) \
-    && sed -i 's|^sim_output_folder *=.*|sim_output_folder = Paper2_SimsOutputs/1_ModalSplitCalibration/${OUTPUT_SIM_NAME}|' $CONFIG_INI_PATH \
+    $(if $CLEAN_ITERATIONS; then echo "&& echo '[CLEANUP] Waiting 90 seconds before first check...' && sleep 90 && (find $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME} -type f -mmin -1 2>/dev/null | grep -q . && echo '[CLEANUP] Files modified in last minute detected. Waiting 2 more minutes...' && sleep 120 && (find $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME} -type f -mmin -1 2>/dev/null | grep -q . && echo '[CLEANUP] Files still being modified. Waiting 3 more minutes for safety...' && sleep 180 && echo '[CLEANUP] Final wait complete. Proceeding with deletion.' || echo '[CLEANUP] No recent modifications detected at second check. Proceeding with deletion.') || echo '[CLEANUP] No recent modifications detected at first check. Proceeding with deletion.') && echo '[CLEANUP] Deleting iteration folders (keeping only iteration $LAST_ITERATION)...' && for i in \$(seq 0 $((LAST_ITERATION - 1))); do echo \"[CLEANUP] Removing iteration \$i...\" && rm -rf $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.\$i; done && echo '[CLEANUP] Iteration folders deleted.' $(if $DELETE_EVENTS_FILE; then echo "&& echo '[CLEANUP] DELETE_EVENTS_FILE=true, removing large event files...' && [ -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.$LAST_ITERATION/$LAST_ITERATION.events.xml.gz ] && echo '[CLEANUP] Deleting it.$LAST_ITERATION/$LAST_ITERATION.events.xml.gz...' && rm -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.$LAST_ITERATION/$LAST_ITERATION.events.xml.gz || echo '[CLEANUP] File it.$LAST_ITERATION/$LAST_ITERATION.events.xml.gz not found, skipping.' && [ -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/output_events.xml.gz ] && echo '[CLEANUP] Deleting output_events.xml.gz...' && rm -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/output_events.xml.gz || echo '[CLEANUP] File output_events.xml.gz not found, skipping.'"; else echo "&& echo '[CLEANUP] DELETE_EVENTS_FILE=false, keeping event files.'"; fi) && echo '[CLEANUP] Cleanup complete!'"; fi) \
+    && sed -i 's|^sim_output_folder *=.*|sim_output_folder = $RELATIVE_OUTPUT_PATH/${OUTPUT_SIM_NAME}|' $CONFIG_INI_PATH \
     $(if $RUN_ANALYSIS; then echo "&& bash $ANALYSIS_SCRIPT"; fi)
     "
 
 echo "Simulation submitted"
+
+
