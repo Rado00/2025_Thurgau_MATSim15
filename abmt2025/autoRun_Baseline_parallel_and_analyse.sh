@@ -6,12 +6,12 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+LAST_ITERATION=3 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 
 SIM_ID="28_onlyUse_100iter_s1234" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
 
-RUN_ANALYSIS=false
-CLEAN_ITERATIONS=false
+RUN_ANALYSIS=true
+CLEAN_ITERATIONS=true
 
 OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
 
@@ -91,7 +91,7 @@ elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     ANALYSIS_SCRIPT="/home/muaa/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
     CONFIG_INI_PATH="/home/muaa/ThurgauPaperAnalysisAM/config/config.ini"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "sarf" ]]; then
-    ANALYSIS_SCRIPT="$HOME/projects/corrado_paper/ThurgauPaperAnalysisAM/scripts/run_all_analysis.sh"
+    ANALYSIS_SCRIPT="$HOME/projects/corrado_paper/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
     CONFIG_INI_PATH="$HOME/projects/corrado_paper/ThurgauPaperAnalysisAM/config/config.ini"
 else
     echo "Unsupported system configuration for analysis script/config path"
