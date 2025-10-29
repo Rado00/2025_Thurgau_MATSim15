@@ -34,8 +34,8 @@ public class DrtCostParameters extends SwissCostParameters {
 		parameters.DRTCost_CHF_vehicle = 33.30; // 
 
 		// price = 0.6 CHF/km * invehicle_distance + 2 CHF
-		parameters.DRTFare_CHF = 2; // fixed constant price DRT 2.0
-		parameters.DRTFare_CHF_km = 0.5; // km price DRT  0.7
+		parameters.DRTFare_CHF = 0; // fixed constant price DRT 2.0
+		parameters.DRTFare_CHF_km = 0; // km price DRT  0.7
 		
 
 		return parameters;
