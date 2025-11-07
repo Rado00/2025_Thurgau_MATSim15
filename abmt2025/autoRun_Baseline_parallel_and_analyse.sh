@@ -83,6 +83,7 @@ else
     echo "Unsupported system configuration"
     exit 1
 fi
+
 # Extract relative path automatically (everything after "MATSim_Thurgau/")
 RELATIVE_OUTPUT_PATH="${OUTPUT_DIRECTORY_PATH#*MATSim_Thurgau/}"
 
@@ -122,14 +123,22 @@ cd "$DATA_PATH"
 
 ########################## SUBMIT THE JOB ###########################################
 # SENDS SIMS
+# 
+# Execution order:
+# 1. Run MATSim simulation
+# 2. Update config.ini with simulation output path
+# 3. Run Python analysis (if RUN_ANALYSIS=true) - BEFORE cleanup so files are available
+# 4. Clean up iterations and events (if CLEAN_ITERATIONS=true)
+#
 # CLEAN_ITERATIONS: Progressive waiting strategy to safely delete intermediate iteration folders
 # Phase 1 (T=0-90s): Initial wait after simulation completion
 # Phase 2 (T=90s): First check - files modified in last minute?
 # Phase 3 (T=90-210s): Wait 2 more minutes if files still being modified
 # Phase 4 (T=210s): Second check - files still being modified?
 # Phase 5 (T=210-390s): Wait 3 more minutes as final safety buffer
-# Phase 6: Delete all iteration folders except the last one
-# Phase 7 Delete large event files if DELETE_EVENTS_FILE=true - non funziona se il nome SIM SIM_ID${1}
+# Phase 6: Automatically find the last iteration created by MATSim (not based on LAST_ITERATION)
+# Phase 7: Delete all iteration folders except the last one
+# Phase 8: Delete large event files if DELETE_EVENTS_FILE=true
 
 sbatch -n 1 \
     --cpus-per-task=4 \
@@ -143,11 +152,9 @@ sbatch -n 1 \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \
     --output-sim-name ${OUTPUT_SIM_NAME} \
-    $(if $CLEAN_ITERATIONS; then echo "&& echo '[CLEANUP] Waiting 90 seconds before first check...' && sleep 90 && (find $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME} -type f -mmin -1 2>/dev/null | grep -q . && echo '[CLEANUP] Files modified in last minute detected. Waiting 2 more minutes...' && sleep 120 && (find $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME} -type f -mmin -1 2>/dev/null | grep -q . && echo '[CLEANUP] Files still being modified. Waiting 3 more minutes for safety...' && sleep 180 && echo '[CLEANUP] Final wait complete. Proceeding with deletion.' || echo '[CLEANUP] No recent modifications detected at second check. Proceeding with deletion.') || echo '[CLEANUP] No recent modifications detected at first check. Proceeding with deletion.') && echo '[CLEANUP] Deleting iteration folders (keeping only iteration $LAST_ITERATION)...' && for i in \$(seq 0 $((LAST_ITERATION - 1))); do echo \"[CLEANUP] Removing iteration \$i...\" && rm -rf $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.\$i; done && echo '[CLEANUP] Iteration folders deleted.' $(if $DELETE_EVENTS_FILE; then echo "&& echo '[CLEANUP] DELETE_EVENTS_FILE=true, removing large event files...' && [ -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.$LAST_ITERATION/$LAST_ITERATION.events.xml.gz ] && echo '[CLEANUP] Deleting it.$LAST_ITERATION/$LAST_ITERATION.events.xml.gz...' && rm -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.$LAST_ITERATION/$LAST_ITERATION.events.xml.gz || echo '[CLEANUP] File it.$LAST_ITERATION/$LAST_ITERATION.events.xml.gz not found, skipping.' && [ -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/output_events.xml.gz ] && echo '[CLEANUP] Deleting output_events.xml.gz...' && rm -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/output_events.xml.gz || echo '[CLEANUP] File output_events.xml.gz not found, skipping.'"; else echo "&& echo '[CLEANUP] DELETE_EVENTS_FILE=false, keeping event files.'"; fi) && echo '[CLEANUP] Cleanup complete!'"; fi) \
     && sed -i 's|^sim_output_folder *=.*|sim_output_folder = $RELATIVE_OUTPUT_PATH/${OUTPUT_SIM_NAME}|' $CONFIG_INI_PATH \
-    $(if $RUN_ANALYSIS; then echo "&& bash $ANALYSIS_SCRIPT"; fi)
+    $(if $RUN_ANALYSIS; then echo "&& echo '[ANALYSIS] Starting Python analysis...' && bash $ANALYSIS_SCRIPT && echo '[ANALYSIS] Analysis complete!'"; fi) \
+    $(if $CLEAN_ITERATIONS; then echo "&& echo '[CLEANUP] Waiting 90 seconds before first check...' && sleep 90 && (find $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME} -type f -mmin -1 2>/dev/null | grep -q . && echo '[CLEANUP] Files modified in last minute detected. Waiting 2 more minutes...' && sleep 120 && (find $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME} -type f -mmin -1 2>/dev/null | grep -q . && echo '[CLEANUP] Files still being modified. Waiting 3 more minutes for safety...' && sleep 180 && echo '[CLEANUP] Final wait complete. Proceeding with deletion.' || echo '[CLEANUP] No recent modifications detected at second check. Proceeding with deletion.') || echo '[CLEANUP] No recent modifications detected at first check. Proceeding with deletion.') && echo '[CLEANUP] Finding last iteration...' && ACTUAL_LAST_ITER=\$(ls -d $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.* 2>/dev/null | sed 's/.*it\\.//' | sort -n | tail -1) && echo \"[CLEANUP] Last iteration found: it.\$ACTUAL_LAST_ITER\" && echo '[CLEANUP] Deleting all iteration folders except the last one...' && for iter_dir in $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.*; do iter_num=\$(basename \$iter_dir | sed 's/it\\.//' ); if [ \"\$iter_num\" != \"\$ACTUAL_LAST_ITER\" ]; then echo \"[CLEANUP] Removing iteration \$iter_num...\" && rm -rf \$iter_dir; fi; done && echo '[CLEANUP] Iteration folders deleted. Remaining:' && ls $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/ $(if $DELETE_EVENTS_FILE; then echo "&& echo '[CLEANUP] DELETE_EVENTS_FILE=true, removing large event files...' && [ -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.\$ACTUAL_LAST_ITER/\$ACTUAL_LAST_ITER.events.xml.gz ] && echo \"[CLEANUP] Deleting it.\$ACTUAL_LAST_ITER/\$ACTUAL_LAST_ITER.events.xml.gz...\" && rm -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/ITERS/it.\$ACTUAL_LAST_ITER/\$ACTUAL_LAST_ITER.events.xml.gz || echo '[CLEANUP] File events.xml.gz not found in last iteration, skipping.' && [ -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/output_events.xml.gz ] && echo '[CLEANUP] Deleting output_events.xml.gz...' && rm -f $OUTPUT_DIRECTORY_PATH/${OUTPUT_SIM_NAME}/output_events.xml.gz || echo '[CLEANUP] File output_events.xml.gz not found, skipping.'"; else echo "&& echo '[CLEANUP] DELETE_EVENTS_FILE=false, keeping event files.'"; fi) && echo '[CLEANUP] Cleanup complete!'"; fi)
     "
 
 echo "Simulation submitted"
-
-
