@@ -22,9 +22,13 @@ import abmt2025.project.mode_choice.variables.AstraPersonVariables;
 import abmt2025.project.mode_choice.variables.AstraTripVariables;
 import abmt2025.project.mode_choice.variables.DRTVariables;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DRTUtilityEstimator implements UtilityEstimator {
 	
 	static public final String NAME = "DRTUtilityEstimator";
+	private static final Logger log = LogManager.getLogger(DRTUtilityEstimator.class);
 
 	private final AstraModeParameters_DRT parameters; //TODO: do not forget to add appropriate parameters to this class
 	private final AstraPersonPredictor personPredictor;
@@ -55,7 +59,7 @@ public class DRTUtilityEstimator implements UtilityEstimator {
 		return parameters.astraDRT.betaAccessEgressTime * variables.accestime_min;
 	}
 	
-	protected double estimateWaitinfTimeUtility(DRTVariables variables) {
+	protected double estimateWaitingTimeUtility(DRTVariables variables) {
 		return parameters.astraDRT.betaWaitingTime * variables.waitingtime_min;
 	}
 	
@@ -80,6 +84,21 @@ public class DRTUtilityEstimator implements UtilityEstimator {
 		//AstraTripVariables tripVariables = this.tripPredictor.predictVariables(person, trip, elements);
 	
 		DRTVariables variables = drtpredictor.predictVariables(person, trip, elements);
+
+		        // Add safety check here
+        if (variables == null) {
+            log.warn("DRT variables prediction failed for person {} at iteration", person.getId());
+            return Double.NEGATIVE_INFINITY;
+        }
+        
+        // Check for invalid values
+        if (Double.isNaN(variables.invehicletime_min) || Double.isInfinite(variables.invehicletime_min) ||
+            Double.isNaN(variables.waitingtime_min) || Double.isInfinite(variables.waitingtime_min) ||
+            Double.isNaN(variables.cost) || Double.isInfinite(variables.cost)) {
+            log.warn("DRT variables contain invalid values for person {}: invehicletime={}, waitingtime={}, cost={}", 
+                     person.getId(), variables.invehicletime_min, variables.waitingtime_min, variables.cost);
+            return Double.NEGATIVE_INFINITY;
+        }
 		AstraPersonVariables personVariables = personPredictor.predictVariables(person, trip, elements);
 		AstraTripVariables tripVariables = tripPredictor.predictVariables(person, trip, elements);
 		
@@ -88,12 +107,17 @@ public class DRTUtilityEstimator implements UtilityEstimator {
 		utility += estimateConstantUtility();
 		utility += estimateTravelTimeUtility(variables);
 		// utility += estimateAccessEgressTimeUtility(variables);
-		utility += estimateWaitinfTimeUtility(variables);
+		utility += estimateWaitingTimeUtility(variables);
 		utility += estimateWorkUtility(tripVariables);
 		// utility += estimateAgeUtility(personVariables);
 		utility += estimateCostUtility(variables);
 
 		return utility;
-	}
+		
+    } catch (Exception e) {
+        // If anything goes wrong, make DRT unavailable rather than crashing
+        log.warn("Exception in DRT utility calculation for person {}: {}", person.getId(), e.getMessage());
+        return Double.NEGATIVE_INFINITY;
+    }
 
 }

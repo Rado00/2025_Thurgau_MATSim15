@@ -41,7 +41,6 @@ public class AstraModeAvailability_DRT implements ModeAvailability {
 		if (modes.contains(TransportMode.walk)) {
 			mutableModes.add(TransportMode.drt);
 		}
-		mutableModes.add("drt");
 
 		return mutableModes;
 
