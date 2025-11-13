@@ -78,46 +78,47 @@ public class DRTUtilityEstimator implements UtilityEstimator {
 	// Cost?
 	
 	@Override
-public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
-    // Add the missing try block here
-    try {
-        // TODO calculate the utility of this trip
+    public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
+        // Add the missing try block here
+        try {
+            // TODO calculate the utility of this trip
+            
+            //AstraTripVariables tripVariables = this.tripPredictor.predictVariables(person, trip, elements);
         
-        //AstraTripVariables tripVariables = this.tripPredictor.predictVariables(person, trip, elements);
-    
-        DRTVariables variables = drtpredictor.predictVariables(person, trip, elements);
+            DRTVariables variables = drtpredictor.predictVariables(person, trip, elements);
 
-        // Add safety check here
-        if (variables == null) {
-            log.warn("DRT variables prediction failed for person {} at iteration", person.getId());
+            // Add safety check here
+            if (variables == null) {
+                log.warn("DRT variables prediction failed for person {} at iteration", person.getId());
+                return Double.NEGATIVE_INFINITY;
+            }
+            
+            // Check for invalid values
+            if (Double.isNaN(variables.invehicletime_min) || Double.isInfinite(variables.invehicletime_min) ||
+                Double.isNaN(variables.waitingtime_min) || Double.isInfinite(variables.waitingtime_min) ||
+                Double.isNaN(variables.cost) || Double.isInfinite(variables.cost)) {
+                log.warn("DRT variables contain invalid values for person {}: invehicletime={}, waitingtime={}, cost={}", 
+                         person.getId(), variables.invehicletime_min, variables.waitingtime_min, variables.cost);
+                return Double.NEGATIVE_INFINITY;
+            }
+            AstraPersonVariables personVariables = personPredictor.predictVariables(person, trip, elements);
+            AstraTripVariables tripVariables = tripPredictor.predictVariables(person, trip, elements);
+            
+            double utility = 0.0;
+
+            utility += estimateConstantUtility();
+            utility += estimateTravelTimeUtility(variables);
+            // utility += estimateAccessEgressTimeUtility(variables);
+            utility += estimateWaitingTimeUtility(variables);
+            utility += estimateWorkUtility(tripVariables);
+            // utility += estimateAgeUtility(personVariables);
+            utility += estimateCostUtility(variables);
+
+            return utility;
+        } catch (Exception e) {
+            // If anything goes wrong, make DRT unavailable rather than crashing
+            log.warn("Exception in DRT utility calculation for person {}: {}", person.getId(), e.getMessage());
             return Double.NEGATIVE_INFINITY;
         }
-        
-        // Check for invalid values
-        if (Double.isNaN(variables.invehicletime_min) || Double.isInfinite(variables.invehicletime_min) ||
-            Double.isNaN(variables.waitingtime_min) || Double.isInfinite(variables.waitingtime_min) ||
-            Double.isNaN(variables.cost) || Double.isInfinite(variables.cost)) {
-            log.warn("DRT variables contain invalid values for person {}: invehicletime={}, waitingtime={}, cost={}", 
-                     person.getId(), variables.invehicletime_min, variables.waitingtime_min, variables.cost);
-            return Double.NEGATIVE_INFINITY;
-        }
-        AstraPersonVariables personVariables = personPredictor.predictVariables(person, trip, elements);
-        AstraTripVariables tripVariables = tripPredictor.predictVariables(person, trip, elements);
-        
-        double utility = 0.0;
-
-        utility += estimateConstantUtility();
-        utility += estimateTravelTimeUtility(variables);
-        // utility += estimateAccessEgressTimeUtility(variables);
-        utility += estimateWaitingTimeUtility(variables);
-        utility += estimateWorkUtility(tripVariables);
-        // utility += estimateAgeUtility(personVariables);
-        utility += estimateCostUtility(variables);
-
-        return utility;
-    } catch (Exception e) {
-        // If anything goes wrong, make DRT unavailable rather than crashing
-        log.warn("Exception in DRT utility calculation for person {}: {}", person.getId(), e.getMessage());
-        return Double.NEGATIVE_INFINITY;
     }
-}
+}  
