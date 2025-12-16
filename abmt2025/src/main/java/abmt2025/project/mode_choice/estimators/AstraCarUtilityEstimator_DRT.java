@@ -18,9 +18,13 @@ import abmt2025.project.mode_choice.predictors.AstraPersonPredictor;
 import abmt2025.project.mode_choice.predictors.AstraTripPredictor;
 import abmt2025.project.mode_choice.variables.AstraPersonVariables;
 import abmt2025.project.mode_choice.variables.AstraTripVariables;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AstraCarUtilityEstimator_DRT extends CarUtilityEstimator {
 	static public final String NAME = "AstraCarUtilityEstimator_DRT";
+	private static final Logger log = LogManager.getLogger(AstraCarUtilityEstimator_DRT.class);
+	private static boolean loggedCost = false;
 
 	private final AstraModeParameters_DRT parameters;
 	private final AstraPersonPredictor personPredictor;
@@ -67,6 +71,16 @@ public class AstraCarUtilityEstimator_DRT extends CarUtilityEstimator {
 		CarVariables variables = predictor.predictVariables(person, trip, elements);
 		AstraPersonVariables personVariables = personPredictor.predictVariables(person, trip, elements);
 		AstraTripVariables tripVariables = tripPredictor.predictVariables(person, trip, elements);
+
+		// Log cost information once for debugging
+		if (!loggedCost) {
+			log.warn("=== DRT CAR COST DEBUG ===");
+			log.warn("CarVariables.cost: " + variables.cost);
+			log.warn("Distance (km): " + variables.euclideanDistance_km);
+			log.warn("Cost per km: " + (variables.cost / Math.max(0.001, variables.euclideanDistance_km)));
+			log.warn("betaCost_u_MU: " + parameters.betaCost_u_MU);
+			loggedCost = true;
+		}
 
 		double utility = 0.0;
 
