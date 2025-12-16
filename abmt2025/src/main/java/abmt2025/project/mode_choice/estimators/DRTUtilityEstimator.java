@@ -82,6 +82,7 @@ public class DRTUtilityEstimator implements UtilityEstimator {
         // Add the missing try block here
         try {
             // TODO calculate the utility of this trip
+			// TODO SIMPLIFY BECAUSE PROBABLY IT ADDED TIME FROM 28h to 32h - check old code
             
             //AstraTripVariables tripVariables = this.tripPredictor.predictVariables(person, trip, elements);
         

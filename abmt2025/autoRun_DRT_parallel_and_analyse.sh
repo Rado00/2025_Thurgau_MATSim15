@@ -7,17 +7,17 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=4 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-DRT_CONFIG="Thurgau_config_DRT_M15_06.xml"
+LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+DRT_CONFIG="Thurgau_config_DRT_M15_06_noDRTavail.xml"
 
-RUN_ANALYSIS=false
-CLEAN_ITERATIONS=false
+RUN_ANALYSIS=true
+CLEAN_ITERATIONS=true
 DELETE_EVENTS_FILE=true
 
-BASELINE_PCT="1pct"
+BASELINE_PCT="100pct"
 
 
-SIM_ID="1_pct_Tolto_mutableModes.add("drt");" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="CalTest_11_noDRTavail" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="10_drt_1_8.xml"
 SHAPE_FILE="10_ShapeFile.shp"
 

@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import org.eqasim.core.components.config.EqasimConfigGroup;
 import org.eqasim.core.simulation.analysis.EqasimAnalysisModule;
 import org.eqasim.core.simulation.mode_choice.EqasimModeChoiceModule;
+import org.eqasim.core.components.transit.EqasimTransitQSimModule;	//MILOS FIX
 import org.eqasim.switzerland.SwitzerlandConfigurator;
 import org.eqasim.switzerland.mode_choice.SwissModeChoiceModule;
 import org.matsim.api.core.v01.Scenario;
@@ -142,7 +143,7 @@ public class RunSimulation_DRT {
 		controller.addOverridingModule(new SwissModeChoiceModule(cmd));
 		controller.addOverridingModule(new AstraModule_DRT(cmd));
 
-		AstraConfigurator_DRT.configureController(controller, cmd);
+		//MILOS FIX AstraConfigurator_DRT.configureController(controller, cmd);
 
 		controller.addOverridingModule(new SmoothingTravelTimeModule());
 		
@@ -172,9 +173,10 @@ public class RunSimulation_DRT {
 		});
 
 
-
+	// MILOS FIX: EqasimTransitQSimModule
 		controller.configureQSimComponents(components -> {
             DvrpQSimComponents.activateAllModes(MultiModeDrtConfigGroup.get(config)).configure(components);
+			EqasimTransitQSimModule.configure(components, config);
         });
 
 		controller.run();
