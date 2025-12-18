@@ -1,0 +1,107 @@
+\subsection{Intermodal DRT-PT Integration}
+\label{sec:feeder_drt}
+
+A key extension to the baseline simulation framework involves enabling Demand-Responsive Transit (DRT) to serve as an access and egress mode for public transport (PT) trips. This intermodal integration addresses a realistic travel behavior where travelers may use on-demand services to reach or depart from transit stations, particularly in areas with lower transit stop density.
+
+\subsubsection{Design Considerations}
+
+Two architectural approaches were considered for implementing intermodal DRT-PT functionality:
+
+\begin{enumerate}
+    \item \textbf{Symmetric Feeder Mode}: A dedicated mode requiring DRT for both access and egress legs, resulting in a fixed trip structure of DRT$\rightarrow$PT$\rightarrow$DRT.
+
+    \item \textbf{Flexible Intermodal Access/Egress}: An approach leveraging the Swiss Rail Raptor routing algorithm's intermodal capabilities, allowing the router to optimally select between walking and DRT for each access and egress segment independently.
+\end{enumerate}
+
+The flexible approach was selected as it better reflects real-world travel behavior, where the choice between walking and DRT depends on the distance to transit stops. This results in the following possible trip structures:
+
+\begin{itemize}
+    \item DRT $\rightarrow$ PT $\rightarrow$ Walk (DRT for access, walking for egress)
+    \item Walk $\rightarrow$ PT $\rightarrow$ DRT (walking for access, DRT for egress)
+    \item DRT $\rightarrow$ PT $\rightarrow$ DRT (DRT for both access and egress)
+\end{itemize}
+
+\subsubsection{Routing Logic}
+
+The feeder DRT routing module operates according to Algorithm~\ref{alg:feeder_routing}. The router identifies the nearest transit stops to both origin and destination, then evaluates whether to use DRT or walking for each access/egress segment based on a distance threshold $d_{threshold}$.
+
+\begin{algorithm}[H]
+\caption{Feeder DRT Routing}
+\label{alg:feeder_routing}
+\begin{algorithmic}[1]
+\Require Origin $O$, Destination $D$, Departure time $t_0$, Distance threshold $d_{threshold}$
+\Ensure Intermodal trip plan
+\State $S_{access} \gets$ \textsc{FindNearestTransitStop}($O$)
+\State $S_{egress} \gets$ \textsc{FindNearestTransitStop}($D$)
+\State $d_{access} \gets$ \textsc{EuclideanDistance}($O$, $S_{access}$)
+\State $d_{egress} \gets$ \textsc{EuclideanDistance}($S_{egress}$, $D$)
+\If{$d_{access} > d_{threshold}$}
+    \State $leg_{access} \gets$ \textsc{RouteDRT}($O$, $S_{access}$, $t_0$)
+\Else
+    \State $leg_{access} \gets$ \textsc{RouteWalk}($O$, $S_{access}$, $t_0$)
+\EndIf
+\State $t_1 \gets t_0 +$ \textsc{TravelTime}($leg_{access}$)
+\State $leg_{PT} \gets$ \textsc{RoutePT}($S_{access}$, $S_{egress}$, $t_1$)
+\State $t_2 \gets t_1 +$ \textsc{TravelTime}($leg_{PT}$)
+\If{$d_{egress} > d_{threshold}$}
+    \State $leg_{egress} \gets$ \textsc{RouteDRT}($S_{egress}$, $D$, $t_2$)
+\Else
+    \State $leg_{egress} \gets$ \textsc{RouteWalk}($S_{egress}$, $D$, $t_2$)
+\EndIf
+\State \Return $leg_{access} \oplus leg_{PT} \oplus leg_{egress}$
+\end{algorithmic}
+\end{algorithm}
+
+In this implementation, $d_{threshold} = 500$~m was chosen as the decision boundary. When the distance to the nearest transit stop exceeds this threshold, DRT is used; otherwise, walking is selected. This threshold reflects the assumption that travelers are willing to walk short distances to transit stops but prefer on-demand services for longer access/egress distances.
+
+\subsubsection{Utility Specification}
+
+The utility function for feeder DRT trips follows an additive structure, combining the utilities of individual trip segments. For a feeder DRT trip composed of access, PT, and egress segments, the total utility is computed as:
+
+\begin{equation}
+    U_{feeder} = U_{access} + U_{PT} + U_{egress}
+    \label{eq:feeder_utility}
+\end{equation}
+
+\noindent where:
+\begin{itemize}
+    \item $U_{access}$ is the utility of the access segment (DRT or walk)
+    \item $U_{PT}$ is the utility of the public transport segment
+    \item $U_{egress}$ is the utility of the egress segment (DRT or walk)
+\end{itemize}
+
+When DRT is used for access or egress, its utility follows the same specification as standalone DRT trips (Equation~\ref{eq:drt_utility}), including alternative-specific constant, in-vehicle time, waiting time, and monetary cost components. This ensures consistency in how DRT is valued regardless of whether it is used as a standalone mode or as part of an intermodal chain.
+
+\subsubsection{Mode Availability and Constraints}
+
+The feeder DRT mode (\texttt{feeder\_drt}) is made available to agents under the following conditions:
+
+\begin{enumerate}
+    \item The agent has access to public transport (PT mode is available)
+    \item The agent can walk (walk mode is available, which is universally true)
+    \item The trip origin and destination are not classified as ``outside'' activities
+\end{enumerate}
+
+The third condition ensures that intermodal trips are not generated for activities occurring outside the study area, where DRT service may not be available.
+
+Additionally, a validation constraint is applied after route estimation to verify that the generated trip plan contains at least one DRT leg and at least one PT leg. This constraint filters out degenerate cases where the routing algorithm might produce PT-only or DRT-only trips when using the feeder mode.
+
+\subsubsection{Service Area Integration}
+
+The feeder DRT service operates within the same geographic boundaries as the standalone DRT service, defined by the service area shapefile. This ensures that DRT legs within feeder trips are only offered where DRT vehicles operate. The maximum access/egress distance parameter ($d_{max} = 10,000$~m) limits the search radius for transit stops, preventing unrealistically long DRT legs for access or egress.
+
+\subsubsection{Implementation Architecture}
+
+The implementation follows the modular architecture of the eqasim framework, consisting of the following components:
+
+\begin{itemize}
+    \item \textbf{FeederDrtConfigGroup}: A configuration module storing parameters such as mode names, distance thresholds, and service flags.
+
+    \item \textbf{FeederDrtRoutingModule}: The routing module implementing Algorithm~\ref{alg:feeder_routing}, responsible for generating intermodal trip plans.
+
+    \item \textbf{FeederDrtUtilityEstimator}: The utility estimator implementing Equation~\ref{eq:feeder_utility} by delegating to the existing DRT and PT estimators for individual segments.
+
+    \item \textbf{FeederDrtConstraint}: A trip constraint validating that feeder trips contain the required mode combination and do not serve ``outside'' activities.
+\end{itemize}
+
+This modular design allows the feeder DRT functionality to be enabled or disabled without affecting the standalone DRT or PT modes, which remain fully operational alongside the new intermodal option.
