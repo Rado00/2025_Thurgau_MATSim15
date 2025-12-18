@@ -27,6 +27,8 @@ import abmt2025.project.mode_choice.estimators.AstraCarUtilityEstimator_DRT;
 import abmt2025.project.mode_choice.estimators.AstraPtUtilityEstimator_DRT;
 import abmt2025.project.mode_choice.estimators.AstraWalkUtilityEstimator_DRT;
 import abmt2025.project.mode_choice.estimators.DRTUtilityEstimator;
+import abmt2025.project.mode_choice.feeder.FeederDrtConstraint;
+import abmt2025.project.mode_choice.feeder.FeederDrtUtilityEstimator;
 import abmt2025.project.mode_choice.predictors.AstraBikePredictor;
 import abmt2025.project.mode_choice.predictors.AstraPersonPredictor;
 import abmt2025.project.mode_choice.predictors.AstraPtPredictor;
@@ -49,6 +51,9 @@ public class AstraModule_DRT extends AbstractEqasimExtension {
 		bindUtilityEstimator(AstraWalkUtilityEstimator_DRT.NAME).to(AstraWalkUtilityEstimator_DRT.class);
 		bindUtilityEstimator(DRTUtilityEstimator.NAME).to(DRTUtilityEstimator.class);
 
+		// Feeder DRT utility estimator (DRT + PT combination)
+		bindUtilityEstimator(FeederDrtUtilityEstimator.NAME).to(FeederDrtUtilityEstimator.class);
+
 		bind(AstraPtPredictor.class);
 		bind(AstraBikePredictor.class);
 		bind(AstraWalkPredictor.class);
@@ -58,6 +63,9 @@ public class AstraModule_DRT extends AbstractEqasimExtension {
 		bind(DRTCostModel.class);
 
 		bindTripConstraintFactory(InfiniteHeadwayConstraint.NAME).to(InfiniteHeadwayConstraint.Factory.class);
+
+		// Feeder DRT constraint (validates DRT+PT trips)
+		bindTripConstraintFactory(FeederDrtConstraint.NAME).to(FeederDrtConstraint.Factory.class);
 
 		bind(SwissModeParameters.class).to(AstraModeParameters_DRT.class);
 

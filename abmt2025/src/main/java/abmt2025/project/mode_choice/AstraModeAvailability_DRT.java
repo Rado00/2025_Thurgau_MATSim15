@@ -33,13 +33,18 @@ public class AstraModeAvailability_DRT implements ModeAvailability {
 		// modes.add("drt");
 		// return modes;
 
-		// This is from GPT
-		// Convert to a mutable list GPT
-
+		// Convert to a mutable list
 		List<String> mutableModes = new java.util.ArrayList<>(modes);
 
 		if (modes.contains(TransportMode.walk)) {
+			// Add standalone DRT mode
 			mutableModes.add(TransportMode.drt);
+
+			// Add feeder_drt mode (DRT + PT combination)
+			// Only available if both walk and pt are available (as these are prerequisites)
+			if (modes.contains(TransportMode.pt)) {
+				mutableModes.add("feeder_drt");
+			}
 		}
 
 		return mutableModes;

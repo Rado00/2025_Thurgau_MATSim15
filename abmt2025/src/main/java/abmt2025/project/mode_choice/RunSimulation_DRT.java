@@ -43,6 +43,8 @@ import abmt2025.project.travel_time.SmoothingTravelTimeModule;
 import abmt2025.project.mode_choice.estimators.DRTUtilityEstimator;
 import abmt2025.project.mode_choice.costs.OperatorCostCalculator;
 import abmt2025.project.mode_choice.DrtCostParameters;
+import abmt2025.project.mode_choice.feeder.FeederDrtModule;
+import abmt2025.project.mode_choice.feeder.FeederDrtConfigGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -142,6 +144,17 @@ public class RunSimulation_DRT {
 		controller.addOverridingModule(new EqasimModeChoiceModule());
 		controller.addOverridingModule(new SwissModeChoiceModule(cmd));
 		controller.addOverridingModule(new AstraModule_DRT(cmd));
+
+		// Feeder DRT module - enables DRT as access/egress mode for PT
+		controller.addOverridingModule(new FeederDrtModule());
+
+		// Bind FeederDrtConfigGroup
+		controller.addOverridingModule(new AbstractModule() {
+			@Override
+			public void install() {
+				bind(FeederDrtConfigGroup.class).toInstance(FeederDrtConfigGroup.get(config));
+			}
+		});
 
 		//MILOS FIX AstraConfigurator_DRT.configureController(controller, cmd);
 

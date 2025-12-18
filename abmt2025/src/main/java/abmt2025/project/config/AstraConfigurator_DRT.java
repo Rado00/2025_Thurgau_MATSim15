@@ -29,6 +29,9 @@ import abmt2025.project.mode_choice.estimators.AstraBikeUtilityEstimator_DRT;
 import abmt2025.project.mode_choice.estimators.AstraCarUtilityEstimator_DRT;
 import abmt2025.project.mode_choice.estimators.AstraPtUtilityEstimator_DRT;
 import abmt2025.project.mode_choice.estimators.AstraWalkUtilityEstimator_DRT;
+import abmt2025.project.mode_choice.feeder.FeederDrtConfigGroup;
+import abmt2025.project.mode_choice.feeder.FeederDrtConstraint;
+import abmt2025.project.mode_choice.feeder.FeederDrtUtilityEstimator;
 import ch.sbb.matsim.config.SwissRailRaptorConfigGroup;
 
 public class AstraConfigurator_DRT extends EqasimConfigurator {
@@ -43,7 +46,8 @@ public class AstraConfigurator_DRT extends EqasimConfigurator {
 				// new CalibrationConfigGroup(), //
 				new AstraConfigGroup(), //
 				new EqasimTerminationConfigGroup(),
-				new EqasimRaptorConfigGroup()
+				new EqasimRaptorConfigGroup(),
+				new FeederDrtConfigGroup() // Feeder DRT config
 		};
 	}
 
@@ -69,12 +73,14 @@ public class AstraConfigurator_DRT extends EqasimConfigurator {
 		eqasimConfig.setEstimator(TransportMode.pt, AstraPtUtilityEstimator_DRT.NAME);
 		eqasimConfig.setEstimator(TransportMode.bike, AstraBikeUtilityEstimator_DRT.NAME);
 		eqasimConfig.setEstimator(TransportMode.walk, AstraWalkUtilityEstimator_DRT.NAME);
+		eqasimConfig.setEstimator("feeder_drt", FeederDrtUtilityEstimator.NAME);
 
 		DiscreteModeChoiceConfigGroup dmcConfig = (DiscreteModeChoiceConfigGroup) config.getModules()
 				.get(DiscreteModeChoiceConfigGroup.GROUP_NAME);
 
 		Set<String> tripConstraints = new HashSet<>(dmcConfig.getTripConstraints());
 		tripConstraints.add(InfiniteHeadwayConstraint.NAME);
+		tripConstraints.add(FeederDrtConstraint.NAME);
 		dmcConfig.setTripConstraints(tripConstraints);
 
 		dmcConfig.setModeAvailability(AstraModeAvailability_DRT.NAME);		
