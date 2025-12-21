@@ -202,7 +202,12 @@ public class FeederDrtRoutingModule implements RoutingModule {
      * Fall back to regular PT routing.
      */
     private List<? extends PlanElement> fallbackToPt(Facility from, Facility to, double departureTime, Person person) {
-        return ptRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(from, to, departureTime, person));
+        try {
+            return ptRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(from, to, departureTime, person));
+        } catch (Exception e) {
+            log.debug("PT fallback routing failed: {}", e.getMessage());
+            return null;
+        }
     }
 
     /**
