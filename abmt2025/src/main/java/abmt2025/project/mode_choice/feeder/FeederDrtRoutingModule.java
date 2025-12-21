@@ -250,6 +250,11 @@ public class FeederDrtRoutingModule implements RoutingModule {
             public org.matsim.api.core.v01.Id getLinkId() {
                 return stop.getLinkId();
             }
+
+            @Override
+            public java.util.Map<String, Object> getCustomAttributes() {
+                return java.util.Collections.emptyMap();
+            }
         };
     }
 
