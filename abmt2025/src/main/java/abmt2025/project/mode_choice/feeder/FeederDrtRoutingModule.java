@@ -13,7 +13,7 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.api.core.v01.population.PopulationFactory;
-import org.matsim.core.population.routes.GenericRouteImpl;
+import org.matsim.core.router.DefaultRoutingRequest;
 import org.matsim.core.router.RoutingModule;
 import org.matsim.core.router.RoutingRequest;
 import org.matsim.core.utils.geometry.CoordUtils;
@@ -102,7 +102,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 } else {
                     // Fall back to walk
                     List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
-                            RoutingRequest.of(fromFacility, createFacility(accessStop), currentTime, person));
+                            DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
                     if (walkAccess != null) {
                         route.addAll(walkAccess);
                         currentTime = getArrivalTime(walkAccess, currentTime);
@@ -111,7 +111,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
             } else {
                 // Walk access
                 List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
-                        RoutingRequest.of(fromFacility, createFacility(accessStop), currentTime, person));
+                        DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
                 if (walkAccess != null) {
                     route.addAll(walkAccess);
                     currentTime = getArrivalTime(walkAccess, currentTime);
@@ -126,7 +126,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
             // PT LEG: from access stop to egress stop
             List<? extends PlanElement> ptLeg = ptRoutingModule.calcRoute(
-                    RoutingRequest.of(createFacility(accessStop), createFacility(egressStop), currentTime, person));
+                    DefaultRoutingRequest.withoutAttributes(createFacility(accessStop), createFacility(egressStop), currentTime, person));
             if (ptLeg != null && !ptLeg.isEmpty()) {
                 route.addAll(ptLeg);
                 currentTime = getArrivalTime(ptLeg, currentTime);
@@ -150,7 +150,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 } else {
                     // Fall back to walk
                     List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
-                            RoutingRequest.of(createFacility(egressStop), toFacility, currentTime, person));
+                            DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
                     if (walkEgress != null) {
                         route.addAll(walkEgress);
                     }
@@ -158,7 +158,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
             } else {
                 // Walk egress
                 List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
-                        RoutingRequest.of(createFacility(egressStop), toFacility, currentTime, person));
+                        DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
                 if (walkEgress != null) {
                     route.addAll(walkEgress);
                 }
@@ -191,7 +191,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
             Facility fromFac = (from instanceof Facility) ? (Facility) from : createFacility((TransitStopFacility) from);
             Facility toFac = (to instanceof Facility) ? (Facility) to : createFacility((TransitStopFacility) to);
 
-            return drtRoutingModule.calcRoute(RoutingRequest.of(fromFac, toFac, departureTime, person));
+            return drtRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(fromFac, toFac, departureTime, person));
         } catch (Exception e) {
             log.debug("DRT routing failed: {}", e.getMessage());
             return null;
@@ -202,7 +202,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
      * Fall back to regular PT routing.
      */
     private List<? extends PlanElement> fallbackToPt(Facility from, Facility to, double departureTime, Person person) {
-        return ptRoutingModule.calcRoute(RoutingRequest.of(from, to, departureTime, person));
+        return ptRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(from, to, departureTime, person));
     }
 
     /**
