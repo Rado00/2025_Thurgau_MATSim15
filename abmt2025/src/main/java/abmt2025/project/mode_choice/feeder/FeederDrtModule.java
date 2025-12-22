@@ -5,6 +5,7 @@ import org.eqasim.core.simulation.mode_choice.utilities.UtilityEstimator;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.population.PopulationFactory;
+import org.matsim.core.config.Config;
 import org.matsim.core.router.RoutingModule;
 import org.matsim.pt.transitSchedule.api.TransitSchedule;
 
@@ -65,5 +66,16 @@ public class FeederDrtModule extends AbstractEqasimExtension {
     @Provides
     public FeederDrtConstraint.Factory provideFeederDrtConstraintFactory() {
         return new FeederDrtConstraint.Factory();
+    }
+
+    @Provides
+    @Singleton
+    public FeederDrtConfigGroup provideFeederDrtConfigGroup(Config config) {
+        FeederDrtConfigGroup feederConfig = FeederDrtConfigGroup.get(config);
+        if (feederConfig == null) {
+            // Return default config if not explicitly configured
+            feederConfig = new FeederDrtConfigGroup();
+        }
+        return feederConfig;
     }
 }
