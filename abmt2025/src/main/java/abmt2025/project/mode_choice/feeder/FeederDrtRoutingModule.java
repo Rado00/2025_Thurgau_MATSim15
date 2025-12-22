@@ -36,6 +36,10 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
     public static final String FEEDER_DRT_MODE = "feeder_drt";
 
+    // Counters for debugging
+    private int routingAttempts = 0;
+    private int successfulRoutes = 0;
+
     private final RoutingModule drtRoutingModule;
     private final RoutingModule ptRoutingModule;
     private final RoutingModule walkRoutingModule;
@@ -70,6 +74,14 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
     public List<? extends PlanElement> calcRoute(Facility fromFacility, Facility toFacility,
             double departureTime, Person person) {
+
+        routingAttempts++;
+        // Log every 100 attempts to show progress
+        if (routingAttempts % 100 == 0) {
+            log.info("Feeder DRT routing: {} attempts, {} successful routes ({} %)",
+                    routingAttempts, successfulRoutes,
+                    routingAttempts > 0 ? (100.0 * successfulRoutes / routingAttempts) : 0);
+        }
 
         List<PlanElement> route = new ArrayList<>();
 
@@ -191,6 +203,13 @@ public class FeederDrtRoutingModule implements RoutingModule {
             if (!hasDrt) {
                 log.debug("Feeder route has no DRT legs, returning null");
                 return null;
+            }
+
+            successfulRoutes++;
+            // Log first few successful routes at INFO level for visibility
+            if (successfulRoutes <= 5) {
+                log.info("SUCCESS: Feeder DRT route created for person {} (route #{}) - {} legs",
+                        person.getId(), successfulRoutes, route.size());
             }
 
             return route;
