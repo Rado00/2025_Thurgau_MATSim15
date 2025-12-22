@@ -64,6 +64,9 @@ public class FeederDrtRoutingModule implements RoutingModule {
         this.transitSchedule = transitSchedule;
         this.network = network;
         this.maxAccessEgressDistance = config.getMaxAccessEgressDistance_m();
+
+        log.info("FeederDrtRoutingModule initialized with maxAccessEgressDistance={} m, {} transit stops available",
+                maxAccessEgressDistance, transitSchedule.getFacilities().size());
     }
 
     @Override
