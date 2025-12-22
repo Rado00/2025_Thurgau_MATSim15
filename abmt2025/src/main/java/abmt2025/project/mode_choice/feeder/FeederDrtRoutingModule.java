@@ -13,7 +13,7 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.api.core.v01.population.PopulationFactory;
-import org.matsim.core.router.DefaultRoutingRequest;
+import org.matsim.core.population.routes.GenericRouteImpl;
 import org.matsim.core.router.RoutingModule;
 import org.matsim.core.router.RoutingRequest;
 import org.matsim.core.utils.geometry.CoordUtils;
@@ -35,10 +35,6 @@ public class FeederDrtRoutingModule implements RoutingModule {
     private static final Logger log = LogManager.getLogger(FeederDrtRoutingModule.class);
 
     public static final String FEEDER_DRT_MODE = "feeder_drt";
-
-    // Counters for debugging
-    private int routingAttempts = 0;
-    private int successfulRoutes = 0;
 
     private final RoutingModule drtRoutingModule;
     private final RoutingModule ptRoutingModule;
@@ -64,9 +60,6 @@ public class FeederDrtRoutingModule implements RoutingModule {
         this.transitSchedule = transitSchedule;
         this.network = network;
         this.maxAccessEgressDistance = config.getMaxAccessEgressDistance_m();
-
-        log.info("FeederDrtRoutingModule initialized with maxAccessEgressDistance={} m, {} transit stops available",
-                maxAccessEgressDistance, transitSchedule.getFacilities().size());
     }
 
     @Override
@@ -77,14 +70,6 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
     public List<? extends PlanElement> calcRoute(Facility fromFacility, Facility toFacility,
             double departureTime, Person person) {
-
-        routingAttempts++;
-        // Log every 100 attempts to show progress
-        if (routingAttempts % 100 == 0) {
-            log.info("Feeder DRT routing: {} attempts, {} successful routes ({} %)",
-                    routingAttempts, successfulRoutes,
-                    routingAttempts > 0 ? (100.0 * successfulRoutes / routingAttempts) : 0);
-        }
 
         List<PlanElement> route = new ArrayList<>();
 
@@ -107,9 +92,6 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
             double currentTime = departureTime;
 
-            // Maximum walk distance for fallback - don't create unrealistic routes
-            final double MAX_WALK_FALLBACK_DISTANCE = 2000.0; // 2km max walk
-
             // ACCESS LEG: DRT or walk from origin to access stop
             if (distanceToAccessStop > 500) { // Use DRT if > 500m from stop
                 // Try DRT access
@@ -118,24 +100,18 @@ public class FeederDrtRoutingModule implements RoutingModule {
                     route.addAll(accessLeg);
                     currentTime = getArrivalTime(accessLeg, currentTime);
                 } else {
-                    // DRT failed - check if walk is realistic
-                    if (distanceToAccessStop > MAX_WALK_FALLBACK_DISTANCE) {
-                        // Too far to walk and DRT not available - feeder_drt not viable
-                        log.debug("Access too far ({} m) and DRT not available, returning null", distanceToAccessStop);
-                        return null;
-                    }
-                    // Fall back to walk (within reasonable distance)
+                    // Fall back to walk
                     List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
-                            DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
+                            RoutingRequest.of(fromFacility, createFacility(accessStop), currentTime, person));
                     if (walkAccess != null) {
                         route.addAll(walkAccess);
                         currentTime = getArrivalTime(walkAccess, currentTime);
                     }
                 }
             } else {
-                // Walk access (short distance, always OK)
+                // Walk access
                 List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
-                        DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
+                        RoutingRequest.of(fromFacility, createFacility(accessStop), currentTime, person));
                 if (walkAccess != null) {
                     route.addAll(walkAccess);
                     currentTime = getArrivalTime(walkAccess, currentTime);
@@ -149,33 +125,15 @@ public class FeederDrtRoutingModule implements RoutingModule {
             route.add(ptInteractionAccess);
 
             // PT LEG: from access stop to egress stop
-            List<? extends PlanElement> ptLeg = null;
-            try {
-                ptLeg = ptRoutingModule.calcRoute(
-                        DefaultRoutingRequest.withoutAttributes(createFacility(accessStop), createFacility(egressStop), currentTime, person));
-            } catch (Exception e) {
-                log.debug("PT routing threw exception: {}", e.getMessage());
+            List<? extends PlanElement> ptLeg = ptRoutingModule.calcRoute(
+                    RoutingRequest.of(createFacility(accessStop), createFacility(egressStop), currentTime, person));
+            if (ptLeg != null && !ptLeg.isEmpty()) {
+                route.addAll(ptLeg);
+                currentTime = getArrivalTime(ptLeg, currentTime);
+            } else {
+                log.debug("PT routing failed, returning null");
                 return null;
             }
-
-            if (ptLeg == null || ptLeg.isEmpty()) {
-                log.debug("PT routing returned null or empty, returning null");
-                return null;
-            }
-
-            // Validate PT route has required elements
-            boolean hasValidPtLeg = ptLeg.stream()
-                    .filter(e -> e instanceof Leg)
-                    .map(e -> (Leg) e)
-                    .anyMatch(l -> l.getMode().equals(TransportMode.pt) || l.getMode().equals(TransportMode.transit_walk));
-
-            if (!hasValidPtLeg) {
-                log.debug("PT routing returned route without PT legs");
-                return null;
-            }
-
-            route.addAll(ptLeg);
-            currentTime = getArrivalTime(ptLeg, currentTime);
 
             // Add PT interaction activity
             Activity ptInteractionEgress = populationFactory.createActivityFromCoord(
@@ -190,23 +148,17 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 if (egressLeg != null && !egressLeg.isEmpty()) {
                     route.addAll(egressLeg);
                 } else {
-                    // DRT failed - check if walk is realistic
-                    if (distanceFromEgressStop > MAX_WALK_FALLBACK_DISTANCE) {
-                        // Too far to walk and DRT not available - feeder_drt not viable
-                        log.debug("Egress too far ({} m) and DRT not available, returning null", distanceFromEgressStop);
-                        return null;
-                    }
-                    // Fall back to walk (within reasonable distance)
+                    // Fall back to walk
                     List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
-                            DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
+                            RoutingRequest.of(createFacility(egressStop), toFacility, currentTime, person));
                     if (walkEgress != null) {
                         route.addAll(walkEgress);
                     }
                 }
             } else {
-                // Walk egress (short distance, always OK)
+                // Walk egress
                 List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
-                        DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
+                        RoutingRequest.of(createFacility(egressStop), toFacility, currentTime, person));
                 if (walkEgress != null) {
                     route.addAll(walkEgress);
                 }
@@ -223,21 +175,11 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 return null;
             }
 
-            successfulRoutes++;
-            // Log first few successful routes at INFO level for visibility
-            if (successfulRoutes <= 5) {
-                log.info("SUCCESS: Feeder DRT route created for person {} (route #{}) - {} legs",
-                        person.getId(), successfulRoutes, route.size());
-            }
-
             return route;
 
         } catch (Exception e) {
-            // Log at debug level to avoid flooding logs - these failures are expected
-            // when PT routing can't find a valid route
-            log.debug("Error in feeder DRT routing: {}", e.getMessage());
-            // Don't fall back to PT here since the PT router likely failed too
-            return null;
+            log.warn("Error in feeder DRT routing: {}", e.getMessage());
+            return fallbackToPt(fromFacility, toFacility, departureTime, person);
         }
     }
 
@@ -249,7 +191,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
             Facility fromFac = (from instanceof Facility) ? (Facility) from : createFacility((TransitStopFacility) from);
             Facility toFac = (to instanceof Facility) ? (Facility) to : createFacility((TransitStopFacility) to);
 
-            return drtRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(fromFac, toFac, departureTime, person));
+            return drtRoutingModule.calcRoute(RoutingRequest.of(fromFac, toFac, departureTime, person));
         } catch (Exception e) {
             log.debug("DRT routing failed: {}", e.getMessage());
             return null;
@@ -260,12 +202,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
      * Fall back to regular PT routing.
      */
     private List<? extends PlanElement> fallbackToPt(Facility from, Facility to, double departureTime, Person person) {
-        try {
-            return ptRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(from, to, departureTime, person));
-        } catch (Exception e) {
-            log.debug("PT fallback routing failed: {}", e.getMessage());
-            return null;
-        }
+        return ptRoutingModule.calcRoute(RoutingRequest.of(from, to, departureTime, person));
     }
 
     /**
@@ -312,11 +249,6 @@ public class FeederDrtRoutingModule implements RoutingModule {
             @Override
             public org.matsim.api.core.v01.Id getLinkId() {
                 return stop.getLinkId();
-            }
-
-            @Override
-            public java.util.Map<String, Object> getCustomAttributes() {
-                return java.util.Collections.emptyMap();
             }
         };
     }
