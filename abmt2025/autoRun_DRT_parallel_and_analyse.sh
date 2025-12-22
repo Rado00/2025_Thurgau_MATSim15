@@ -7,19 +7,19 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-DRT_CONFIG="Thurgau_config_DRT_M15_06_noDRTavail.xml"
+LAST_ITERATION=4 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+DRT_CONFIG="Thurgau_config_DRT_M15_06_MultiMod.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
 DELETE_EVENTS_FILE=true
 
-BASELINE_PCT="100pct"
+BASELINE_PCT="1pct"
 
 
-SIM_ID="CalTest_11_noDRTavail" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="10_drt_1_8.xml"
-SHAPE_FILE="10_ShapeFile.shp"
+SIM_ID="Test_Multi-modality2" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="15_drt_100_8.xml"
+SHAPE_FILE="15_ShapeFile.shp"
 
 
 
