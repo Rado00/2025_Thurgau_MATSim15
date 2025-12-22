@@ -125,15 +125,33 @@ public class FeederDrtRoutingModule implements RoutingModule {
             route.add(ptInteractionAccess);
 
             // PT LEG: from access stop to egress stop
-            List<? extends PlanElement> ptLeg = ptRoutingModule.calcRoute(
-                    DefaultRoutingRequest.withoutAttributes(createFacility(accessStop), createFacility(egressStop), currentTime, person));
-            if (ptLeg != null && !ptLeg.isEmpty()) {
-                route.addAll(ptLeg);
-                currentTime = getArrivalTime(ptLeg, currentTime);
-            } else {
-                log.debug("PT routing failed, returning null");
+            List<? extends PlanElement> ptLeg = null;
+            try {
+                ptLeg = ptRoutingModule.calcRoute(
+                        DefaultRoutingRequest.withoutAttributes(createFacility(accessStop), createFacility(egressStop), currentTime, person));
+            } catch (Exception e) {
+                log.debug("PT routing threw exception: {}", e.getMessage());
                 return null;
             }
+
+            if (ptLeg == null || ptLeg.isEmpty()) {
+                log.debug("PT routing returned null or empty, returning null");
+                return null;
+            }
+
+            // Validate PT route has required elements
+            boolean hasValidPtLeg = ptLeg.stream()
+                    .filter(e -> e instanceof Leg)
+                    .map(e -> (Leg) e)
+                    .anyMatch(l -> l.getMode().equals(TransportMode.pt) || l.getMode().equals(TransportMode.transit_walk));
+
+            if (!hasValidPtLeg) {
+                log.debug("PT routing returned route without PT legs");
+                return null;
+            }
+
+            route.addAll(ptLeg);
+            currentTime = getArrivalTime(ptLeg, currentTime);
 
             // Add PT interaction activity
             Activity ptInteractionEgress = populationFactory.createActivityFromCoord(
@@ -178,8 +196,11 @@ public class FeederDrtRoutingModule implements RoutingModule {
             return route;
 
         } catch (Exception e) {
-            log.warn("Error in feeder DRT routing: {}", e.getMessage());
-            return fallbackToPt(fromFacility, toFacility, departureTime, person);
+            // Log at debug level to avoid flooding logs - these failures are expected
+            // when PT routing can't find a valid route
+            log.debug("Error in feeder DRT routing: {}", e.getMessage());
+            // Don't fall back to PT here since the PT router likely failed too
+            return null;
         }
     }
 
