@@ -104,6 +104,9 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
             double currentTime = departureTime;
 
+            // Maximum walk distance for fallback - don't create unrealistic routes
+            final double MAX_WALK_FALLBACK_DISTANCE = 2000.0; // 2km max walk
+
             // ACCESS LEG: DRT or walk from origin to access stop
             if (distanceToAccessStop > 500) { // Use DRT if > 500m from stop
                 // Try DRT access
@@ -112,7 +115,13 @@ public class FeederDrtRoutingModule implements RoutingModule {
                     route.addAll(accessLeg);
                     currentTime = getArrivalTime(accessLeg, currentTime);
                 } else {
-                    // Fall back to walk
+                    // DRT failed - check if walk is realistic
+                    if (distanceToAccessStop > MAX_WALK_FALLBACK_DISTANCE) {
+                        // Too far to walk and DRT not available - feeder_drt not viable
+                        log.debug("Access too far ({} m) and DRT not available, returning null", distanceToAccessStop);
+                        return null;
+                    }
+                    // Fall back to walk (within reasonable distance)
                     List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
                             DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
                     if (walkAccess != null) {
@@ -121,7 +130,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
                     }
                 }
             } else {
-                // Walk access
+                // Walk access (short distance, always OK)
                 List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
                         DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
                 if (walkAccess != null) {
@@ -178,7 +187,13 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 if (egressLeg != null && !egressLeg.isEmpty()) {
                     route.addAll(egressLeg);
                 } else {
-                    // Fall back to walk
+                    // DRT failed - check if walk is realistic
+                    if (distanceFromEgressStop > MAX_WALK_FALLBACK_DISTANCE) {
+                        // Too far to walk and DRT not available - feeder_drt not viable
+                        log.debug("Egress too far ({} m) and DRT not available, returning null", distanceFromEgressStop);
+                        return null;
+                    }
+                    // Fall back to walk (within reasonable distance)
                     List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
                             DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
                     if (walkEgress != null) {
@@ -186,7 +201,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
                     }
                 }
             } else {
-                // Walk egress
+                // Walk egress (short distance, always OK)
                 List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
                         DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
                 if (walkEgress != null) {
