@@ -51,6 +51,12 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
     public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
         int currentCall = callCount.incrementAndGet();
 
+        // Log first few calls for debugging
+        if (currentCall <= 5) {
+            log.info("FeederDRT estimateUtility called #{} for person {}, {} elements: {}",
+                    currentCall, person.getId(), elements.size(), describePlanElements(elements));
+        }
+
         try {
             // Extract times from legs
             double drtInVehicleTime_min = 0.0;
@@ -65,7 +71,25 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
                 if (element instanceof Leg) {
                     Leg leg = (Leg) element;
                     String mode = leg.getMode();
-                    double travelTime_min = leg.getTravelTime().seconds() / 60.0;
+
+                    // Handle undefined travel times - use route distance/speed or default
+                    double travelTime_min;
+                    if (leg.getTravelTime().isDefined()) {
+                        travelTime_min = leg.getTravelTime().seconds() / 60.0;
+                    } else if (leg.getRoute() != null && leg.getRoute().getDistance() > 0) {
+                        // Estimate from distance: assume 30 km/h for DRT, 40 km/h for PT, 5 km/h for walk
+                        double distance_km = leg.getRoute().getDistance() / 1000.0;
+                        if (mode.equals(TransportMode.drt)) {
+                            travelTime_min = distance_km / 30.0 * 60.0;
+                        } else if (mode.equals(TransportMode.pt)) {
+                            travelTime_min = distance_km / 40.0 * 60.0;
+                        } else {
+                            travelTime_min = distance_km / 5.0 * 60.0; // walk
+                        }
+                    } else {
+                        // Default fallback: 5 minutes
+                        travelTime_min = 5.0;
+                    }
 
                     if (mode.equals(TransportMode.drt)) {
                         hasDrt = true;
@@ -133,9 +157,13 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
 
         } catch (Exception e) {
             failCount.incrementAndGet();
-            if (currentCall <= 10 || currentCall % 1000 == 0) {
-                log.warn("Exception in feeder DRT utility calculation for person {} (call #{}): {}",
-                        person.getId(), currentCall, e.getMessage(), e);
+            // Log first 50 exceptions and then every 100 to catch issues
+            if (failCount.get() <= 50 || failCount.get() % 100 == 0) {
+                log.warn("Exception in feeder DRT utility calculation for person {} (call #{}, fail #{}): {} - {}",
+                        person.getId(), currentCall, failCount.get(), e.getClass().getSimpleName(), e.getMessage());
+                if (failCount.get() <= 5) {
+                    e.printStackTrace();
+                }
             }
             return Double.NEGATIVE_INFINITY;
         }
