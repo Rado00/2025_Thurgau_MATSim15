@@ -1,7 +1,6 @@
 package abmt2025.project.mode_choice.feeder;
 
 import org.eqasim.core.simulation.mode_choice.AbstractEqasimExtension;
-import org.eqasim.core.simulation.mode_choice.utilities.UtilityEstimator;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.population.PopulationFactory;
@@ -11,9 +10,6 @@ import org.matsim.pt.transitSchedule.api.TransitSchedule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-
-import abmt2025.project.mode_choice.estimators.AstraPtUtilityEstimator_DRT;
-import abmt2025.project.mode_choice.estimators.DRTUtilityEstimator;
 
 /**
  * Guice module for Feeder DRT functionality.
@@ -28,6 +24,8 @@ public class FeederDrtModule extends AbstractEqasimExtension {
     @Override
     protected void installEqasimExtension() {
         // Bind the utility estimator for feeder_drt mode
+        // Note: FeederDrtUtilityEstimator only needs AstraModeParameters_DRT,
+        // which is already bound in AstraModule_DRT
         bindUtilityEstimator(FeederDrtUtilityEstimator.NAME).to(FeederDrtUtilityEstimator.class);
 
         // Bind the trip constraint for feeder_drt mode
@@ -35,10 +33,6 @@ public class FeederDrtModule extends AbstractEqasimExtension {
 
         // Bind the routing module for feeder_drt mode
         addRoutingModuleBinding(FEEDER_DRT_MODE).to(FeederDrtRoutingModule.class);
-
-        // Explicitly bind the estimator classes so they can be injected
-        bind(DRTUtilityEstimator.class);
-        bind(AstraPtUtilityEstimator_DRT.class);
     }
 
     @Provides
