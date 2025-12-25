@@ -174,7 +174,10 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
         for (PlanElement pe : elements) {
             if (pe instanceof Leg) {
                 Leg leg = (Leg) pe;
-                sb.append(leg.getMode()).append("(").append(String.format("%.1f", leg.getTravelTime().seconds()/60.0)).append("min) ");
+                String timeStr = leg.getTravelTime().isDefined()
+                    ? String.format("%.1f", leg.getTravelTime().seconds()/60.0)
+                    : "undef";
+                sb.append(leg.getMode()).append("(").append(timeStr).append("min) ");
             }
         }
         return sb.toString();
