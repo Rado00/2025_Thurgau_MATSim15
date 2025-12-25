@@ -33,6 +33,10 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
     public static final String NAME = "FeederDrtUtilityEstimator";
     private static final Logger log = LogManager.getLogger(FeederDrtUtilityEstimator.class);
 
+    // Use a very low but finite utility instead of NEGATIVE_INFINITY
+    // This prevents the "all modes fail" crash in TourBasedModel
+    private static final double INVALID_ROUTE_UTILITY = -1000.0;
+
     private final AstraModeParameters_DRT parameters;
 
     // Diagnostic counters
@@ -116,7 +120,7 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
                             person.getId(), describePlanElements(elements));
                 }
                 failCount.incrementAndGet();
-                return Double.NEGATIVE_INFINITY;
+                return INVALID_ROUTE_UTILITY;
             }
 
             // Calculate utility components
@@ -165,7 +169,7 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
                     e.printStackTrace();
                 }
             }
-            return Double.NEGATIVE_INFINITY;
+            return INVALID_ROUTE_UTILITY;
         }
     }
 
