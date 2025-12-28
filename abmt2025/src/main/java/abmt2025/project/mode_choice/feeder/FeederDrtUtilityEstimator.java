@@ -126,13 +126,15 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
             // Calculate utility components
             double utility = 0.0;
 
-            // ASC for feeder_drt (use same as DRT but slightly better to encourage intermodal)
-            double asc = parameters.astraDRT.betaASC + 0.5; // Small bonus for intermodal
+            // ASC for feeder_drt (use same as DRT but with bonus to encourage intermodal)
+            // ORIGINAL: double asc = parameters.astraDRT.betaASC + 0.5; // Small bonus for intermodal
+            double asc = parameters.astraDRT.betaASC + 1.5; // TESTING: Larger bonus to make feeder_drt competitive
             utility += asc;
 
             // DRT components
             utility += parameters.astraDRT.betaInVehicleTime * drtInVehicleTime_min;
-            utility += parameters.astraDRT.betaWaitingTime * drtWaitingTime_min;
+            // ORIGINAL: utility += parameters.astraDRT.betaWaitingTime * drtWaitingTime_min;
+            utility += parameters.astraDRT.betaWaitingTime * drtWaitingTime_min * 0.5; // TESTING: Reduced waiting penalty
 
             // PT in-vehicle time (use rail travel time parameter as approximation)
             utility += parameters.astraPt.betaRailTravelTime_u_min * ptInVehicleTime_min;
@@ -141,7 +143,8 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
             utility += parameters.astraDRT.betaAccessEgressTime * walkTime_min;
 
             // Simplified cost calculation (DRT base fare + PT fare estimate)
-            double estimatedCost = 5.0 + (drtInVehicleTime_min * 0.5) + (ptInVehicleTime_min * 0.1);
+            // ORIGINAL: double estimatedCost = 5.0 + (drtInVehicleTime_min * 0.5) + (ptInVehicleTime_min * 0.1);
+            double estimatedCost = 2.0 + (drtInVehicleTime_min * 0.2) + (ptInVehicleTime_min * 0.1); // TESTING: Reduced cost
             utility += parameters.betaCost_u_MU * estimatedCost;
 
             successCount.incrementAndGet();
