@@ -54,6 +54,10 @@ public class AstraModule_DRT extends AbstractEqasimExtension {
 		// Feeder DRT utility estimator (DRT + PT combination)
 		bindUtilityEstimator(FeederDrtUtilityEstimator.NAME).to(FeederDrtUtilityEstimator.class);
 
+		// Explicit bindings for estimator classes (needed for FeederDrtUtilityEstimator injection)
+		bind(DRTUtilityEstimator.class);
+		bind(AstraPtUtilityEstimator_DRT.class);
+
 		bind(AstraPtPredictor.class);
 		bind(AstraBikePredictor.class);
 		bind(AstraWalkPredictor.class);
