@@ -52,6 +52,8 @@ import org.matsim.contrib.dvrp.run.DvrpMode;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import org.matsim.core.controler.AbstractModule;
+import org.matsim.contribs.discrete_mode_choice.modules.DiscreteModeChoiceConfigurator;
+import org.matsim.contribs.discrete_mode_choice.modules.config.DiscreteModeChoiceConfigGroup;
 
 
 public class RunSimulation_DRT {
@@ -91,7 +93,19 @@ public class RunSimulation_DRT {
 
         config.controller().setOutputDirectory(path.toString());
     	// config.controller().setLastIteration(60); // PASSING IT THROUGH THE autoRun SHELL FILE
-        
+
+        // Add feeder_drt to cachedModes so DMC uses FeederDrtRoutingModule instead of fallback
+        DiscreteModeChoiceConfigGroup dmcConfig = DiscreteModeChoiceConfigGroup.getOrCreate(config);
+        String existingCachedModes = String.join(", ", dmcConfig.getCachedModes());
+        if (!existingCachedModes.contains("feeder_drt")) {
+            dmcConfig.setCachedModes(java.util.Arrays.asList(
+                    existingCachedModes.split(",\\s*")[0].isEmpty()
+                        ? new String[]{"feeder_drt"}
+                        : (existingCachedModes + ", feeder_drt").split(",\\s*")
+            ));
+            LOG.info("Added feeder_drt to DMC cachedModes: {}", dmcConfig.getCachedModes());
+        }
+
         DvrpConfigGroup dvrpConfig = new DvrpConfigGroup();
         config.addModule(dvrpConfig);
 
