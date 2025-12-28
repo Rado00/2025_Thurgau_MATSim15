@@ -83,7 +83,7 @@
 	<module name="DiscreteModeChoice" >
 		<param name="accumulateEstimationDelays" value="true" />
 		<!-- Trips tested with the modes listed here will be cached for each combination of trip and agent during one replanning pass. -->
-		<param name="cachedModes" value="car, bike, pt, walk, truck, car_passenger, drt" />
+		<param name="cachedModes" value="car, bike, pt, walk, truck, car_passenger, drt, feeder_drt" />
 		<!-- Defines whether to run a runtime check that verifies that everything is set up correctl for a 'mode-choice-in-the-loop' setup. -->
 		<param name="enforceSinglePlan" value="true" />
 		<!-- Defines what happens if there is no feasible choice alternative for an agent: IGNORE_AGENT, INITIAL_CHOICE, EXCEPTION -->
