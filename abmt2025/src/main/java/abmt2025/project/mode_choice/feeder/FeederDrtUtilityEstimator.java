@@ -128,7 +128,8 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
 
             // ASC for feeder_drt (use same as DRT but with bonus to encourage intermodal)
             // ORIGINAL: double asc = parameters.astraDRT.betaASC + 0.5; // Small bonus for intermodal
-            double asc = parameters.astraDRT.betaASC + 1.5; // TESTING: Larger bonus to make feeder_drt competitive
+            // TESTING v1: double asc = parameters.astraDRT.betaASC + 1.5; // Larger bonus
+            double asc = parameters.astraDRT.betaASC + 3.0; // TESTING v2: Even larger bonus to beat car
             utility += asc;
 
             // DRT components
