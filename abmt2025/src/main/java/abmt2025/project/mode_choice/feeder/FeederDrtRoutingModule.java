@@ -36,9 +36,13 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
     public static final String FEEDER_DRT_MODE = "feeder_drt";
 
+    // Maximum distance for DRT legs to prevent memory issues with long-distance routing
+    private static final double MAX_DRT_LEG_DISTANCE = 5000.0; // 5km max for DRT leg
+
     // Counters for debugging
     private int routingAttempts = 0;
     private int successfulRoutes = 0;
+    private int drtDistanceSkips = 0;
 
     private final RoutingModule drtRoutingModule;
     private final RoutingModule ptRoutingModule;
@@ -81,9 +85,10 @@ public class FeederDrtRoutingModule implements RoutingModule {
         routingAttempts++;
         // Log every 100 attempts to show progress
         if (routingAttempts % 100 == 0) {
-            log.info("Feeder DRT routing: {} attempts, {} successful routes ({} %)",
+            log.info("Feeder DRT routing: {} attempts, {} successful ({}%), {} DRT distance skips",
                     routingAttempts, successfulRoutes,
-                    routingAttempts > 0 ? (100.0 * successfulRoutes / routingAttempts) : 0);
+                    String.format("%.1f", routingAttempts > 0 ? (100.0 * successfulRoutes / routingAttempts) : 0),
+                    drtDistanceSkips);
         }
 
         List<PlanElement> route = new ArrayList<>();
@@ -243,11 +248,26 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
     /**
      * Route a DRT leg between two locations.
+     * Checks distance before attempting routing to prevent memory issues.
      */
     private List<? extends PlanElement> routeDrtLeg(Object from, Object to, double departureTime, Person person) {
         try {
             Facility fromFac = (from instanceof Facility) ? (Facility) from : createFacility((TransitStopFacility) from);
             Facility toFac = (to instanceof Facility) ? (Facility) to : createFacility((TransitStopFacility) to);
+
+            // Check distance before attempting DRT routing to prevent OOM
+            Coord fromCoord = getCoord(fromFac);
+            Coord toCoord = getCoord(toFac);
+            double distance = CoordUtils.calcEuclideanDistance(fromCoord, toCoord);
+
+            if (distance > MAX_DRT_LEG_DISTANCE) {
+                drtDistanceSkips++;
+                if (drtDistanceSkips <= 10 || drtDistanceSkips % 100 == 0) {
+                    log.debug("DRT leg distance {} m exceeds max {} m, skipping (skip count: {})",
+                            String.format("%.0f", distance), MAX_DRT_LEG_DISTANCE, drtDistanceSkips);
+                }
+                return null;
+            }
 
             return drtRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(fromFac, toFac, departureTime, person));
         } catch (Exception e) {
