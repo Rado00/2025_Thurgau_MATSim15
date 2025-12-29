@@ -147,11 +147,11 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 }
             }
 
-            // Add PT interaction activity
-            Activity ptInteractionAccess = populationFactory.createActivityFromCoord(
-                    "pt interaction", accessStop.getCoord());
-            ptInteractionAccess.setMaximumDuration(0);
-            route.add(ptInteractionAccess);
+            // Add feeder interaction activity (marks boundary between DRT/walk access and PT)
+            Activity feederInteractionAccess = populationFactory.createActivityFromCoord(
+                    "feeder interaction", accessStop.getCoord());
+            feederInteractionAccess.setMaximumDuration(0);
+            route.add(feederInteractionAccess);
 
             // PT LEG: from access stop to egress stop
             List<? extends PlanElement> ptLeg = null;
@@ -182,11 +182,11 @@ public class FeederDrtRoutingModule implements RoutingModule {
             route.addAll(ptLeg);
             currentTime = getArrivalTime(ptLeg, currentTime);
 
-            // Add PT interaction activity
-            Activity ptInteractionEgress = populationFactory.createActivityFromCoord(
-                    "pt interaction", egressStop.getCoord());
-            ptInteractionEgress.setMaximumDuration(0);
-            route.add(ptInteractionEgress);
+            // Add feeder interaction activity (marks boundary between PT and DRT/walk egress)
+            Activity feederInteractionEgress = populationFactory.createActivityFromCoord(
+                    "feeder interaction", egressStop.getCoord());
+            feederInteractionEgress.setMaximumDuration(0);
+            route.add(feederInteractionEgress);
 
             // EGRESS LEG: DRT or walk from egress stop to destination
             if (distanceFromEgressStop > 500) { // Use DRT if > 500m from stop
