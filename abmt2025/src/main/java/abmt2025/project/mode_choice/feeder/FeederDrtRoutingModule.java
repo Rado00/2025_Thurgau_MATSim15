@@ -228,11 +228,18 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 return null;
             }
 
+            // Set routingMode to "feeder_drt" on all legs so that main_mode is correctly recorded
+            for (PlanElement element : route) {
+                if (element instanceof Leg) {
+                    ((Leg) element).setRoutingMode(FEEDER_DRT_MODE);
+                }
+            }
+
             successfulRoutes++;
             // Log first few successful routes at INFO level for visibility
             if (successfulRoutes <= 5) {
-                log.info("SUCCESS: Feeder DRT route created for person {} (route #{}) - {} legs",
-                        person.getId(), successfulRoutes, route.size());
+                log.info("SUCCESS: Feeder DRT route created for person {} (route #{}) - {} legs with routingMode={}",
+                        person.getId(), successfulRoutes, route.size(), FEEDER_DRT_MODE);
             }
 
             return route;
