@@ -106,6 +106,14 @@ public class RunSimulation_DRT {
             LOG.info("Added feeder_drt to DMC cachedModes: {}", dmcConfig.getCachedModes());
         }
 
+        // Add "feeder interaction" activity type to scoring config (required for feeder DRT)
+        org.matsim.core.config.groups.ScoringConfigGroup scoringConfig = config.scoring();
+        org.matsim.core.config.groups.ScoringConfigGroup.ActivityParams feederInteractionParams =
+                new org.matsim.core.config.groups.ScoringConfigGroup.ActivityParams("feeder interaction");
+        feederInteractionParams.setScoringThisActivityAtAll(false);
+        scoringConfig.addActivityParams(feederInteractionParams);
+        LOG.info("Added 'feeder interaction' activity type to scoring config");
+
         DvrpConfigGroup dvrpConfig = new DvrpConfigGroup();
         config.addModule(dvrpConfig);
 
