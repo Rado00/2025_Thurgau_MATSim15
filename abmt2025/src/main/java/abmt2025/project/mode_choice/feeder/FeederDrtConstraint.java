@@ -11,6 +11,7 @@ import org.matsim.contribs.discrete_mode_choice.model.DiscreteModeChoiceTrip;
 import org.matsim.contribs.discrete_mode_choice.model.trip_based.TripConstraint;
 import org.matsim.contribs.discrete_mode_choice.model.trip_based.TripConstraintFactory;
 import org.matsim.contribs.discrete_mode_choice.model.trip_based.candidates.TripCandidate;
+import org.matsim.contribs.discrete_mode_choice.model.trip_based.candidates.RoutedTripCandidate;
 
 /**
  * Constraint for feeder DRT trips.
@@ -52,7 +53,10 @@ public class FeederDrtConstraint implements TripConstraint {
 
         // Validate that the route contains both DRT and PT legs
         // This catches cases where the routing module returned null and a fallback was used
-        List<? extends PlanElement> routeElements = candidate.getRoutePlanElements();
+        if (!(candidate instanceof RoutedTripCandidate)) {
+            return false;
+        }
+        List<? extends PlanElement> routeElements = ((RoutedTripCandidate) candidate).getRoutedPlanElements();
         if (routeElements == null || routeElements.isEmpty()) {
             return false;
         }
