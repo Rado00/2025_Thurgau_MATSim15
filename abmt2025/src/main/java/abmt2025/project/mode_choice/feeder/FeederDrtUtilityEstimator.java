@@ -2,7 +2,10 @@ package abmt2025.project.mode_choice.feeder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eqasim.core.simulation.mode_choice.utilities.UtilityEstimator;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Activity;
@@ -27,33 +30,45 @@ import abmt2025.project.mode_choice.estimators.AstraPtUtilityEstimator_DRT;
  */
 public class FeederDrtUtilityEstimator implements UtilityEstimator {
     public static final String NAME = "FeederDrtUtilityEstimator";
+    private static final Logger log = LogManager.getLogger(FeederDrtUtilityEstimator.class);
+    private static final AtomicInteger callCount = new AtomicInteger(0);
 
     private final DRTUtilityEstimator drtEstimator;
     private final AstraPtUtilityEstimator_DRT ptEstimator;
 
     // TODO: Remove this after testing - temporary bonus to make feeder_drt competitive
-    private static final double FEEDER_ASC_BONUS = 3.0;  // Bonus to make feeder_drt competitive with car
+    private static final double FEEDER_ASC_BONUS = 10.0;  // High bonus for testing - reduce after confirming it works
 
     @Inject
     public FeederDrtUtilityEstimator(DRTUtilityEstimator drtEstimator, AstraPtUtilityEstimator_DRT ptEstimator) {
         this.drtEstimator = drtEstimator;
         this.ptEstimator = ptEstimator;
+        log.info("FeederDrtUtilityEstimator initialized with FEEDER_ASC_BONUS={}", FEEDER_ASC_BONUS);
     }
 
     @Override
     public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
+        int call = callCount.incrementAndGet();
+
         // Direct copy of Tarek's logic
         String lastMode = "";
         List<PlanElement> currentTrip = new LinkedList<>();
         double totalUtility = 0;
+        int segmentsProcessed = 0;
 
         for (PlanElement element : elements) {
             if (element instanceof Activity && ((Activity) element).getType().equals("feeder interaction")) {
                 // Process the accumulated segment
                 if (lastMode.equals(TransportMode.pt)) {
-                    totalUtility += ptEstimator.estimateUtility(person, trip, currentTrip);
+                    double segUtil = ptEstimator.estimateUtility(person, trip, currentTrip);
+                    totalUtility += segUtil;
+                    segmentsProcessed++;
+                    if (call <= 5) log.info("Call #{}: PT segment utility = {}", call, segUtil);
                 } else if (lastMode.equals(TransportMode.drt)) {
-                    totalUtility += drtEstimator.estimateUtility(person, trip, currentTrip);
+                    double segUtil = drtEstimator.estimateUtility(person, trip, currentTrip);
+                    totalUtility += segUtil;
+                    segmentsProcessed++;
+                    if (call <= 5) log.info("Call #{}: DRT segment utility = {}", call, segUtil);
                 }
                 currentTrip.clear();
             } else {
@@ -71,14 +86,28 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
         // Process the last segment
         if (currentTrip.size() > 0) {
             if (lastMode.equals(TransportMode.pt)) {
-                totalUtility += ptEstimator.estimateUtility(person, trip, currentTrip);
+                double segUtil = ptEstimator.estimateUtility(person, trip, currentTrip);
+                totalUtility += segUtil;
+                segmentsProcessed++;
+                if (call <= 5) log.info("Call #{}: Last PT segment utility = {}", call, segUtil);
             } else if (lastMode.equals(TransportMode.drt)) {
-                totalUtility += drtEstimator.estimateUtility(person, trip, currentTrip);
+                double segUtil = drtEstimator.estimateUtility(person, trip, currentTrip);
+                totalUtility += segUtil;
+                segmentsProcessed++;
+                if (call <= 5) log.info("Call #{}: Last DRT segment utility = {}", call, segUtil);
             }
             currentTrip.clear();
         }
 
-        // TODO: Remove FEEDER_ASC_BONUS after calibration
-        return totalUtility + FEEDER_ASC_BONUS;
+        double finalUtility = totalUtility + FEEDER_ASC_BONUS;
+
+        // Log results
+        if (call <= 10 || call % 100 == 0) {
+            log.info("Call #{}: person={}, segments={}, totalUtility={}, withBonus={}",
+                    call, person.getId(), segmentsProcessed,
+                    String.format("%.3f", totalUtility), String.format("%.3f", finalUtility));
+        }
+
+        return finalUtility;
     }
 }
