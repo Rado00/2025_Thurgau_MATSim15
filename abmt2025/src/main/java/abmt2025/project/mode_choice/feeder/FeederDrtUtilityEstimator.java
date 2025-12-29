@@ -32,7 +32,7 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
     private final AstraPtUtilityEstimator_DRT ptEstimator;
 
     // TODO: Remove this after testing - temporary bonus to make feeder_drt competitive
-    private static final double FEEDER_ASC_BONUS = 0.0;  // Set to 0 for now, increase if needed
+    private static final double FEEDER_ASC_BONUS = 3.0;  // Bonus to make feeder_drt competitive with car
 
     @Inject
     public FeederDrtUtilityEstimator(DRTUtilityEstimator drtEstimator, AstraPtUtilityEstimator_DRT ptEstimator) {
