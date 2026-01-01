@@ -37,7 +37,8 @@ public class FeederDrtRoutingModule implements RoutingModule {
     public static final String FEEDER_DRT_MODE = "feeder_drt";
 
     // Maximum distance for DRT legs to prevent memory issues with long-distance routing
-    private static final double MAX_DRT_LEG_DISTANCE = 5000.0; // 5km max for DRT leg
+    // Note: This is beeline distance; network paths can be 3-5x longer
+    private static final double MAX_DRT_LEG_DISTANCE = 3000.0; // 3km max for DRT leg (conservative to prevent OOM)
 
     // Counters for debugging
     private int routingAttempts = 0;
