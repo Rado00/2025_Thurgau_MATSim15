@@ -3945,7 +3945,7 @@ If you are using MATSim without time adaptation, you can ignore this warning.
 2025-12-29T17:07:53,690  INFO FeederDrtUtilityEstimator:106 Call #5: person=3527691, segments=0, totalUtility=0.000, withBonus=10.000
 2025-12-29T17:07:53,690  INFO FeederDrtRoutingModule:234 SUCCESS: Feeder DRT route created for person 3676436 (route #1) - 13 legs
 2025-12-29T17:07:53,690  INFO FeederDrtUtilityEstimator:106 Call #6: person=3676436, segments=2, totalUtility=-3.645, withBonus=6.355
-2025-12-29T17:07:53,690  INFO FeederDrtConstraint:91 Constraint #38: hasDrt=true, hasPt=true, valid=true, utility=6.354531511707666, modes=[walk,walk,pt,walk,walk,drt,walk,]
+2025-12-29T17:07:53,690  INFO FeederDrtConstraint:91 Constraint #38: hasDrt=, hatruesPt=true, valid=true, utility=6.354531511707666, modes=[walk,walk,pt,walk,walk,drt,walk,]
 2025-12-29T17:07:53,691  INFO FeederDrtConstraint:91 Constraint #39: hasDrt=false, hasPt=false, valid=false, utility=10.0, modes=[walk,]
 2025-12-29T17:07:53,695  INFO FeederDrtConstraint:91 Constraint #40: hasDrt=false, hasPt=false, valid=false, utility=10.0, modes=[walk,]
 2025-12-29T17:07:53,699  INFO FeederDrtConstraint:91 Constraint #41: hasDrt=true, hasPt=true, valid=true, utility=6.354531511707666, modes=[walk,walk,pt,walk,walk,drt,walk,]
