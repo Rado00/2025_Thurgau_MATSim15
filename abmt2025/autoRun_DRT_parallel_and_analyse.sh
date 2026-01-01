@@ -8,7 +8,7 @@ USER_NAME=$(whoami)
 ########################## CHECK AUTORUN SETTING ###########################################
 
 LAST_ITERATION=4 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-DRT_CONFIG="Thurgau_config_DRT_M15_06_MultiMod.xml"
+DRT_CONFIG="Thurgau_config_DRT_M15_06_MultiMod02.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
@@ -17,7 +17,7 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="1pct"
 
 
-SIM_ID="Test_Multi-modality_TarekCode_ASCbonus10_d" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="Test_Multi-modality_TarekCode_ASCbonus10_NewConfig" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="15_drt_100_8.xml"
 SHAPE_FILE="15_ShapeFile.shp"
 
