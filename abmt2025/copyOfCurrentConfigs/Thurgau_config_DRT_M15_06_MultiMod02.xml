@@ -266,6 +266,11 @@
 			<param name="estimator" value="DRTUtilityEstimator" />
 			<param name="mode" value="drt" />
 		</parameterset>
+		<parameterset type="estimator">
+			<param name="estimator" value="FeederDrtUtilityEstimator"/>
+			<param name="mode" value="feeder_drt"/>
+		</parameterset>
+
 
 		<param name="useScheduleBasedTransport" value="true" />
 		<parameterset type="estimator" >
@@ -803,6 +808,16 @@
 				<param name="mode" value="drt" />
 				<param name="monetaryDistanceRate" value="0.0" />
 			</parameterset>
+			<parameterset type="modeParams">
+				<param name="constant" value="0.0"/>
+				<param name="dailyMonetaryConstant" value="0.0"/>
+				<param name="dailyUtilityConstant" value="0.0"/>
+				<param name="marginalUtilityOfDistance_util_m" value="0.0"/>
+				<param name="marginalUtilityOfTraveling_util_hr" value="-1.0"/>
+				<param name="mode" value="feeder_drt"/>
+				<param name="monetaryDistanceRate" value="0.0"/>
+			</parameterset>
+
 		</parameterset>
 	</module>
 
