@@ -39,10 +39,14 @@ public class FeederDrtRoutingModule implements RoutingModule {
     // Maximum distance for DRT legs to prevent memory issues with long-distance routing
     private static final double MAX_DRT_LEG_DISTANCE = 5000.0; // 5km max for DRT leg
 
+    // Train station category threshold (stopCategory <= this value is considered a train station)
+    private static final int TRAIN_STATION_CATEGORY_THRESHOLD = 3;
+
     // Counters for debugging
     private int routingAttempts = 0;
     private int successfulRoutes = 0;
     private int drtDistanceSkips = 0;
+    private int trainStationRoutesChosen = 0;
 
     private final RoutingModule drtRoutingModule;
     private final RoutingModule ptRoutingModule;
@@ -85,60 +89,123 @@ public class FeederDrtRoutingModule implements RoutingModule {
         routingAttempts++;
         // Log every 100 attempts to show progress
         if (routingAttempts % 100 == 0) {
-            log.info("Feeder DRT routing: {} attempts, {} successful ({}%), {} DRT distance skips",
+            log.info("Feeder DRT routing: {} attempts, {} successful ({}%), {} via train station, {} DRT distance skips",
                     routingAttempts, successfulRoutes,
                     String.format("%.1f", routingAttempts > 0 ? (100.0 * successfulRoutes / routingAttempts) : 0),
-                    drtDistanceSkips);
+                    trainStationRoutesChosen, drtDistanceSkips);
         }
-
-        List<PlanElement> route = new ArrayList<>();
 
         try {
             Coord originCoord = getCoord(fromFacility);
             Coord destCoord = getCoord(toFacility);
 
-            // Find nearest PT stops to origin and destination
-            TransitStopFacility accessStop = findNearestStop(originCoord);
-            TransitStopFacility egressStop = findNearestStop(destCoord);
+            // Find both nearest stop (any type) and nearest train station
+            TransitStopFacility nearestAccessStop = findNearestStop(originCoord);
+            TransitStopFacility nearestEgressStop = findNearestStop(destCoord);
+            TransitStopFacility nearestAccessTrainStation = findNearestTrainStation(originCoord);
+            TransitStopFacility nearestEgressTrainStation = findNearestTrainStation(destCoord);
 
-            if (accessStop == null || egressStop == null) {
-                log.debug("Could not find PT stops for feeder DRT routing, falling back to PT");
-                return fallbackToPt(fromFacility, toFacility, departureTime, person);
+            // Try routing via nearest stops (any type)
+            List<? extends PlanElement> routeViaNearest = null;
+            double travelTimeNearest = Double.MAX_VALUE;
+            if (nearestAccessStop != null && nearestEgressStop != null) {
+                routeViaNearest = computeFeederRoute(fromFacility, toFacility, departureTime, person,
+                        nearestAccessStop, nearestEgressStop);
+                if (routeViaNearest != null) {
+                    travelTimeNearest = getTotalTravelTime(routeViaNearest);
+                }
             }
 
-            // Check if origin is close enough for walk access instead of DRT
-            double distanceToAccessStop = CoordUtils.calcEuclideanDistance(originCoord, accessStop.getCoord());
-            double distanceFromEgressStop = CoordUtils.calcEuclideanDistance(egressStop.getCoord(), destCoord);
+            // Try routing via train stations
+            List<? extends PlanElement> routeViaTrain = null;
+            double travelTimeTrain = Double.MAX_VALUE;
+            if (nearestAccessTrainStation != null && nearestEgressTrainStation != null) {
+                // Only try if train stations are different from nearest stops
+                boolean accessIsDifferent = nearestAccessStop == null ||
+                        !nearestAccessTrainStation.getId().equals(nearestAccessStop.getId());
+                boolean egressIsDifferent = nearestEgressStop == null ||
+                        !nearestEgressTrainStation.getId().equals(nearestEgressStop.getId());
 
-            double currentTime = departureTime;
-
-            // Maximum walk distance for fallback - don't create unrealistic routes
-            final double MAX_WALK_FALLBACK_DISTANCE = 2000.0; // 2km max walk
-
-            // ACCESS LEG: DRT or walk from origin to access stop
-            if (distanceToAccessStop > 500) { // Use DRT if > 500m from stop
-                // Try DRT access
-                List<? extends PlanElement> accessLeg = routeDrtLeg(fromFacility, accessStop, currentTime, person);
-                if (accessLeg != null && !accessLeg.isEmpty()) {
-                    route.addAll(accessLeg);
-                    currentTime = getArrivalTime(accessLeg, currentTime);
-                } else {
-                    // DRT failed - check if walk is realistic
-                    if (distanceToAccessStop > MAX_WALK_FALLBACK_DISTANCE) {
-                        // Too far to walk and DRT not available - feeder_drt not viable
-                        log.debug("Access too far ({} m) and DRT not available, returning null", distanceToAccessStop);
-                        return null;
-                    }
-                    // Fall back to walk (within reasonable distance)
-                    List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
-                            DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
-                    if (walkAccess != null) {
-                        route.addAll(walkAccess);
-                        currentTime = getArrivalTime(walkAccess, currentTime);
+                if (accessIsDifferent || egressIsDifferent) {
+                    routeViaTrain = computeFeederRoute(fromFacility, toFacility, departureTime, person,
+                            nearestAccessTrainStation, nearestEgressTrainStation);
+                    if (routeViaTrain != null) {
+                        travelTimeTrain = getTotalTravelTime(routeViaTrain);
                     }
                 }
+            }
+
+            // Choose the best route (shorter travel time)
+            List<? extends PlanElement> bestRoute = null;
+            boolean usedTrainStation = false;
+
+            if (routeViaNearest != null && routeViaTrain != null) {
+                if (travelTimeTrain < travelTimeNearest) {
+                    bestRoute = routeViaTrain;
+                    usedTrainStation = true;
+                } else {
+                    bestRoute = routeViaNearest;
+                }
+            } else if (routeViaTrain != null) {
+                bestRoute = routeViaTrain;
+                usedTrainStation = true;
+            } else if (routeViaNearest != null) {
+                bestRoute = routeViaNearest;
+            }
+
+            if (bestRoute == null) {
+                log.debug("Could not compute any feeder route");
+                return null;
+            }
+
+            successfulRoutes++;
+            if (usedTrainStation) {
+                trainStationRoutesChosen++;
+            }
+
+            // Log first few successful routes at INFO level for visibility
+            if (successfulRoutes <= 5) {
+                log.info("SUCCESS: Feeder DRT route created for person {} (route #{}) - {} legs, via {}",
+                        person.getId(), successfulRoutes, bestRoute.size(),
+                        usedTrainStation ? "train station" : "nearest stop");
+            }
+
+            return bestRoute;
+
+        } catch (Exception e) {
+            log.debug("Error in feeder DRT routing: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Compute a feeder route via specified access and egress stops.
+     * Returns null if route cannot be computed or is invalid.
+     */
+    private List<? extends PlanElement> computeFeederRoute(Facility fromFacility, Facility toFacility,
+            double departureTime, Person person,
+            TransitStopFacility accessStop, TransitStopFacility egressStop) {
+
+        List<PlanElement> route = new ArrayList<>();
+        Coord originCoord = getCoord(fromFacility);
+        Coord destCoord = getCoord(toFacility);
+
+        double distanceToAccessStop = CoordUtils.calcEuclideanDistance(originCoord, accessStop.getCoord());
+        double distanceFromEgressStop = CoordUtils.calcEuclideanDistance(egressStop.getCoord(), destCoord);
+
+        double currentTime = departureTime;
+        final double MAX_WALK_FALLBACK_DISTANCE = 2000.0; // 2km max walk
+
+        // ACCESS LEG: DRT or walk from origin to access stop
+        if (distanceToAccessStop > 500) {
+            List<? extends PlanElement> accessLeg = routeDrtLeg(fromFacility, accessStop, currentTime, person);
+            if (accessLeg != null && !accessLeg.isEmpty()) {
+                route.addAll(accessLeg);
+                currentTime = getArrivalTime(accessLeg, currentTime);
             } else {
-                // Walk access (short distance, always OK)
+                if (distanceToAccessStop > MAX_WALK_FALLBACK_DISTANCE) {
+                    return null;
+                }
                 List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
                         DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
                 if (walkAccess != null) {
@@ -146,104 +213,102 @@ public class FeederDrtRoutingModule implements RoutingModule {
                     currentTime = getArrivalTime(walkAccess, currentTime);
                 }
             }
-
-            // Add feeder interaction activity (marks boundary between DRT/walk access and PT)
-            Activity feederInteractionAccess = populationFactory.createActivityFromCoord(
-                    "feeder interaction", accessStop.getCoord());
-            feederInteractionAccess.setMaximumDuration(0);
-            route.add(feederInteractionAccess);
-
-            // PT LEG: from access stop to egress stop
-            List<? extends PlanElement> ptLeg = null;
-            try {
-                ptLeg = ptRoutingModule.calcRoute(
-                        DefaultRoutingRequest.withoutAttributes(createFacility(accessStop), createFacility(egressStop), currentTime, person));
-            } catch (Exception e) {
-                log.debug("PT routing threw exception: {}", e.getMessage());
-                return null;
+        } else {
+            List<? extends PlanElement> walkAccess = walkRoutingModule.calcRoute(
+                    DefaultRoutingRequest.withoutAttributes(fromFacility, createFacility(accessStop), currentTime, person));
+            if (walkAccess != null) {
+                route.addAll(walkAccess);
+                currentTime = getArrivalTime(walkAccess, currentTime);
             }
+        }
 
-            if (ptLeg == null || ptLeg.isEmpty()) {
-                log.debug("PT routing returned null or empty, returning null");
-                return null;
-            }
+        // Add feeder interaction activity
+        Activity feederInteractionAccess = populationFactory.createActivityFromCoord(
+                "feeder interaction", accessStop.getCoord());
+        feederInteractionAccess.setMaximumDuration(0);
+        route.add(feederInteractionAccess);
 
-            // Validate PT route has required elements
-            boolean hasValidPtLeg = ptLeg.stream()
-                    .filter(e -> e instanceof Leg)
-                    .map(e -> (Leg) e)
-                    .anyMatch(l -> l.getMode().equals(TransportMode.pt) || l.getMode().equals(TransportMode.transit_walk));
+        // PT LEG: from access stop to egress stop
+        List<? extends PlanElement> ptLeg = null;
+        try {
+            ptLeg = ptRoutingModule.calcRoute(
+                    DefaultRoutingRequest.withoutAttributes(createFacility(accessStop), createFacility(egressStop), currentTime, person));
+        } catch (Exception e) {
+            return null;
+        }
 
-            if (!hasValidPtLeg) {
-                log.debug("PT routing returned route without PT legs");
-                return null;
-            }
+        if (ptLeg == null || ptLeg.isEmpty()) {
+            return null;
+        }
 
-            route.addAll(ptLeg);
-            currentTime = getArrivalTime(ptLeg, currentTime);
+        boolean hasValidPtLeg = ptLeg.stream()
+                .filter(e -> e instanceof Leg)
+                .map(e -> (Leg) e)
+                .anyMatch(l -> l.getMode().equals(TransportMode.pt) || l.getMode().equals(TransportMode.transit_walk));
 
-            // Add feeder interaction activity (marks boundary between PT and DRT/walk egress)
-            Activity feederInteractionEgress = populationFactory.createActivityFromCoord(
-                    "feeder interaction", egressStop.getCoord());
-            feederInteractionEgress.setMaximumDuration(0);
-            route.add(feederInteractionEgress);
+        if (!hasValidPtLeg) {
+            return null;
+        }
 
-            // EGRESS LEG: DRT or walk from egress stop to destination
-            if (distanceFromEgressStop > 500) { // Use DRT if > 500m from stop
-                // Try DRT egress
-                List<? extends PlanElement> egressLeg = routeDrtLeg(egressStop, toFacility, currentTime, person);
-                if (egressLeg != null && !egressLeg.isEmpty()) {
-                    route.addAll(egressLeg);
-                } else {
-                    // DRT failed - check if walk is realistic
-                    if (distanceFromEgressStop > MAX_WALK_FALLBACK_DISTANCE) {
-                        // Too far to walk and DRT not available - feeder_drt not viable
-                        log.debug("Egress too far ({} m) and DRT not available, returning null", distanceFromEgressStop);
-                        return null;
-                    }
-                    // Fall back to walk (within reasonable distance)
-                    List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
-                            DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
-                    if (walkEgress != null) {
-                        route.addAll(walkEgress);
-                    }
-                }
+        route.addAll(ptLeg);
+        currentTime = getArrivalTime(ptLeg, currentTime);
+
+        // Add feeder interaction activity
+        Activity feederInteractionEgress = populationFactory.createActivityFromCoord(
+                "feeder interaction", egressStop.getCoord());
+        feederInteractionEgress.setMaximumDuration(0);
+        route.add(feederInteractionEgress);
+
+        // EGRESS LEG: DRT or walk from egress stop to destination
+        if (distanceFromEgressStop > 500) {
+            List<? extends PlanElement> egressLeg = routeDrtLeg(egressStop, toFacility, currentTime, person);
+            if (egressLeg != null && !egressLeg.isEmpty()) {
+                route.addAll(egressLeg);
             } else {
-                // Walk egress (short distance, always OK)
+                if (distanceFromEgressStop > MAX_WALK_FALLBACK_DISTANCE) {
+                    return null;
+                }
                 List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
                         DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
                 if (walkEgress != null) {
                     route.addAll(walkEgress);
                 }
             }
-
-            // Check if we actually have a DRT leg in the route
-            boolean hasDrt = route.stream()
-                    .filter(e -> e instanceof Leg)
-                    .map(e -> (Leg) e)
-                    .anyMatch(l -> l.getMode().equals(TransportMode.drt));
-
-            if (!hasDrt) {
-                log.debug("Feeder route has no DRT legs, returning null");
-                return null;
+        } else {
+            List<? extends PlanElement> walkEgress = walkRoutingModule.calcRoute(
+                    DefaultRoutingRequest.withoutAttributes(createFacility(egressStop), toFacility, currentTime, person));
+            if (walkEgress != null) {
+                route.addAll(walkEgress);
             }
+        }
 
-            successfulRoutes++;
-            // Log first few successful routes at INFO level for visibility
-            if (successfulRoutes <= 5) {
-                log.info("SUCCESS: Feeder DRT route created for person {} (route #{}) - {} legs",
-                        person.getId(), successfulRoutes, route.size());
-            }
+        // Check if we actually have a DRT leg in the route
+        boolean hasDrt = route.stream()
+                .filter(e -> e instanceof Leg)
+                .map(e -> (Leg) e)
+                .anyMatch(l -> l.getMode().equals(TransportMode.drt));
 
-            return route;
-
-        } catch (Exception e) {
-            // Log at debug level to avoid flooding logs - these failures are expected
-            // when PT routing can't find a valid route
-            log.debug("Error in feeder DRT routing: {}", e.getMessage());
-            // Don't fall back to PT here since the PT router likely failed too
+        if (!hasDrt) {
             return null;
         }
+
+        return route;
+    }
+
+    /**
+     * Get total travel time from a list of plan elements.
+     */
+    private double getTotalTravelTime(List<? extends PlanElement> elements) {
+        double totalTime = 0;
+        for (PlanElement element : elements) {
+            if (element instanceof Leg) {
+                Leg leg = (Leg) element;
+                if (leg.getTravelTime().isDefined()) {
+                    totalTime += leg.getTravelTime().seconds();
+                }
+            }
+        }
+        return totalTime;
     }
 
     /**
@@ -296,6 +361,48 @@ public class FeederDrtRoutingModule implements RoutingModule {
         double minDistance = Double.MAX_VALUE;
 
         for (TransitStopFacility stop : transitSchedule.getFacilities().values()) {
+            double distance = CoordUtils.calcEuclideanDistance(coord, stop.getCoord());
+            if (distance < minDistance && distance <= maxAccessEgressDistance) {
+                minDistance = distance;
+                nearest = stop;
+            }
+        }
+
+        return nearest;
+    }
+
+    /**
+     * Find the nearest train station to a coordinate.
+     * Train stations are identified by stopCategory attribute <= TRAIN_STATION_CATEGORY_THRESHOLD (1-3).
+     * Category 1 = Major stations (Hbf), 2 = Important stations, 3 = Regional stations.
+     */
+    private TransitStopFacility findNearestTrainStation(Coord coord) {
+        TransitStopFacility nearest = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (TransitStopFacility stop : transitSchedule.getFacilities().values()) {
+            // Check if this is a train station based on stopCategory attribute
+            Object categoryAttr = stop.getAttributes().getAttribute("stopCategory");
+            if (categoryAttr == null) {
+                continue; // Skip stops without category
+            }
+
+            int category;
+            if (categoryAttr instanceof Integer) {
+                category = (Integer) categoryAttr;
+            } else {
+                try {
+                    category = Integer.parseInt(categoryAttr.toString());
+                } catch (NumberFormatException e) {
+                    continue; // Skip if category is not a valid number
+                }
+            }
+
+            // Only consider train stations (category 1-3)
+            if (category > TRAIN_STATION_CATEGORY_THRESHOLD) {
+                continue;
+            }
+
             double distance = CoordUtils.calcEuclideanDistance(coord, stop.getCoord());
             if (distance < minDistance && distance <= maxAccessEgressDistance) {
                 minDistance = distance;
