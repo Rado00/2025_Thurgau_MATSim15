@@ -84,19 +84,19 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
         // Load DRT service area shape file if configured
         String shapeFilePath = config.getDrtServiceAreaShapeFile();
+        Geometry loadedServiceArea = null;
         if (shapeFilePath != null && !shapeFilePath.isEmpty()) {
             try {
                 Collection<SimpleFeature> features = ShapeFileReader.getAllFeatures(shapeFilePath);
-                this.drtServiceArea = (Geometry) features.iterator().next().getDefaultGeometry();
+                loadedServiceArea = (Geometry) features.iterator().next().getDefaultGeometry();
                 log.info("Loaded DRT service area from: {}", shapeFilePath);
             } catch (Exception e) {
                 log.warn("Could not load DRT service area shape file: {}. Service area check disabled.", e.getMessage());
-                this.drtServiceArea = null;
             }
         } else {
-            this.drtServiceArea = null;
             log.info("No DRT service area shape file configured. Service area check disabled.");
         }
+        this.drtServiceArea = loadedServiceArea;
 
         log.info("FeederDrtRoutingModule initialized with maxAccessEgressDistance={} m, {} transit stops available, serviceAreaCheck={}",
                 maxAccessEgressDistance, transitSchedule.getFacilities().size(), drtServiceArea != null);
