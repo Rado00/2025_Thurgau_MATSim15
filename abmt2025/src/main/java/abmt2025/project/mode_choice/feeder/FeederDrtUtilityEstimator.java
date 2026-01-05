@@ -37,7 +37,7 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
     private final AstraPtUtilityEstimator_DRT ptEstimator;
 
     // TODO: Remove this after testing - temporary bonus to make feeder_drt competitive
-    private static final double FEEDER_ASC_BONUS = 10.0;  // High bonus for testing - reduce after confirming it works
+    private static final double FEEDER_ASC_BONUS = 0.0;  // High bonus for testing - reduce after confirming it works
 
     @Inject
     public FeederDrtUtilityEstimator(DRTUtilityEstimator drtEstimator, AstraPtUtilityEstimator_DRT ptEstimator) {
