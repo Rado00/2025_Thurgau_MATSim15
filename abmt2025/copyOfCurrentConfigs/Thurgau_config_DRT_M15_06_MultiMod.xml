@@ -969,7 +969,7 @@
 		<param name="modeName" value="feeder_drt"/>
 		<param name="baseDrtMode" value="drt"/>
 		<param name="basePtMode" value="pt"/>
-		<param name="maxAccessEgressDistance_m" value="5000.0"/>
+		<param name="maxAccessEgressDistance_m" value="10000.0"/>
 		<!-- DRT service area shape file - prevents routing to stops outside DRT area -->
 		<param name="drtServiceAreaShapeFile" value="${DRT_SHAPE_FILE_PATH}"/>
 	</module>
