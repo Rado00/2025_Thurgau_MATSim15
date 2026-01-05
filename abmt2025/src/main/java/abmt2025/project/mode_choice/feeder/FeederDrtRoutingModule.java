@@ -105,6 +105,30 @@ public class FeederDrtRoutingModule implements RoutingModule {
             TransitStopFacility nearestAccessTrainStation = findNearestTrainStation(originCoord);
             TransitStopFacility nearestEgressTrainStation = findNearestTrainStation(destCoord);
 
+            // DEBUG: Log stop finding results
+            if (routingAttempts <= 20 || routingAttempts % 500 == 0) {
+                log.info("Stop search for person {}: origin=({},{}), dest=({},{})",
+                        person.getId(),
+                        String.format("%.0f", originCoord.getX()), String.format("%.0f", originCoord.getY()),
+                        String.format("%.0f", destCoord.getX()), String.format("%.0f", destCoord.getY()));
+                log.info("  nearestAccessStop={} at ({},{})",
+                        nearestAccessStop != null ? nearestAccessStop.getId() : "null",
+                        nearestAccessStop != null ? String.format("%.0f", nearestAccessStop.getCoord().getX()) : "-",
+                        nearestAccessStop != null ? String.format("%.0f", nearestAccessStop.getCoord().getY()) : "-");
+                log.info("  nearestEgressStop={} at ({},{})",
+                        nearestEgressStop != null ? nearestEgressStop.getId() : "null",
+                        nearestEgressStop != null ? String.format("%.0f", nearestEgressStop.getCoord().getX()) : "-",
+                        nearestEgressStop != null ? String.format("%.0f", nearestEgressStop.getCoord().getY()) : "-");
+                log.info("  nearestAccessTrainStation={} at ({},{})",
+                        nearestAccessTrainStation != null ? nearestAccessTrainStation.getId() : "null",
+                        nearestAccessTrainStation != null ? String.format("%.0f", nearestAccessTrainStation.getCoord().getX()) : "-",
+                        nearestAccessTrainStation != null ? String.format("%.0f", nearestAccessTrainStation.getCoord().getY()) : "-");
+                log.info("  nearestEgressTrainStation={} at ({},{})",
+                        nearestEgressTrainStation != null ? nearestEgressTrainStation.getId() : "null",
+                        nearestEgressTrainStation != null ? String.format("%.0f", nearestEgressTrainStation.getCoord().getX()) : "-",
+                        nearestEgressTrainStation != null ? String.format("%.0f", nearestEgressTrainStation.getCoord().getY()) : "-");
+            }
+
             // Try routing via nearest stops (any type)
             List<? extends PlanElement> routeViaNearest = null;
             double travelTimeNearest = Double.MAX_VALUE;
@@ -334,9 +358,23 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 return null;
             }
 
-            return drtRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(fromFac, toFac, departureTime, person));
+            // DEBUG: Log before DRT routing to identify problematic calls
+            log.info("DRT routing: person={}, from=({},{}), to=({},{}), dist={}m",
+                    person != null ? person.getId() : "null",
+                    String.format("%.0f", fromCoord.getX()), String.format("%.0f", fromCoord.getY()),
+                    String.format("%.0f", toCoord.getX()), String.format("%.0f", toCoord.getY()),
+                    String.format("%.0f", distance));
+
+            List<? extends PlanElement> result = drtRoutingModule.calcRoute(DefaultRoutingRequest.withoutAttributes(fromFac, toFac, departureTime, person));
+
+            log.info("DRT routing completed: person={}, result={}",
+                    person != null ? person.getId() : "null",
+                    result != null ? result.size() + " elements" : "null");
+
+            return result;
         } catch (Exception e) {
-            log.debug("DRT routing failed: {}", e.getMessage());
+            log.warn("DRT routing failed for person {}: {}",
+                    person != null ? person.getId() : "null", e.getMessage());
             return null;
         }
     }
