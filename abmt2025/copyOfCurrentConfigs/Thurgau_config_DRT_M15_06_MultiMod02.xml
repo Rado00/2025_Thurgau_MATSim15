@@ -986,6 +986,8 @@
 		<param name="basePtMode" value="pt"/>
 		<!-- Reduced from 10000 to 5000 to prevent OOM errors during DRT path calculation -->
 		<param name="maxAccessEgressDistance_m" value="5000.0"/>
+		<!-- DRT service area shape file - prevents routing to stops outside DRT area -->
+		<param name="drtServiceAreaShapeFile" value="${DRT_SHAPE_FILE_PATH}"/>
 	</module>
 	
 </config>

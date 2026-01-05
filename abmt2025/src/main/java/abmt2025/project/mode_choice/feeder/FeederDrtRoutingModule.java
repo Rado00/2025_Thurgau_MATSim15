@@ -1,10 +1,12 @@
 package abmt2025.project.mode_choice.feeder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.jts.geom.Geometry;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.network.Network;
@@ -17,9 +19,12 @@ import org.matsim.core.router.DefaultRoutingRequest;
 import org.matsim.core.router.RoutingModule;
 import org.matsim.core.router.RoutingRequest;
 import org.matsim.core.utils.geometry.CoordUtils;
+import org.matsim.core.utils.geometry.geotools.MGC;
+import org.matsim.core.utils.gis.ShapeFileReader;
 import org.matsim.facilities.Facility;
 import org.matsim.pt.transitSchedule.api.TransitSchedule;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
+import org.opengis.feature.simple.SimpleFeature;
 
 import com.google.inject.Inject;
 
@@ -47,6 +52,10 @@ public class FeederDrtRoutingModule implements RoutingModule {
     private int successfulRoutes = 0;
     private int drtDistanceSkips = 0;
     private int trainStationRoutesChosen = 0;
+    private int drtServiceAreaSkips = 0;
+
+    // DRT service area geometry (for checking if points are inside service area)
+    private final Geometry drtServiceArea;
 
     private final RoutingModule drtRoutingModule;
     private final RoutingModule ptRoutingModule;
@@ -73,8 +82,24 @@ public class FeederDrtRoutingModule implements RoutingModule {
         this.network = network;
         this.maxAccessEgressDistance = config.getMaxAccessEgressDistance_m();
 
-        log.info("FeederDrtRoutingModule initialized with maxAccessEgressDistance={} m, {} transit stops available",
-                maxAccessEgressDistance, transitSchedule.getFacilities().size());
+        // Load DRT service area shape file if configured
+        String shapeFilePath = config.getDrtServiceAreaShapeFile();
+        if (shapeFilePath != null && !shapeFilePath.isEmpty()) {
+            try {
+                Collection<SimpleFeature> features = ShapeFileReader.getAllFeatures(shapeFilePath);
+                this.drtServiceArea = (Geometry) features.iterator().next().getDefaultGeometry();
+                log.info("Loaded DRT service area from: {}", shapeFilePath);
+            } catch (Exception e) {
+                log.warn("Could not load DRT service area shape file: {}. Service area check disabled.", e.getMessage());
+                this.drtServiceArea = null;
+            }
+        } else {
+            this.drtServiceArea = null;
+            log.info("No DRT service area shape file configured. Service area check disabled.");
+        }
+
+        log.info("FeederDrtRoutingModule initialized with maxAccessEgressDistance={} m, {} transit stops available, serviceAreaCheck={}",
+                maxAccessEgressDistance, transitSchedule.getFacilities().size(), drtServiceArea != null);
     }
 
     @Override
@@ -89,10 +114,10 @@ public class FeederDrtRoutingModule implements RoutingModule {
         routingAttempts++;
         // Log every 100 attempts to show progress
         if (routingAttempts % 100 == 0) {
-            log.info("Feeder DRT routing: {} attempts, {} successful ({}%), {} via train station, {} DRT distance skips",
+            log.info("Feeder DRT routing: {} attempts, {} successful ({}%), {} via train station, {} distance skips, {} service area skips",
                     routingAttempts, successfulRoutes,
                     String.format("%.1f", routingAttempts > 0 ? (100.0 * successfulRoutes / routingAttempts) : 0),
-                    trainStationRoutesChosen, drtDistanceSkips);
+                    trainStationRoutesChosen, drtDistanceSkips, drtServiceAreaSkips);
         }
 
         try {
@@ -337,7 +362,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
 
     /**
      * Route a DRT leg between two locations.
-     * Checks distance before attempting routing to prevent memory issues.
+     * Checks distance and service area before attempting routing to prevent memory issues.
      */
     private List<? extends PlanElement> routeDrtLeg(Object from, Object to, double departureTime, Person person) {
         try {
@@ -358,6 +383,22 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 return null;
             }
 
+            // Check if both points are inside DRT service area (if shape file is configured)
+            if (drtServiceArea != null) {
+                boolean fromInside = isInsideDrtServiceArea(fromCoord);
+                boolean toInside = isInsideDrtServiceArea(toCoord);
+                if (!fromInside || !toInside) {
+                    drtServiceAreaSkips++;
+                    if (drtServiceAreaSkips <= 10 || drtServiceAreaSkips % 100 == 0) {
+                        log.debug("DRT leg outside service area: from={}, to={}, skipping (skip count: {})",
+                                fromInside ? "inside" : "OUTSIDE",
+                                toInside ? "inside" : "OUTSIDE",
+                                drtServiceAreaSkips);
+                    }
+                    return null;
+                }
+            }
+
             // DEBUG: Log before DRT routing to identify problematic calls
             log.info("DRT routing: person={}, from=({},{}), to=({},{}), dist={}m",
                     person != null ? person.getId() : "null",
@@ -376,6 +417,21 @@ public class FeederDrtRoutingModule implements RoutingModule {
             log.warn("DRT routing failed for person {}: {}",
                     person != null ? person.getId() : "null", e.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Check if a coordinate is inside the DRT service area.
+     */
+    private boolean isInsideDrtServiceArea(Coord coord) {
+        if (drtServiceArea == null) {
+            return true; // No service area check if not configured
+        }
+        try {
+            return drtServiceArea.contains(MGC.coord2Point(coord));
+        } catch (Exception e) {
+            log.debug("Error checking service area: {}", e.getMessage());
+            return false; // Be conservative - don't route if check fails
         }
     }
 

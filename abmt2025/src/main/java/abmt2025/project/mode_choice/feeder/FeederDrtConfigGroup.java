@@ -15,6 +15,7 @@ public class FeederDrtConfigGroup extends ReflectiveConfigGroup {
     private static final String MAX_ACCESS_EGRESS_DISTANCE_M = "maxAccessEgressDistance_m";
     private static final String USE_DRT_FOR_ACCESS = "useDrtForAccess";
     private static final String USE_DRT_FOR_EGRESS = "useDrtForEgress";
+    private static final String DRT_SERVICE_AREA_SHAPE_FILE = "drtServiceAreaShapeFile";
 
     private String modeName = "feeder_drt";
     private String baseDrtMode = "drt";
@@ -22,6 +23,7 @@ public class FeederDrtConfigGroup extends ReflectiveConfigGroup {
     private double maxAccessEgressDistance_m = 10000.0; // 10 km default
     private boolean useDrtForAccess = true;
     private boolean useDrtForEgress = true;
+    private String drtServiceAreaShapeFile = null; // Optional: path to DRT service area shape file
 
     public FeederDrtConfigGroup() {
         super(GROUP_NAME);
@@ -85,6 +87,16 @@ public class FeederDrtConfigGroup extends ReflectiveConfigGroup {
     @StringSetter(USE_DRT_FOR_EGRESS)
     public void setUseDrtForEgress(boolean useDrtForEgress) {
         this.useDrtForEgress = useDrtForEgress;
+    }
+
+    @StringGetter(DRT_SERVICE_AREA_SHAPE_FILE)
+    public String getDrtServiceAreaShapeFile() {
+        return drtServiceAreaShapeFile;
+    }
+
+    @StringSetter(DRT_SERVICE_AREA_SHAPE_FILE)
+    public void setDrtServiceAreaShapeFile(String drtServiceAreaShapeFile) {
+        this.drtServiceAreaShapeFile = drtServiceAreaShapeFile;
     }
 
     public static FeederDrtConfigGroup get(org.matsim.core.config.Config config) {
