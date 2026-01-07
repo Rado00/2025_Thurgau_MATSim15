@@ -21,7 +21,7 @@ public class FeederDrtConfigGroup extends ReflectiveConfigGroup {
     private String modeName = "feeder_drt";
     private String baseDrtMode = "drt";
     private String basePtMode = "pt";
-    private double maxAccessEgressDistance_m = 10000.0; // 10 km default
+    private double maxAccessEgressDistance_m = 5000.0; // 5 km default (aligned with MAX_DRT_LEG_DISTANCE)
     private boolean useDrtForAccess = true;
     private boolean useDrtForEgress = true;
     private String drtServiceAreaShapeFile = null; // Optional: path to DRT service area shape file
