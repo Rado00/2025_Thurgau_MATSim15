@@ -17,7 +17,7 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="1pct"
 
 
-SIM_ID="Test_Multi-modality_ASCbonus00_NewConfig_TrainRouting_shape_File_100iter" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="Test_Multi-modality_ASCbonus10_NoTrainR_100iter" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="15_drt_100_8.xml"
 SHAPE_FILE="15_ShapeFile.shp"
 
