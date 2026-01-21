@@ -1,0 +1,53 @@
+<!--
+    SwissRailRaptor Intermodal Access/Egress Configuration Snippet
+
+    Add this to your existing config.xml to enable DRT as access/egress mode for PT.
+
+    IMPORTANT: This should REPLACE your existing swissRailRaptor module section.
+-->
+
+<module name="swissRailRaptor">
+    <!-- Enable intermodal access/egress (main setting) -->
+    <param name="useIntermodalAccessEgress" value="true"/>
+
+    <!-- Mode selection: calculate least cost option for each stop -->
+    <param name="intermodalAccessEgressModeSelection" value="CalcLeastCostModePerStop"/>
+
+    <!-- Walk access/egress - REQUIRED when intermodal is enabled -->
+    <parameterset type="intermodalAccessEgress">
+        <param name="mode" value="walk"/>
+        <param name="maxRadius" value="1000"/>
+    </parameterset>
+
+    <!-- DRT access/egress -->
+    <parameterset type="intermodalAccessEgress">
+        <param name="mode" value="drt"/>
+        <param name="maxRadius" value="5000"/>
+        <!--
+        Optional: Restrict to train stations only (uncomment if stopCategory attribute exists)
+        <param name="stopFilterAttribute" value="stopCategory"/>
+        <param name="stopFilterValue" value="1"/>
+        <param name="stopFilterValue" value="2"/>
+        <param name="stopFilterValue" value="3"/>
+        -->
+    </parameterset>
+</module>
+
+<!--
+    NOTES:
+
+    1. The existing standalone DRT mode will continue to work (door-to-door trips)
+
+    2. When an agent chooses "pt" mode, SwissRailRaptor will automatically consider
+       DRT as an access/egress option based on the maxRadius and cost calculation
+
+    3. The trip will look like:
+       Origin -> [DRT access] -> PT Stop -> [PT legs] -> PT Stop -> [walk/DRT egress] -> Destination
+
+    4. maxRadius determines how far DRT can be used to reach/leave PT stops:
+       - walk: 1000m (typical walking distance)
+       - drt: 5000m (DRT service area radius)
+
+    5. If using stopFilterAttribute, make sure your transit schedule has these attributes
+       on the stop facilities.
+-->
