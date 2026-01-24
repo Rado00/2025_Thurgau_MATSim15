@@ -147,11 +147,6 @@ public class RunSimulation_DRT {
 
 		controller.addOverridingModule(new SmoothingTravelTimeModule());
 
-		// Add DRT modules for DRT routing and DVRP infrastructure
-		// These are required for both standalone DRT and intermodal access/egress
-		controller.addOverridingModule(new DvrpModule());
-		controller.addOverridingModule(new MultiModeDrtModule());
-
 		//Create drt controller object 
         
 		// // Instantiate OperatorCostCalculator
