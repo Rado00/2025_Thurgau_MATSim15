@@ -834,13 +834,17 @@
 		<!-- Walk access/egress (REQUIRED when intermodal is enabled) -->
 		<parameterset type="intermodalAccessEgress">
 			<param name="mode" value="walk"/>
+			<param name="initialSearchRadius" value="500"/>
 			<param name="maxRadius" value="1000"/>
+			<param name="searchExtensionRadius" value="200"/>
 		</parameterset>
 		
 		<!-- DRT access/egress -->
 		<parameterset type="intermodalAccessEgress">
 			<param name="mode" value="drt"/>
+			<param name="initialSearchRadius" value="2000"/>
 			<param name="maxRadius" value="5000"/>
+			<param name="searchExtensionRadius" value="1000"/>
 		</parameterset>
 	</module>	
 
