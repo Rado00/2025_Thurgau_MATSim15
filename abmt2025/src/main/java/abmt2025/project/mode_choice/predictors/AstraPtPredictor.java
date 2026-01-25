@@ -2,12 +2,14 @@ package abmt2025.project.mode_choice.predictors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eqasim.core.simulation.mode_choice.utilities.predictors.CachedVariablePredictor;
 import org.eqasim.core.simulation.mode_choice.utilities.predictors.PtPredictor;
 import org.eqasim.core.simulation.mode_choice.utilities.variables.PtVariables;
 import org.eqasim.switzerland.ovgk.OVGK;
 import org.eqasim.switzerland.ovgk.OVGKCalculator;
+import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
@@ -21,28 +23,75 @@ import org.matsim.pt.transitSchedule.api.TransitSchedule;
 
 import com.google.inject.Inject;
 
+import abmt2025.project.mode_choice.routing.DrtServiceAreaFilter;
 import abmt2025.project.mode_choice.variables.AstraPtVariables;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class AstraPtPredictor extends CachedVariablePredictor<AstraPtVariables> {
+	private static final Logger log = LogManager.getLogger(AstraPtPredictor.class);
+
 	public final PtPredictor delegate;
 	private final TransitSchedule schedule;
 	private final OVGKCalculator ovgkCalculator;
+	private DrtServiceAreaFilter serviceAreaFilter; // Not final - set via optional injection
+
+	// Statistics for logging (thread-safe)
+	private static final AtomicLong ptTripsProcessed = new AtomicLong(0);
+	private static final AtomicLong ptTripsWithDrt = new AtomicLong(0);
+	private static final AtomicLong ptTripsWithDrtInServiceArea = new AtomicLong(0);
+	private static final AtomicLong ptTripsWithDrtOutsideServiceArea = new AtomicLong(0);
 
 	@Inject
 	public AstraPtPredictor(PtPredictor delegate, TransitSchedule schedule, OVGKCalculator ovgkCalculator) {
 		this.delegate = delegate;
 		this.schedule = schedule;
 		this.ovgkCalculator = ovgkCalculator;
+		this.serviceAreaFilter = null;
+		log.info("AstraPtPredictor initialized (filter will be set via setter if available)");
+	}
+
+	/**
+	 * Optional injection of the DRT service area filter.
+	 * This is called by Guice after construction if the filter is available.
+	 */
+	@com.google.inject.Inject(optional = true)
+	public void setServiceAreaFilter(@com.google.inject.name.Named("drtServiceAreaFilter") DrtServiceAreaFilter filter) {
+		this.serviceAreaFilter = filter;
+		if (filter != null && filter.isInitialized()) {
+			log.info("DRT service area filter injected into AstraPtPredictor");
+		}
+	}
+
+	/**
+	 * Log statistics about PT+DRT trips processed.
+	 * Call this at the end of simulation to see summary.
+	 */
+	public static void logStatistics() {
+		log.info("=== AstraPtPredictor DRT Statistics ===");
+		log.info("  Total PT trips processed: {}", ptTripsProcessed.get());
+		log.info("  PT trips with DRT access/egress: {} ({:.1f}%)", ptTripsWithDrt.get(),
+				ptTripsProcessed.get() > 0 ? (100.0 * ptTripsWithDrt.get() / ptTripsProcessed.get()) : 0.0);
+		log.info("  PT+DRT trips with origin/dest in service area: {}", ptTripsWithDrtInServiceArea.get());
+		log.info("  PT+DRT trips with origin/dest outside service area: {}", ptTripsWithDrtOutsideServiceArea.get());
 	}
 
 	@Override
 	protected AstraPtVariables predict(Person person, DiscreteModeChoiceTrip trip,
 			List<? extends PlanElement> elements) {
 
+		ptTripsProcessed.incrementAndGet();
+
+		// Get trip origin and destination for service area checking
+		Coord originCoord = trip.getOriginActivity().getCoord();
+		Coord destCoord = trip.getDestinationActivity().getCoord();
+
 		// Check for DRT legs and handle them separately
 		double drtTravelTime_min = 0.0;
 		double drtWaitingTime_min = 0.0;
 		boolean hasDrtAccess = false;
+		int drtLegCount = 0;
 
 		// Create filtered elements list, replacing DRT legs with walk legs for the delegate
 		List<PlanElement> filteredElements = new ArrayList<>();
@@ -54,6 +103,7 @@ public class AstraPtPredictor extends CachedVariablePredictor<AstraPtVariables> 
 				if (leg.getMode().equals(TransportMode.drt)) {
 					// This is a DRT access/egress leg
 					hasDrtAccess = true;
+					drtLegCount++;
 
 					// Extract DRT-specific times
 					if (leg.getRoute() instanceof DrtRoute) {
@@ -77,6 +127,43 @@ public class AstraPtPredictor extends CachedVariablePredictor<AstraPtVariables> 
 				}
 			} else {
 				filteredElements.add(element);
+			}
+		}
+
+		// Log DRT access/egress statistics
+		if (hasDrtAccess) {
+			ptTripsWithDrt.incrementAndGet();
+
+			// Check if origin or destination is in service area
+			boolean originInServiceArea = false;
+			boolean destInServiceArea = false;
+
+			if (serviceAreaFilter != null && serviceAreaFilter.isInitialized()) {
+				originInServiceArea = serviceAreaFilter.isInsideServiceArea(originCoord);
+				destInServiceArea = serviceAreaFilter.isInsideServiceArea(destCoord);
+
+				if (originInServiceArea || destInServiceArea) {
+					ptTripsWithDrtInServiceArea.incrementAndGet();
+				} else {
+					ptTripsWithDrtOutsideServiceArea.incrementAndGet();
+				}
+			}
+
+			// Debug logging for DRT intermodal trips
+			if (log.isDebugEnabled()) {
+				log.debug("PT+DRT trip for person {}: drtLegs={}, drtTime={:.1f}min, drtWait={:.1f}min, " +
+						"originInArea={}, destInArea={}, origin=({:.0f},{:.0f}), dest=({:.0f},{:.0f})",
+						person.getId(), drtLegCount, drtTravelTime_min, drtWaitingTime_min,
+						originInServiceArea, destInServiceArea,
+						originCoord.getX(), originCoord.getY(),
+						destCoord.getX(), destCoord.getY());
+			}
+
+			// Periodic info logging (every 1000 PT+DRT trips)
+			long drtCount = ptTripsWithDrt.get();
+			if (drtCount % 1000 == 0) {
+				log.info("PT+DRT trips processed: {}, inServiceArea: {}, outsideServiceArea: {}",
+						drtCount, ptTripsWithDrtInServiceArea.get(), ptTripsWithDrtOutsideServiceArea.get());
 			}
 		}
 
