@@ -7,6 +7,7 @@ import com.google.inject.name.Named;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
 import org.matsim.contrib.drt.run.MultiModeDrtConfigGroup;
 import org.matsim.core.config.Config;
+import org.matsim.core.config.ConfigGroup;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.events.ShutdownEvent;
 import org.matsim.core.controler.listener.ShutdownListener;
@@ -46,10 +47,12 @@ public class DrtIntermodalFilterModule extends AbstractModule {
         String shapeFilePath = null;
 
         // Find the first DRT mode's service area shape file
+        // Use generic parameter access for MATSim 15 compatibility
         for (DrtConfigGroup drtConfig : multiModeDrtConfig.getModalElements()) {
-            if (drtConfig.getDrtServiceAreaShapeFile() != null &&
-                    !drtConfig.getDrtServiceAreaShapeFile().isEmpty()) {
-                shapeFilePath = drtConfig.getDrtServiceAreaShapeFile();
+            // Try to get the parameter directly (works across MATSim versions)
+            String paramValue = drtConfig.getParams().get("drtServiceAreaShapeFile");
+            if (paramValue != null && !paramValue.isEmpty()) {
+                shapeFilePath = paramValue;
                 log.info("Found DRT service area shape file for mode '{}': {}",
                         drtConfig.getMode(), shapeFilePath);
                 break;
