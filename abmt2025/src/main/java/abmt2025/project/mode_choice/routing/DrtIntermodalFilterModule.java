@@ -73,10 +73,15 @@ public class DrtIntermodalFilterModule extends AbstractModule {
      */
     public static class DrtFilterShutdownListener implements ShutdownListener {
 
-        private final DrtServiceAreaFilter filter;
+        private DrtServiceAreaFilter filter;
+
+        @com.google.inject.Inject
+        public DrtFilterShutdownListener() {
+            // Default constructor - filter will be set via setter if available
+        }
 
         @com.google.inject.Inject(optional = true)
-        public DrtFilterShutdownListener(@Named("drtServiceAreaFilter") DrtServiceAreaFilter filter) {
+        public void setFilter(@Named("drtServiceAreaFilter") DrtServiceAreaFilter filter) {
             this.filter = filter;
         }
 
