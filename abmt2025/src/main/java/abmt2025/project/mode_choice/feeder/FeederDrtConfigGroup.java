@@ -16,16 +16,14 @@ public class FeederDrtConfigGroup extends ReflectiveConfigGroup {
     private static final String USE_DRT_FOR_ACCESS = "useDrtForAccess";
     private static final String USE_DRT_FOR_EGRESS = "useDrtForEgress";
     private static final String DRT_SERVICE_AREA_SHAPE_FILE = "drtServiceAreaShapeFile";
-    private static final String USE_TRAIN_STATION_ROUTING = "useTrainStationRouting";
 
     private String modeName = "feeder_drt";
     private String baseDrtMode = "drt";
     private String basePtMode = "pt";
-    private double maxAccessEgressDistance_m = 5000.0; // 5 km default (aligned with MAX_DRT_LEG_DISTANCE)
+    private double maxAccessEgressDistance_m = 10000.0; // 10 km default
     private boolean useDrtForAccess = true;
     private boolean useDrtForEgress = true;
     private String drtServiceAreaShapeFile = null; // Optional: path to DRT service area shape file
-    private boolean useTrainStationRouting = true; // If true, also try routing via train stations
 
     public FeederDrtConfigGroup() {
         super(GROUP_NAME);
@@ -99,16 +97,6 @@ public class FeederDrtConfigGroup extends ReflectiveConfigGroup {
     @StringSetter(DRT_SERVICE_AREA_SHAPE_FILE)
     public void setDrtServiceAreaShapeFile(String drtServiceAreaShapeFile) {
         this.drtServiceAreaShapeFile = drtServiceAreaShapeFile;
-    }
-
-    @StringGetter(USE_TRAIN_STATION_ROUTING)
-    public boolean isUseTrainStationRouting() {
-        return useTrainStationRouting;
-    }
-
-    @StringSetter(USE_TRAIN_STATION_ROUTING)
-    public void setUseTrainStationRouting(boolean useTrainStationRouting) {
-        this.useTrainStationRouting = useTrainStationRouting;
     }
 
     public static FeederDrtConfigGroup get(org.matsim.core.config.Config config) {
