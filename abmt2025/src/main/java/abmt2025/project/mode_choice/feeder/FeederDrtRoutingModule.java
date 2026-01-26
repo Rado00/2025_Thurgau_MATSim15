@@ -64,6 +64,7 @@ public class FeederDrtRoutingModule implements RoutingModule {
     private final TransitSchedule transitSchedule;
     private final Network network;
     private final double maxAccessEgressDistance;
+    private final boolean useTrainStationRouting;
 
     @Inject
     public FeederDrtRoutingModule(
@@ -97,9 +98,10 @@ public class FeederDrtRoutingModule implements RoutingModule {
             log.info("No DRT service area shape file configured. Service area check disabled.");
         }
         this.drtServiceArea = loadedServiceArea;
+        this.useTrainStationRouting = config.isUseTrainStationRouting();
 
-        log.info("FeederDrtRoutingModule initialized with maxAccessEgressDistance={} m, {} transit stops available, serviceAreaCheck={}",
-                maxAccessEgressDistance, transitSchedule.getFacilities().size(), drtServiceArea != null);
+        log.info("FeederDrtRoutingModule initialized with maxAccessEgressDistance={} m, {} transit stops available, serviceAreaCheck={}, trainStationRouting={}",
+                maxAccessEgressDistance, transitSchedule.getFacilities().size(), drtServiceArea != null, useTrainStationRouting);
     }
 
     @Override
@@ -165,10 +167,10 @@ public class FeederDrtRoutingModule implements RoutingModule {
                 }
             }
 
-            // Try routing via train stations
+            // Try routing via train stations (if enabled)
             List<? extends PlanElement> routeViaTrain = null;
             double travelTimeTrain = Double.MAX_VALUE;
-            if (nearestAccessTrainStation != null && nearestEgressTrainStation != null) {
+            if (useTrainStationRouting && nearestAccessTrainStation != null && nearestEgressTrainStation != null) {
                 // Only try if train stations are different from nearest stops
                 boolean accessIsDifferent = nearestAccessStop == null ||
                         !nearestAccessTrainStation.getId().equals(nearestAccessStop.getId());
