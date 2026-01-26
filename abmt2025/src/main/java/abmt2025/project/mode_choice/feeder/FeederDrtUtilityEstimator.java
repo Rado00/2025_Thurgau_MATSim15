@@ -50,6 +50,25 @@ public class FeederDrtUtilityEstimator implements UtilityEstimator {
     public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
         int call = callCount.incrementAndGet();
 
+        // First check if the route contains both DRT and PT legs
+        // If not, return NEGATIVE_INFINITY to eliminate this candidate
+        boolean hasDrt = false;
+        boolean hasPt = false;
+        for (PlanElement element : elements) {
+            if (element instanceof Leg) {
+                String mode = ((Leg) element).getMode();
+                if (mode.equals(TransportMode.drt)) hasDrt = true;
+                if (mode.equals(TransportMode.pt)) hasPt = true;
+            }
+        }
+        if (!hasDrt || !hasPt) {
+            if (call <= 10 || call % 1000 == 0) {
+                log.info("Call #{}: INVALID route for person {} - hasDrt={}, hasPt={}, returning NEGATIVE_INFINITY",
+                        call, person.getId(), hasDrt, hasPt);
+            }
+            return Double.NEGATIVE_INFINITY;
+        }
+
         // Direct copy of Tarek's logic
         String lastMode = "";
         List<PlanElement> currentTrip = new LinkedList<>();
