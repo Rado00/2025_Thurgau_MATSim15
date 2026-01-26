@@ -8,7 +8,7 @@ USER_NAME=$(whoami)
 ########################## CHECK AUTORUN SETTING ###########################################
 
 LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-DRT_CONFIG="Thurgau_config_DRT_M15_06_noDRTavail.xml"
+DRT_CONFIG="Thurgau_config_DRT_M15_06.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
@@ -17,9 +17,9 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="CalTest_11_noDRTavail" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="10_drt_1_8.xml"
-SHAPE_FILE="10_ShapeFile.shp"
+SIM_ID="Main_100" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="25_drt_594_8.xml"
+SHAPE_FILE="25_ShapeFile.shp"
 
 
 
@@ -93,9 +93,9 @@ OUTPUT_SIM_NAME=DRT_${SHAPE_FILENAME}_${FLEET_FILENAME}_${SIM_ID}
 
 # Set OUTPUT_DIRECTORY_PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/2_FleetSizeCalibration"
+    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/5_LastTests"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/2_FleetSizeCalibration"
+    OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/5_LastTests"
 else
     echo "Unsupported system configuration"
     exit 1
