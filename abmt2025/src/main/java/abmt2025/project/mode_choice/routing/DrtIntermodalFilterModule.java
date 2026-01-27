@@ -92,6 +92,9 @@ public class DrtIntermodalFilterModule extends AbstractModule {
                 filter.logStatistics();
             }
 
+            // Log FilteredDrtIntermodalRoutingModule statistics
+            FilteredDrtIntermodalRoutingModule.logStatistics();
+
             // Log AstraPtPredictor DRT statistics
             AstraPtPredictor.logStatistics();
         }

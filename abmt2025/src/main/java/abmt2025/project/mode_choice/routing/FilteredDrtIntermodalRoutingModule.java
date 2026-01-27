@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A routing module wrapper that filters DRT routing based on a service area.
@@ -30,20 +31,37 @@ public class FilteredDrtIntermodalRoutingModule implements RoutingModule {
     private final RoutingModule delegate;
     private final DrtServiceAreaFilter serviceAreaFilter;
 
-    // Statistics
-    private long routingAttempts = 0;
-    private long routingAllowed = 0;
-    private long routingFiltered = 0;
+    // Statistics (thread-safe)
+    private static final AtomicLong routingAttempts = new AtomicLong(0);
+    private static final AtomicLong routingAllowed = new AtomicLong(0);
+    private static final AtomicLong routingFiltered = new AtomicLong(0);
+    private static final AtomicLong routingFromInsideOnly = new AtomicLong(0);
+    private static final AtomicLong routingToInsideOnly = new AtomicLong(0);
+    private static final AtomicLong routingBothInside = new AtomicLong(0);
 
     public FilteredDrtIntermodalRoutingModule(RoutingModule delegate, DrtServiceAreaFilter serviceAreaFilter) {
         this.delegate = delegate;
         this.serviceAreaFilter = serviceAreaFilter;
         log.info("FilteredDrtIntermodalRoutingModule initialized with service area filter");
+        log.info("  Filter active: {}", serviceAreaFilter != null && serviceAreaFilter.isInitialized());
     }
 
     @Override
     public List<? extends PlanElement> calcRoute(RoutingRequest request) {
-        routingAttempts++;
+        long attempts = routingAttempts.incrementAndGet();
+
+        // Periodic logging every 5000 attempts
+        if (attempts % 5000 == 0) {
+            log.info("FilteredDrtIntermodalRoutingModule: {} attempts, {} allowed, {} filtered ({}% saved)",
+                    attempts, routingAllowed.get(), routingFiltered.get(),
+                    attempts > 0 ? String.format("%.1f", 100.0 * routingFiltered.get() / attempts) : "0.0");
+        }
+
+        // If no filter, just delegate
+        if (serviceAreaFilter == null || !serviceAreaFilter.isInitialized()) {
+            routingAllowed.incrementAndGet();
+            return delegate.calcRoute(request);
+        }
 
         Facility fromFacility = request.getFromFacility();
         Facility toFacility = request.getToFacility();
@@ -57,10 +75,10 @@ public class FilteredDrtIntermodalRoutingModule implements RoutingModule {
 
         if (!fromInside && !toInside) {
             // Neither endpoint is in the service area - skip DRT routing
-            routingFiltered++;
+            routingFiltered.incrementAndGet();
 
             if (log.isDebugEnabled()) {
-                log.debug("DRT routing filtered: neither endpoint in service area. " +
+                log.debug("DRT routing FILTERED: neither endpoint in service area. " +
                         "From: ({}, {}), To: ({}, {})",
                         fromCoord.getX(), fromCoord.getY(),
                         toCoord.getX(), toCoord.getY());
@@ -70,10 +88,19 @@ public class FilteredDrtIntermodalRoutingModule implements RoutingModule {
         }
 
         // At least one endpoint is in the service area - proceed with DRT routing
-        routingAllowed++;
+        routingAllowed.incrementAndGet();
+
+        // Track which endpoint(s) are inside
+        if (fromInside && toInside) {
+            routingBothInside.incrementAndGet();
+        } else if (fromInside) {
+            routingFromInsideOnly.incrementAndGet();
+        } else {
+            routingToInsideOnly.incrementAndGet();
+        }
 
         if (log.isDebugEnabled()) {
-            log.debug("DRT routing allowed: fromInside={}, toInside={}. " +
+            log.debug("DRT routing ALLOWED: fromInside={}, toInside={}. " +
                     "From: ({}, {}), To: ({}, {})",
                     fromInside, toInside,
                     fromCoord.getX(), fromCoord.getY(),
@@ -86,26 +113,28 @@ public class FilteredDrtIntermodalRoutingModule implements RoutingModule {
     /**
      * Log statistics about routing filter effectiveness.
      */
-    public void logStatistics() {
-        log.info("DRT Intermodal Routing Filter Statistics:");
-        log.info("  Total routing attempts: {}", routingAttempts);
-        log.info("  Routing allowed (in service area): {} ({:.1f}%)", routingAllowed,
-                routingAttempts > 0 ? (100.0 * routingAllowed / routingAttempts) : 0.0);
-        log.info("  Routing filtered (outside service area): {} ({:.1f}%)", routingFiltered,
-                routingAttempts > 0 ? (100.0 * routingFiltered / routingAttempts) : 0.0);
-        log.info("  Computation saved: {:.1f}%",
-                routingAttempts > 0 ? (100.0 * routingFiltered / routingAttempts) : 0.0);
+    public static void logStatistics() {
+        long attempts = routingAttempts.get();
+        long allowed = routingAllowed.get();
+        long filtered = routingFiltered.get();
+
+        log.info("=== FilteredDrtIntermodalRoutingModule Statistics ===");
+        log.info("  Total DRT routing attempts: {}", attempts);
+        log.info("  Routing ALLOWED (at least one endpoint in area): {}", allowed);
+        log.info("    - Both endpoints inside: {}", routingBothInside.get());
+        log.info("    - Only FROM inside (access leg): {}", routingFromInsideOnly.get());
+        log.info("    - Only TO inside (egress leg): {}", routingToInsideOnly.get());
+        log.info("  Routing FILTERED (neither endpoint in area): {}", filtered);
+        log.info("  Computation saved: {}%",
+                attempts > 0 ? String.format("%.1f", 100.0 * filtered / attempts) : "0.0");
     }
 
-    public long getRoutingAttempts() {
-        return routingAttempts;
-    }
-
-    public long getRoutingAllowed() {
-        return routingAllowed;
-    }
-
-    public long getRoutingFiltered() {
-        return routingFiltered;
+    public static void resetStatistics() {
+        routingAttempts.set(0);
+        routingAllowed.set(0);
+        routingFiltered.set(0);
+        routingFromInsideOnly.set(0);
+        routingToInsideOnly.set(0);
+        routingBothInside.set(0);
     }
 }

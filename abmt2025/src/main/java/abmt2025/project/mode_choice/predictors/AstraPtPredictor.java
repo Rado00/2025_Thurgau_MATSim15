@@ -71,8 +71,8 @@ public class AstraPtPredictor extends CachedVariablePredictor<AstraPtVariables> 
 	public static void logStatistics() {
 		log.info("=== AstraPtPredictor DRT Statistics ===");
 		log.info("  Total PT trips processed: {}", ptTripsProcessed.get());
-		log.info("  PT trips with DRT access/egress: {} ({:.1f}%)", ptTripsWithDrt.get(),
-				ptTripsProcessed.get() > 0 ? (100.0 * ptTripsWithDrt.get() / ptTripsProcessed.get()) : 0.0);
+		log.info("  PT trips with DRT access/egress: {} ({}%)", ptTripsWithDrt.get(),
+				ptTripsProcessed.get() > 0 ? String.format("%.1f", 100.0 * ptTripsWithDrt.get() / ptTripsProcessed.get()) : "0.0");
 		log.info("  PT+DRT trips with origin/dest in service area: {}", ptTripsWithDrtInServiceArea.get());
 		log.info("  PT+DRT trips with origin/dest outside service area: {}", ptTripsWithDrtOutsideServiceArea.get());
 	}
@@ -151,12 +151,16 @@ public class AstraPtPredictor extends CachedVariablePredictor<AstraPtVariables> 
 
 			// Debug logging for DRT intermodal trips
 			if (log.isDebugEnabled()) {
-				log.debug("PT+DRT trip for person {}: drtLegs={}, drtTime={:.1f}min, drtWait={:.1f}min, " +
-						"originInArea={}, destInArea={}, origin=({:.0f},{:.0f}), dest=({:.0f},{:.0f})",
-						person.getId(), drtLegCount, drtTravelTime_min, drtWaitingTime_min,
+				log.debug("PT+DRT trip for person {}: drtLegs={}, drtTime={}min, drtWait={}min, " +
+						"originInArea={}, destInArea={}, origin=({},{}), dest=({},{})",
+						person.getId(), drtLegCount,
+						String.format("%.1f", drtTravelTime_min),
+						String.format("%.1f", drtWaitingTime_min),
 						originInServiceArea, destInServiceArea,
-						originCoord.getX(), originCoord.getY(),
-						destCoord.getX(), destCoord.getY());
+						String.format("%.0f", originCoord.getX()),
+						String.format("%.0f", originCoord.getY()),
+						String.format("%.0f", destCoord.getX()),
+						String.format("%.0f", destCoord.getY()));
 			}
 
 			// Periodic info logging (every 1000 PT+DRT trips)

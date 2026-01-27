@@ -117,10 +117,10 @@ public class DrtServiceAreaFilter {
     public void logStatistics() {
         log.info("DRT Service Area Filter Statistics:");
         log.info("  Total checks: {}", checksPerformed);
-        log.info("  Inside service area: {} ({:.1f}%)", checksInside,
-                checksPerformed > 0 ? (100.0 * checksInside / checksPerformed) : 0.0);
-        log.info("  Outside service area: {} ({:.1f}%)", checksOutside,
-                checksPerformed > 0 ? (100.0 * checksOutside / checksPerformed) : 0.0);
+        log.info("  Inside service area: {} ({}%)", checksInside,
+                checksPerformed > 0 ? String.format("%.1f", 100.0 * checksInside / checksPerformed) : "0.0");
+        log.info("  Outside service area: {} ({}%)", checksOutside,
+                checksPerformed > 0 ? String.format("%.1f", 100.0 * checksOutside / checksPerformed) : "0.0");
     }
 
     /**
