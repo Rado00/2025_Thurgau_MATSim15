@@ -2,11 +2,12 @@ package abmt2025.project.mode_choice.routing;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.google.inject.multibindings.MapBinder;
+import com.google.inject.name.Names;
 
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
@@ -60,17 +61,16 @@ public class DrtIntermodalFilterModule extends AbstractModule {
 
     /**
      * Provider for the filtered DRT routing module.
-     * Uses runtime lookup to get the original DRT router and wrap it with filtering.
+     * Uses runtime lookup via Injector to get the original DRT router and wrap it with filtering.
      */
     public static class FilteredDrtRoutingModuleProvider implements Provider<RoutingModule> {
 
-        private java.util.Map<String, javax.inject.Provider<RoutingModule>> routingModules;
+        private final Injector injector;
         private DrtServiceAreaFilter filter;
 
         @Inject
-        public FilteredDrtRoutingModuleProvider(
-                java.util.Map<String, javax.inject.Provider<RoutingModule>> routingModules) {
-            this.routingModules = routingModules;
+        public FilteredDrtRoutingModuleProvider(Injector injector) {
+            this.injector = injector;
         }
 
         @Inject(optional = true)
@@ -80,16 +80,23 @@ public class DrtIntermodalFilterModule extends AbstractModule {
 
         @Override
         public RoutingModule get() {
-            // Get the original DRT routing module at runtime
-            javax.inject.Provider<RoutingModule> drtProvider = routingModules.get(TransportMode.drt);
-
-            if (drtProvider == null) {
-                log.warn("No DRT routing module found for mode '{}' - drt_access will return null routes",
-                        TransportMode.drt);
-                return new FilteredDrtIntermodalRoutingModule(null, filter);
+            // Get the original DRT routing module at runtime using the Injector
+            RoutingModule originalDrtRouter = null;
+            try {
+                // Look up the DRT routing module by its named binding
+                originalDrtRouter = injector.getInstance(
+                        Key.get(RoutingModule.class, Names.named(TransportMode.drt)));
+                log.info("FilteredDrtRoutingModuleProvider: Found DRT routing module: {}",
+                        originalDrtRouter.getClass().getSimpleName());
+            } catch (Exception e) {
+                log.warn("Could not find DRT routing module for mode '{}': {}",
+                        TransportMode.drt, e.getMessage());
             }
 
-            RoutingModule originalDrtRouter = drtProvider.get();
+            if (originalDrtRouter == null) {
+                log.warn("No DRT routing module found - drt_access will return null routes");
+                return new FilteredDrtIntermodalRoutingModule(null, filter);
+            }
 
             if (filter != null && filter.isInitialized()) {
                 log.info("FilteredDrtRoutingModuleProvider: wrapping {} with active service area filter",
@@ -132,39 +139,6 @@ public class DrtIntermodalFilterModule extends AbstractModule {
         }
 
         return new DrtServiceAreaFilter(shapeFilePath);
-    }
-
-    /**
-     * Provides a filtered DRT routing module that wraps the original DRT router.
-     * This is bound as a named provider so it can be used for intermodal routing.
-     */
-    @Provides
-    @Singleton
-    @Named("filteredDrtRoutingModule")
-    public FilteredDrtIntermodalRoutingModule provideFilteredDrtRoutingModule(
-            @Named("drtServiceAreaFilter") DrtServiceAreaFilter filter,
-            java.util.Map<String, javax.inject.Provider<RoutingModule>> routingModules) {
-
-        log.info("Creating FilteredDrtIntermodalRoutingModule...");
-
-        // Get the original DRT routing module
-        javax.inject.Provider<RoutingModule> drtProvider = routingModules.get(TransportMode.drt);
-
-        if (drtProvider == null) {
-            log.warn("No DRT routing module found - filter cannot be created");
-            return null;
-        }
-
-        RoutingModule originalDrtRouter = drtProvider.get();
-        log.info("Original DRT routing module: {}", originalDrtRouter.getClass().getName());
-
-        if (filter == null || !filter.isInitialized()) {
-            log.warn("DRT service area filter not available - using original DRT router without filtering");
-            return new FilteredDrtIntermodalRoutingModule(originalDrtRouter, null);
-        }
-
-        log.info("FilteredDrtIntermodalRoutingModule created with active service area filter");
-        return new FilteredDrtIntermodalRoutingModule(originalDrtRouter, filter);
     }
 
     /**
