@@ -42,12 +42,19 @@ public class FilteredDrtIntermodalRoutingModule implements RoutingModule {
     public FilteredDrtIntermodalRoutingModule(RoutingModule delegate, DrtServiceAreaFilter serviceAreaFilter) {
         this.delegate = delegate;
         this.serviceAreaFilter = serviceAreaFilter;
-        log.info("FilteredDrtIntermodalRoutingModule initialized with service area filter");
+        log.info("FilteredDrtIntermodalRoutingModule initialized");
+        log.info("  Delegate available: {}", delegate != null);
         log.info("  Filter active: {}", serviceAreaFilter != null && serviceAreaFilter.isInitialized());
     }
 
     @Override
     public List<? extends PlanElement> calcRoute(RoutingRequest request) {
+        // If no delegate, cannot route at all
+        if (delegate == null) {
+            log.warn("FilteredDrtIntermodalRoutingModule has no delegate - cannot route");
+            return null;
+        }
+
         long attempts = routingAttempts.incrementAndGet();
 
         // Periodic logging every 5000 attempts

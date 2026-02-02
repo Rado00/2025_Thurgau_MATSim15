@@ -23,6 +23,7 @@ import org.matsim.pt.transitSchedule.api.TransitSchedule;
 
 import com.google.inject.Inject;
 
+import abmt2025.project.mode_choice.routing.DrtIntermodalFilterModule;
 import abmt2025.project.mode_choice.routing.DrtServiceAreaFilter;
 import abmt2025.project.mode_choice.variables.AstraPtVariables;
 
@@ -77,6 +78,13 @@ public class AstraPtPredictor extends CachedVariablePredictor<AstraPtVariables> 
 		log.info("  PT+DRT trips with origin/dest outside service area: {}", ptTripsWithDrtOutsideServiceArea.get());
 	}
 
+	/**
+	 * Check if a mode is a DRT mode (either "drt" or "drt_access").
+	 */
+	private boolean isDrtMode(String mode) {
+		return TransportMode.drt.equals(mode) || DrtIntermodalFilterModule.DRT_ACCESS_MODE.equals(mode);
+	}
+
 	@Override
 	protected AstraPtVariables predict(Person person, DiscreteModeChoiceTrip trip,
 			List<? extends PlanElement> elements) {
@@ -100,8 +108,8 @@ public class AstraPtPredictor extends CachedVariablePredictor<AstraPtVariables> 
 			if (element instanceof Leg) {
 				Leg leg = (Leg) element;
 
-				if (leg.getMode().equals(TransportMode.drt)) {
-					// This is a DRT access/egress leg
+				if (isDrtMode(leg.getMode())) {
+					// This is a DRT access/egress leg (either "drt" or "drt_access")
 					hasDrtAccess = true;
 					drtLegCount++;
 
