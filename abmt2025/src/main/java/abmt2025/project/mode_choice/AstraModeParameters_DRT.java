@@ -52,12 +52,13 @@ public class AstraModeParameters_DRT extends SwissModeParameters {
 		parameters.referenceEuclideanDistance_km = 39.0;
 		parameters.referenceHouseholdIncome_MU = 12260.0;
 
-		//The ones for Modal Split Calibration
-		parameters.walk.alpha_u = 1.4; //-------- 0,5903
-		parameters.bike.alpha_u = 1.5; //-------- 0,1522
-		parameters.pt.alpha_u = 0; //--------
-		parameters.car.alpha_u = 1.4; // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
-		parameters.astraCar.betaCity = -0.2; //-------- -0.459
+		// Modal Split Calibration - can be overridden via system properties
+		// e.g., -DALPHA_WALK=1.4 -DALPHA_BIKE=1.5 -DALPHA_PT=0 -DALPHA_CAR=1.4 -DBETA_CAR_CITY=-0.2
+		parameters.walk.alpha_u = Double.parseDouble(System.getProperty("ALPHA_WALK", "1.4")); //-------- 0,5903
+		parameters.bike.alpha_u = Double.parseDouble(System.getProperty("ALPHA_BIKE", "1.5")); //-------- 0,1522
+		parameters.pt.alpha_u = Double.parseDouble(System.getProperty("ALPHA_PT", "0")); //--------
+		parameters.car.alpha_u = Double.parseDouble(System.getProperty("ALPHA_CAR", "1.4")); // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
+		parameters.astraCar.betaCity = Double.parseDouble(System.getProperty("BETA_CAR_CITY", "-0.2")); //-------- -0.459
 
 		// Public transport
 		parameters.pt.betaWaitingTime_u_min = -0.0124;

@@ -33,9 +33,10 @@ public class DrtCostParameters extends SwissCostParameters {
 		parameters.DRTCost_CHF_trip = 0.375; // 
 		parameters.DRTCost_CHF_vehicle = 33.30; // 
 
-		// price = 0.6 CHF/km * invehicle_distance + 2 CHF
-		parameters.DRTFare_CHF = 0; // fixed constant price DRT 2.0
-		parameters.DRTFare_CHF_km = 0; // km price DRT  0.7
+		// price = DRTFare_CHF_km * invehicle_distance + DRTFare_CHF
+		// Can be overridden via system properties: -DDRT_FARE_CHF=2.0 -DDRT_FARE_CHF_KM=0.7
+		parameters.DRTFare_CHF = Double.parseDouble(System.getProperty("DRT_FARE_CHF", "0")); // fixed constant price DRT
+		parameters.DRTFare_CHF_km = Double.parseDouble(System.getProperty("DRT_FARE_CHF_KM", "0")); // km price DRT
 		
 
 		return parameters;
