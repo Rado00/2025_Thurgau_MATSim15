@@ -508,6 +508,18 @@
 				<param name="typicalDurationScoreComputation" value="relative" />
 			</parameterset>
 			<parameterset type="activityParams" >
+				<param name="activityType" value="drt_access interaction" />
+				<param name="closingTime" value="undefined" />
+				<param name="earliestEndTime" value="undefined" />
+				<param name="latestStartTime" value="undefined" />
+				<param name="minimalDuration" value="undefined" />
+				<param name="openingTime" value="undefined" />
+				<param name="priority" value="1.0" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+				<param name="typicalDurationScoreComputation" value="relative" />
+			</parameterset>
+			<parameterset type="activityParams" >
 				<param name="activityType" value="taxi interaction" />
 				<param name="closingTime" value="undefined" />
 				<param name="earliestEndTime" value="undefined" />
@@ -795,10 +807,20 @@
 				<param name="mode" value="drt" />
 				<param name="monetaryDistanceRate" value="0.0" />
 			</parameterset>
+			<!-- drt_access mode for intermodal PT+DRT (uses same parameters as drt) -->
+			<parameterset type="modeParams" >
+				<param name="constant" value="0.0" />
+				<param name="dailyMonetaryConstant" value="0.0" />
+				<param name="dailyUtilityConstant" value="0.0" />
+				<param name="marginalUtilityOfDistance_util_m" value="0.0" />
+				<param name="marginalUtilityOfTraveling_util_hr" value="-1.0" />
+				<param name="mode" value="drt_access" />
+				<param name="monetaryDistanceRate" value="0.0" />
+			</parameterset>
 		</parameterset>
 	</module>
 
-<!-- ====================================================================== -->	
+<!-- ====================================================================== -->
 
 <!-- ====================================================================== -->
 	<module name="subtourModeChoice" >
@@ -839,14 +861,16 @@
 			<param name="searchExtensionRadius" value="200"/>
 		</parameterset>
 		
-		<!-- DRT access/egress -->
+		<!-- DRT access/egress - uses drt_access mode with service area pre-filtering -->
+		<!-- The drt_access mode wraps the DRT router and filters requests where -->
+		<!-- neither origin nor destination is in the DRT service area, saving computation -->
 		<parameterset type="intermodalAccessEgress">
-			<param name="mode" value="drt"/>
+			<param name="mode" value="drt_access"/>
 			<param name="initialSearchRadius" value="2000"/>
 			<param name="maxRadius" value="5000"/>
 			<param name="searchExtensionRadius" value="1000"/>
 		</parameterset>
-	</module>	
+	</module>
 
 	<module name="transitRouter" >
 		<!-- additional time the router allocates when a line switch happens. Can be interpreted as a 'safety' time that agents need to safely transfer from one line to another -->
