@@ -4,6 +4,15 @@ import org.eqasim.switzerland.mode_choice.parameters.SwissCostParameters;
 
 public class DrtCostParameters extends SwissCostParameters {
 
+	private static double getRequiredDoubleProperty(String name) {
+		String value = System.getProperty(name);
+		if (value == null) {
+			throw new IllegalStateException("Required system property '" + name + "' is not set. " +
+				"Please provide it via -D" + name + "=<value> in the java command.");
+		}
+		return Double.parseDouble(value);
+	}
+
 	public double carCost_CHF_km = 0.0;
 
 	public double ptCost_CHF_km = 0.0;
@@ -34,9 +43,9 @@ public class DrtCostParameters extends SwissCostParameters {
 		parameters.DRTCost_CHF_vehicle = 33.30; // 
 
 		// price = DRTFare_CHF_km * invehicle_distance + DRTFare_CHF
-		// Can be overridden via system properties: -DDRT_FARE_CHF=2.0 -DDRT_FARE_CHF_KM=0.7
-		parameters.DRTFare_CHF = Double.parseDouble(System.getProperty("DRT_FARE_CHF", "0")); // fixed constant price DRT
-		parameters.DRTFare_CHF_km = Double.parseDouble(System.getProperty("DRT_FARE_CHF_KM", "0")); // km price DRT
+		// Must be set via system properties: -DDRT_FARE_CHF=2.0 -DDRT_FARE_CHF_KM=0.7
+		parameters.DRTFare_CHF = getRequiredDoubleProperty("DRT_FARE_CHF"); // fixed constant price DRT
+		parameters.DRTFare_CHF_km = getRequiredDoubleProperty("DRT_FARE_CHF_KM"); // km price DRT
 		
 
 		return parameters;

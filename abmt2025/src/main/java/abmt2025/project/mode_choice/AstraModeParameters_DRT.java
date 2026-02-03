@@ -3,6 +3,16 @@ package abmt2025.project.mode_choice;
 import org.eqasim.switzerland.mode_choice.parameters.SwissModeParameters;
 
 public class AstraModeParameters_DRT extends SwissModeParameters {
+
+	private static double getRequiredDoubleProperty(String name) {
+		String value = System.getProperty(name);
+		if (value == null) {
+			throw new IllegalStateException("Required system property '" + name + "' is not set. " +
+				"Please provide it via -D" + name + "=<value> in the java command.");
+		}
+		return Double.parseDouble(value);
+	}
+
 	static public class AstraBaseModeParameters {
 		public double betaAgeOver60 = 0.0;
 		public double betaWork = 0.0;
@@ -52,13 +62,13 @@ public class AstraModeParameters_DRT extends SwissModeParameters {
 		parameters.referenceEuclideanDistance_km = 39.0;
 		parameters.referenceHouseholdIncome_MU = 12260.0;
 
-		// Modal Split Calibration - can be overridden via system properties
+		// Modal Split Calibration - must be set via system properties
 		// e.g., -DALPHA_WALK=1.4 -DALPHA_BIKE=1.5 -DALPHA_PT=0 -DALPHA_CAR=1.4 -DBETA_CAR_CITY=-0.2
-		parameters.walk.alpha_u = Double.parseDouble(System.getProperty("ALPHA_WALK", "1.4")); //-------- 0,5903
-		parameters.bike.alpha_u = Double.parseDouble(System.getProperty("ALPHA_BIKE", "1.5")); //-------- 0,1522
-		parameters.pt.alpha_u = Double.parseDouble(System.getProperty("ALPHA_PT", "0")); //--------
-		parameters.car.alpha_u = Double.parseDouble(System.getProperty("ALPHA_CAR", "1.4")); // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
-		parameters.astraCar.betaCity = Double.parseDouble(System.getProperty("BETA_CAR_CITY", "-0.2")); //-------- -0.459
+		parameters.walk.alpha_u = getRequiredDoubleProperty("ALPHA_WALK"); //-------- 0,5903
+		parameters.bike.alpha_u = getRequiredDoubleProperty("ALPHA_BIKE"); //-------- 0,1522
+		parameters.pt.alpha_u = getRequiredDoubleProperty("ALPHA_PT"); //--------
+		parameters.car.alpha_u = getRequiredDoubleProperty("ALPHA_CAR"); // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
+		parameters.astraCar.betaCity = getRequiredDoubleProperty("BETA_CAR_CITY"); //-------- -0.459
 
 		// Public transport
 		parameters.pt.betaWaitingTime_u_min = -0.0124;
