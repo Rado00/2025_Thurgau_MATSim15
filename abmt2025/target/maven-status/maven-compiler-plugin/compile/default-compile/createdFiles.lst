@@ -19,6 +19,7 @@ abmt2025/project/mode_choice/RunSimulation_DRT$1.class
 abmt2025/project/utils/classSamples/mode_choice/costs/AbmtPtCostModel.class
 abmt2025/project/utils/CreatePopulationSample.class
 abmt2025/project/utils/headway/HeadwayImputer.class
+abmt2025/project/mode_choice/routing/DrtIntermodalFilterModule$FilteredDrtRoutingModuleProvider.class
 abmt2025/project/utils/classSamples/mode_choice/AbmtModeAvailability.class
 abmt2025/project/mode_choice/variables/AstraWalkVariables.class
 abmt2025/project/utils/classSamples/counter/MyControlerListener.class
