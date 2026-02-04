@@ -39,12 +39,6 @@ ALPHA_PT="0"
 ALPHA_CAR="1.4"
 BETA_CAR_CITY="-0.2"
 
-# Bösch 2018 Operator Cost Parameters (passed to Java as system properties)
-# Used for operator_costs.txt report generation
-DRT_COST_CHF_VEHICLE_KM="0.20"      # Vehicle distance costs: fuel, maintenance, depreciation (CHF/km)
-DRT_COST_CHF_DRIVER_HOUR="35.0"    # Driver hourly cost (CHF/hour)
-DRT_COST_CHF_VEHICLE_DAY="30.0"    # Fixed daily cost per vehicle: insurance, cleaning, parking (CHF/vehicle/day)
-
 
 ########################## PATHS ###########################################
 
@@ -188,9 +182,6 @@ sbatch -n 1 \
     -DALPHA_PT=$ALPHA_PT \
     -DALPHA_CAR=$ALPHA_CAR \
     -DBETA_CAR_CITY=$BETA_CAR_CITY \
-    -DDRT_COST_CHF_VEHICLE_KM=$DRT_COST_CHF_VEHICLE_KM \
-    -DDRT_COST_CHF_DRIVER_HOUR=$DRT_COST_CHF_DRIVER_HOUR \
-    -DDRT_COST_CHF_VEHICLE_DAY=$DRT_COST_CHF_VEHICLE_DAY \
     -cp abmt2025-DRT${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_DRT \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \

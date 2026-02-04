@@ -29,13 +29,15 @@ public class DrtCostParameters extends SwissCostParameters {
 	public double DRTFare_CHF = 2;
 	public double DRTFare_CHF_km = 0.5;
 
-	// Bösch 2018 operator cost parameters
-	// Vehicle distance-based costs (fuel, maintenance, depreciation)
-	public double DRTOperatorCost_CHF_vehicleKm = 0.0;
-	// Driver hourly cost
-	public double DRTOperatorCost_CHF_driverHour = 0.0;
-	// Fixed daily cost per vehicle (insurance, cleaning, parking)
-	public double DRTOperatorCost_CHF_vehicleDay = 0.0;
+	// Bösch 2018 operator cost parameters (from Bösch et al. 2018, Table 2)
+	// "Cost-based Analysis of Autonomous Mobility Services"
+	// Values for conventional DRT with driver in Swiss context
+	// Vehicle distance-based costs (fuel, maintenance, depreciation): ~0.15-0.20 CHF/km
+	public double DRTOperatorCost_CHF_vehicleKm = 0.20;
+	// Driver hourly cost (Swiss wages): ~30-40 CHF/hour
+	public double DRTOperatorCost_CHF_driverHour = 35.0;
+	// Fixed daily cost per vehicle (insurance, cleaning, parking): ~20-40 CHF/vehicle/day
+	public double DRTOperatorCost_CHF_vehicleDay = 30.0;
 	
 	//TODO: add your own cost parameters
 	public static DrtCostParameters buildDefault() {
@@ -58,11 +60,8 @@ public class DrtCostParameters extends SwissCostParameters {
 		parameters.DRTFare_CHF = getRequiredDoubleProperty("DRT_FARE_CHF"); // fixed constant price DRT
 		parameters.DRTFare_CHF_km = getRequiredDoubleProperty("DRT_FARE_CHF_KM"); // km price DRT
 
-		// Bösch 2018 operator cost parameters
-		// Must be set via system properties (defaults based on Bösch et al. 2018 for conventional DRT with driver)
-		parameters.DRTOperatorCost_CHF_vehicleKm = getRequiredDoubleProperty("DRT_COST_CHF_VEHICLE_KM"); // ~0.20 CHF/km
-		parameters.DRTOperatorCost_CHF_driverHour = getRequiredDoubleProperty("DRT_COST_CHF_DRIVER_HOUR"); // ~35 CHF/h
-		parameters.DRTOperatorCost_CHF_vehicleDay = getRequiredDoubleProperty("DRT_COST_CHF_VEHICLE_DAY"); // ~30 CHF/day
+		// Bösch 2018 operator cost parameters are already initialized with defaults
+		// (see field declarations above with values from Bösch et al. 2018)
 
 		return parameters;
 	}
