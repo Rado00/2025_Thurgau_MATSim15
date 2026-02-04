@@ -19,12 +19,23 @@ public class DrtCostParameters extends SwissCostParameters {
 	public double ptMinimumCost_CHF = 0.0;
 
 	public double ptRegionalRadius_km = 0.0;
-	
+
+	// Legacy cost parameters (used in utility estimation)
 	public double DRTCost_CHF_distance = 0.0;
 	public double DRTCost_CHF_trip = 0.0;
 	public double DRTCost_CHF_vehicle = 0.0;
+
+	// Passenger fare parameters (for revenue calculation)
 	public double DRTFare_CHF = 2;
 	public double DRTFare_CHF_km = 0.5;
+
+	// Bösch 2018 operator cost parameters
+	// Vehicle distance-based costs (fuel, maintenance, depreciation)
+	public double DRTOperatorCost_CHF_vehicleKm = 0.0;
+	// Driver hourly cost
+	public double DRTOperatorCost_CHF_driverHour = 0.0;
+	// Fixed daily cost per vehicle (insurance, cleaning, parking)
+	public double DRTOperatorCost_CHF_vehicleDay = 0.0;
 	
 	//TODO: add your own cost parameters
 	public static DrtCostParameters buildDefault() {
@@ -46,7 +57,12 @@ public class DrtCostParameters extends SwissCostParameters {
 		// Must be set via system properties: -DDRT_FARE_CHF=2.0 -DDRT_FARE_CHF_KM=0.7
 		parameters.DRTFare_CHF = getRequiredDoubleProperty("DRT_FARE_CHF"); // fixed constant price DRT
 		parameters.DRTFare_CHF_km = getRequiredDoubleProperty("DRT_FARE_CHF_KM"); // km price DRT
-		
+
+		// Bösch 2018 operator cost parameters
+		// Must be set via system properties (defaults based on Bösch et al. 2018 for conventional DRT with driver)
+		parameters.DRTOperatorCost_CHF_vehicleKm = getRequiredDoubleProperty("DRT_COST_CHF_VEHICLE_KM"); // ~0.20 CHF/km
+		parameters.DRTOperatorCost_CHF_driverHour = getRequiredDoubleProperty("DRT_COST_CHF_DRIVER_HOUR"); // ~35 CHF/h
+		parameters.DRTOperatorCost_CHF_vehicleDay = getRequiredDoubleProperty("DRT_COST_CHF_VEHICLE_DAY"); // ~30 CHF/day
 
 		return parameters;
 	}
