@@ -17,7 +17,7 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="1pct"
 
 
-SIM_ID="SwissRail_09_req_filter" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="SwissRail_12_00CHF" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="25_drt_594_8.xml"
 SHAPE_FILE="25_ShapeFile.shp"
 
@@ -27,10 +27,10 @@ DRT_FARE_CHF="0"           # Fixed constant price DRT (CHF)
 DRT_FARE_CHF_KM="0"        # Per-km price DRT (CHF/km)
 
 # DRT Operational Constraints (substituted in config XML)
+REJECT_IF_CONSTRAINTS_VIOLATED="false"   # true = hard constraints, false = soft constraints
 MAX_WAIT_TIME="600.0"                    # Max wait time in seconds
 MAX_TRAVEL_TIME_ALPHA="2"                # maxTravelTime = alpha * unsharedRideTime + beta
 MAX_TRAVEL_TIME_BETA="240.0"             # maxTravelTime shift in seconds
-REJECT_IF_CONSTRAINTS_VIOLATED="false"   # true = hard constraints, false = soft constraints
 
 # Modal Split Calibration (passed to Java as system properties)
 ALPHA_WALK="1.4"
