@@ -8,7 +8,7 @@ USER_NAME=$(whoami)
 ########################## CHECK AUTORUN SETTING ###########################################
 
 LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-DRT_CONFIG="Thurgau_config_DRT_M15_06_swissRail_08.xml"
+DRT_CONFIG="Thurgau_config_DRT_M15_10.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
@@ -21,7 +21,7 @@ SIM_ID="SwissRail_17_0CHF" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="25_drt_594_8.xml"
 SHAPE_FILE="25_ShapeFile.shp"
 
-########################## DRT PARAMETERS (for swissRail_08 config) ###########################################
+########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################
 # DRT Fare (passed to Java as system properties)
 DRT_FARE_CHF="0"           # Fixed constant price DRT (CHF)
 DRT_FARE_CHF_KM="0"        # Per-km price DRT (CHF/km)
