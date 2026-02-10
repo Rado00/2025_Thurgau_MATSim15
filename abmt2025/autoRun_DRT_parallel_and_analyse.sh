@@ -7,17 +7,17 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=10 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 DRT_CONFIG="Thurgau_config_DRT_M15_06_swissRail_08.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
 DELETE_EVENTS_FILE=true
 
-BASELINE_PCT="1pct"
+BASELINE_PCT="100pct"
 
 
-SIM_ID="SwissRail_12_00CHF" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="SwissRail_17_0CHF" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="25_drt_594_8.xml"
 SHAPE_FILE="25_ShapeFile.shp"
 
