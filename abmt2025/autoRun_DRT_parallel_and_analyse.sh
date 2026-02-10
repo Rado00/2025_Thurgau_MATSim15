@@ -17,13 +17,13 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="SwissRail_17_0CHF" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="25_drt_594_8.xml"
-SHAPE_FILE="25_ShapeFile.shp"
+SIM_ID="BaselineCalibDRT_04" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="10_drt_1_8.xml"
+SHAPE_FILE="10_ShapeFile.shp"
 
 ########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################
 # DRT Fare (passed to Java as system properties)
-DRT_FARE_CHF="0"           # Fixed constant price DRT (CHF)
+DRT_FARE_CHF="10"           # Fixed constant price DRT (CHF)
 DRT_FARE_CHF_KM="0"        # Per-km price DRT (CHF/km)
 
 # DRT Operational Constraints (substituted in config XML)
@@ -33,11 +33,11 @@ MAX_TRAVEL_TIME_ALPHA="2"                # maxTravelTime = alpha * unsharedRideT
 MAX_TRAVEL_TIME_BETA="240.0"             # maxTravelTime shift in seconds
 
 # Modal Split Calibration (passed to Java as system properties)
-ALPHA_WALK="1.4"
-ALPHA_BIKE="1.5"
+ALPHA_WALK="0.9"
+ALPHA_BIKE="0.65"
 ALPHA_PT="0"
-ALPHA_CAR="1.4"
-BETA_CAR_CITY="-0.2"
+ALPHA_CAR="0.5"
+BETA_CAR_CITY="-0.459"
 
 
 ########################## PATHS ###########################################
@@ -62,9 +62,9 @@ echo "Maven folder is set to: $MAVEN_PATH"
 
 # DATA PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/${BASELINE_PCT}"
+    DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario_Fixed/${BASELINE_PCT}"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario/${BASELINE_PCT}"
+    DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario_Fixed/${BASELINE_PCT}"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
@@ -110,9 +110,9 @@ OUTPUT_SIM_NAME=DRT_${SHAPE_FILENAME}_${FLEET_FILENAME}_${SIM_ID}
 
 # Set OUTPUT_DIRECTORY_PATH
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/5_LastTests"
+    OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/5_LastTests"
+    OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 else
     echo "Unsupported system configuration"
     exit 1
