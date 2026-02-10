@@ -102,7 +102,8 @@ public class DRTUtilityEstimator implements UtilityEstimator {
                          person.getId(), variables.invehicletime_min, variables.waitingtime_min, variables.cost);
                 return Double.NEGATIVE_INFINITY;
             }
-            AstraPersonVariables personVariables = personPredictor.predictVariables(person, trip, elements);
+            // Commented out - personVariables not used since estimateAgeUtility is disabled
+            // AstraPersonVariables personVariables = personPredictor.predictVariables(person, trip, elements);
             AstraTripVariables tripVariables = tripPredictor.predictVariables(person, trip, elements);
             
             double utility = 0.0;

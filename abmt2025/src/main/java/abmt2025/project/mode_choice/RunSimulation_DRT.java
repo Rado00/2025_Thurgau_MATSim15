@@ -43,6 +43,7 @@ import abmt2025.project.travel_time.SmoothingTravelTimeModule;
 import abmt2025.project.mode_choice.estimators.DRTUtilityEstimator;
 import abmt2025.project.mode_choice.costs.OperatorCostCalculator;
 import abmt2025.project.mode_choice.DrtCostParameters;
+import abmt2025.project.mode_choice.routing.DrtIntermodalFilterModule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -146,7 +147,10 @@ public class RunSimulation_DRT {
 		//MILOS FIX AstraConfigurator_DRT.configureController(controller, cmd);
 
 		controller.addOverridingModule(new SmoothingTravelTimeModule());
-		
+
+		// Add DRT intermodal filter module for service area checking and logging
+		controller.addOverridingModule(new DrtIntermodalFilterModule());
+
 		//Create drt controller object 
         
 		// // Instantiate OperatorCostCalculator

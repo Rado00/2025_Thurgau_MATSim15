@@ -8,7 +8,7 @@ USER_NAME=$(whoami)
 ########################## CHECK AUTORUN SETTING ###########################################
 
 LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-DRT_CONFIG="Thurgau_config_DRT_M15_06.xml"
+DRT_CONFIG="Thurgau_config_DRT_M15_10.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
@@ -17,10 +17,27 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="Main_100" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="SwissRail_17_0CHF" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="25_drt_594_8.xml"
 SHAPE_FILE="25_ShapeFile.shp"
 
+########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################
+# DRT Fare (passed to Java as system properties)
+DRT_FARE_CHF="0"           # Fixed constant price DRT (CHF)
+DRT_FARE_CHF_KM="0"        # Per-km price DRT (CHF/km)
+
+# DRT Operational Constraints (substituted in config XML)
+REJECT_IF_CONSTRAINTS_VIOLATED="false"   # true = hard constraints, false = soft constraints
+MAX_WAIT_TIME="600.0"                    # Max wait time in seconds
+MAX_TRAVEL_TIME_ALPHA="2"                # maxTravelTime = alpha * unsharedRideTime + beta
+MAX_TRAVEL_TIME_BETA="240.0"             # maxTravelTime shift in seconds
+
+# Modal Split Calibration (passed to Java as system properties)
+ALPHA_WALK="1.4"
+ALPHA_BIKE="1.5"
+ALPHA_PT="0"
+ALPHA_CAR="1.4"
+BETA_CAR_CITY="-0.2"
 
 
 ########################## PATHS ###########################################
@@ -121,8 +138,14 @@ fi
 # Define the path for the new temporary config file
 CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_${FLEET_FILENAME}.xml"
 
-# Create config by replacing LAST_ITERATION placeholder in the template
-sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" -e "s|\${DRT_SHAPE_FILE_PATH}|$DRT_SHAPE_FILE_PATH|g" \
+# Create config by replacing placeholders in the template
+sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" \
+    -e "s|\${DRT_VEHICLES_PATH}|$DRT_VEHICLES_PATH|g" \
+    -e "s|\${DRT_SHAPE_FILE_PATH}|$DRT_SHAPE_FILE_PATH|g" \
+    -e "s|\${MAX_WAIT_TIME}|$MAX_WAIT_TIME|g" \
+    -e "s|\${MAX_TRAVEL_TIME_ALPHA}|$MAX_TRAVEL_TIME_ALPHA|g" \
+    -e "s|\${MAX_TRAVEL_TIME_BETA}|$MAX_TRAVEL_TIME_BETA|g" \
+    -e "s|\${REJECT_IF_CONSTRAINTS_VIOLATED}|$REJECT_IF_CONSTRAINTS_VIOLATED|g" \
     "$DATA_PATH/${DRT_CONFIG}" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
@@ -151,7 +174,15 @@ sbatch -n 1 \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
     --wrap=" \
-    java -Xmx128G -cp abmt2025-DRT${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_DRT \
+    java -Xmx128G \
+    -DDRT_FARE_CHF=$DRT_FARE_CHF \
+    -DDRT_FARE_CHF_KM=$DRT_FARE_CHF_KM \
+    -DALPHA_WALK=$ALPHA_WALK \
+    -DALPHA_BIKE=$ALPHA_BIKE \
+    -DALPHA_PT=$ALPHA_PT \
+    -DALPHA_CAR=$ALPHA_CAR \
+    -DBETA_CAR_CITY=$BETA_CAR_CITY \
+    -cp abmt2025-DRT${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_DRT \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \
     --output-sim-name $OUTPUT_SIM_NAME \

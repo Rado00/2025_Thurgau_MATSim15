@@ -99,6 +99,26 @@ public class AstraPtUtilityEstimator_DRT extends PtUtilityEstimator {
 		}
 	}
 
+	/**
+	 * Estimates the utility component for DRT access/egress in intermodal PT+DRT trips.
+	 * Uses DRT-specific parameters for travel time and waiting time.
+	 */
+	protected double estimateDrtAccessEgressUtility(AstraPtVariables variables) {
+		if (!variables.hasDrtAccess) {
+			return 0.0;
+		}
+
+		double utility = 0.0;
+
+		// DRT in-vehicle time utility (using DRT parameters)
+		utility += parameters.astraDRT.betaInVehicleTime * variables.drtAccessEgressTime_min;
+
+		// DRT waiting time utility (using DRT parameters)
+		utility += parameters.astraDRT.betaWaitingTime * variables.drtWaitingTime_min;
+
+		return utility;
+	}
+
 	@Override
 	public double estimateUtility(Person person, DiscreteModeChoiceTrip trip, List<? extends PlanElement> elements) {
 		AstraPtVariables variables = predictor.predictVariables(person, trip, elements);
@@ -117,6 +137,9 @@ public class AstraPtUtilityEstimator_DRT extends PtUtilityEstimator {
 		utility += estimateWorkUtility(tripVariables);
 		utility += estimateHeadwayUtility(variables);
 		utility += estimateOvgkUtility(variables);
+
+		// Add DRT access/egress utility for intermodal PT+DRT trips
+		utility += estimateDrtAccessEgressUtility(variables);
 
 		return utility;
 	}
