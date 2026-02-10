@@ -7,16 +7,25 @@ USER_NAME=$(whoami)
 ########################## CHECK AUTORUN SETTING ###########################################
 
 LAST_ITERATION=4 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
-
-SIM_ID="testClean_tt_an" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
+BASELINE_CONFIG="Thurgau_config_base_M15_10.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
 DELETE_EVENTS_FILE=true
 
+BASELINE_PCT="1pct"
+
+SIM_ID="testClean_tt_an" # TO RUN PARALLEL SIMS AND CHANGE OUTPUT FOLDER
 OUTPUT_SIM_NAME=BaselineCalibration_${SIM_ID}
 
-BASELINE_PCT="1pct"
+########################## BASELINE PARAMETERS ###########################################
+# Modal Split Calibration (passed to Java as system properties)
+ALPHA_WALK="1.4"
+ALPHA_BIKE="1.5"
+ALPHA_PT="0"
+ALPHA_CAR="1.4"
+BETA_CAR_CITY="-0.2"
+
 
 ########################## PATHS ###########################################
 
@@ -108,9 +117,9 @@ fi
 # Define the path for the new temporary config file
 CONFIG_FILE_PATH="$DATA_PATH/Thurgau_config_base.xml"
 
-# Create config by replacing LAST_ITERATION placeholder in the template
+# Create config by replacing placeholders in the template
 sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" \
-    "$DATA_PATH/Thurgau_config_base_M15_06.xml" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
+    "$DATA_PATH/${BASELINE_CONFIG}" > "$CONFIG_FILE_PATH" || { echo "Config file creation failed"; exit 1; }
 
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
 
@@ -148,7 +157,13 @@ sbatch -n 1 \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
     --wrap=" \
-    java -Xmx128G -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline \
+    java -Xmx128G \
+    -DALPHA_WALK=$ALPHA_WALK \
+    -DALPHA_BIKE=$ALPHA_BIKE \
+    -DALPHA_PT=$ALPHA_PT \
+    -DALPHA_CAR=$ALPHA_CAR \
+    -DBETA_CAR_CITY=$BETA_CAR_CITY \
+    -cp abmt2025-Baseline${SIM_ID}.jar abmt2025.project.mode_choice.RunSimulation_Baseline \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \
     --output-sim-name ${OUTPUT_SIM_NAME} \
