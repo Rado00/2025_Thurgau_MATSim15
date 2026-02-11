@@ -17,7 +17,7 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="BaselineCalibDRT_04" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="BaselineCalibDRT_08" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="10_drt_1_8.xml"
 SHAPE_FILE="10_ShapeFile.shp"
 
@@ -33,10 +33,10 @@ MAX_TRAVEL_TIME_ALPHA="2"                # maxTravelTime = alpha * unsharedRideT
 MAX_TRAVEL_TIME_BETA="240.0"             # maxTravelTime shift in seconds
 
 # Modal Split Calibration (passed to Java as system properties)
-ALPHA_WALK="0.9"
-ALPHA_BIKE="0.65"
+ALPHA_WALK="1.3"
+ALPHA_BIKE="1.25"
 ALPHA_PT="0"
-ALPHA_CAR="0.5"
+ALPHA_CAR="1"
 BETA_CAR_CITY="-0.459"
 
 
@@ -48,8 +48,7 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     source ~/use-java17.sh 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
-    # Set Maven options for memory management
-    export MAVEN_OPTS="-Xmx2G -XX:MaxMetaspaceSize=512M"
+    # Maven will be built inside sbatch job (not enough memory on login node)
     source ~/use-java17.sh 
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     MAVEN_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_Thurgau_MATSim15_Muratori/abmt2025"
@@ -77,11 +76,11 @@ echo "Data folder is set to: $DATA_PATH"
 # Navigate to Maven repository
 cd "$MAVEN_PATH" || { echo "Maven path not found"; exit 1; }
 
-# Package the Maven project
+# Package the Maven project (SKIP for comura - will build inside sbatch job)
 if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     mvn package || { echo "Maven build failed"; exit 1; }
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
-    /home/comura/apache-maven-3.9.6/apache-maven-3.9.6/bin/mvn package || { echo "Maven build failed"; exit 1; }
+    echo "[INFO] Skipping Maven build on login node (will build inside sbatch job)"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -150,8 +149,10 @@ sed -e "s|\${LAST_ITERATION}|$LAST_ITERATION|g" \
 
 echo "Created config file with $LAST_ITERATION iterations: $CONFIG_FILE_PATH"
 
-# USE YOUR JAR NAME IN THE FIRST STRING. CHANGE THE NUMBER OF THE SECOND STRING IF RUNNING SIMULATIONS IN PARALLEL 
-cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-DRT${SIM_ID}.jar" 
+# Copy JAR to data directory (SKIP for comura - will build and copy inside sbatch job)
+if [[ "$USER_NAME" != "comura" ]]; then
+    cp "$MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar" "$DATA_PATH/abmt2025-DRT${SIM_ID}.jar"
+fi
 
 # Navigate to the scenario directory
 cd "$DATA_PATH"
@@ -160,11 +161,26 @@ cd "$DATA_PATH"
 ########################## SUBMIT THE JOB ###########################################
 # SENDS SIMS
 # Execution order:
-# 1. Run MATSim simulation
-# 2. Update config.ini with simulation output path
-# 3. Run Python analysis (if RUN_ANALYSIS=true)
-# 4. Clean up iterations and events (if CLEAN_ITERATIONS=true)
-# 5. Optionally deletes event files (if DELETE_EVENTS_FILE=true)
+# 1. (comura only) Build Maven and copy JAR
+# 2. Run MATSim simulation
+# 3. Update config.ini with simulation output path
+# 4. Run Python analysis (if RUN_ANALYSIS=true)
+# 5. Clean up iterations and events (if CLEAN_ITERATIONS=true)
+# 6. Optionally deletes event files (if DELETE_EVENTS_FILE=true)
+
+# Build Maven build commands for comura (runs inside sbatch on compute node)
+MAVEN_BUILD_CMD=""
+if [[ "$USER_NAME" == "comura" ]]; then
+    MAVEN_BUILD_CMD=". ~/use-java17.sh \
+    && echo '[BUILD] Compiling Maven project on compute node...' \
+    && cd $MAVEN_PATH \
+    && /home/comura/apache-maven-3.9.6/apache-maven-3.9.6/bin/mvn clean package \
+    && echo '[BUILD] Maven build complete!' \
+    && echo '[BUILD] Copying JAR to data directory...' \
+    && cp $MAVEN_PATH/target/abmt2025-1.0-SNAPSHOT.jar $DATA_PATH/abmt2025-DRT${SIM_ID}.jar \
+    && cd $DATA_PATH \
+    && "
+fi
 
 sbatch -n 1 \
     --cpus-per-task=4 \
@@ -174,7 +190,7 @@ sbatch -n 1 \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
     --wrap=" \
-    java -Xmx128G \
+    ${MAVEN_BUILD_CMD}java -Xmx128G \
     -DDRT_FARE_CHF=$DRT_FARE_CHF \
     -DDRT_FARE_CHF_KM=$DRT_FARE_CHF_KM \
     -DALPHA_WALK=$ALPHA_WALK \
