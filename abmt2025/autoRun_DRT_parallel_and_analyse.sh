@@ -17,7 +17,7 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="BaselineCalibDRT_08" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="BaselineCalibDRT_04_Jimmy" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="10_drt_1_8.xml"
 SHAPE_FILE="10_ShapeFile.shp"
 
@@ -33,10 +33,10 @@ MAX_TRAVEL_TIME_ALPHA="2"                # maxTravelTime = alpha * unsharedRideT
 MAX_TRAVEL_TIME_BETA="240.0"             # maxTravelTime shift in seconds
 
 # Modal Split Calibration (passed to Java as system properties)
-ALPHA_WALK="1.3"
-ALPHA_BIKE="1.25"
+ALPHA_WALK="0.9"
+ALPHA_BIKE="0.65"
 ALPHA_PT="0"
-ALPHA_CAR="1"
+ALPHA_CAR="0.5"
 BETA_CAR_CITY="-0.459"
 
 
@@ -48,6 +48,10 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     source ~/use-java17.sh 
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     MAVEN_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/"
+    # Maven will be built inside sbatch job (not enough memory on login node)
+    source ~/use-java17.sh 
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "gsangiovanni" ]]; then
+    MAVEN_PATH="/lustre/home/gsangiovanni/Rado/2025_Thurgau_MATSim15/abmt2025/"
     # Maven will be built inside sbatch job (not enough memory on login node)
     source ~/use-java17.sh 
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
@@ -64,6 +68,8 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario_Fixed/${BASELINE_PCT}"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     DATA_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario_Fixed/${BASELINE_PCT}"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "gsangiovanni" ]]; then
+    DATA_PATH="/lustre/home/gsangiovanni/Rado/2024_Paper2_Data/MATSim_Thurgau/Baseline_Scenario_Fixed/${BASELINE_PCT}"
 elif [[ "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ]] && [[ "$USER_NAME" == "muaa" ]]; then
     DATA_PATH="C:/Users/${USER_NAME}/Documents/3_MIEI/2025_ABMT_Data/Zurich"
 else
@@ -81,6 +87,8 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     mvn package || { echo "Maven build failed"; exit 1; }
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     echo "[INFO] Skipping Maven build on login node (will build inside sbatch job)"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "gsangiovanni" ]]; then
+    mvn package || { echo "Maven build failed"; exit 1; }
 else
     echo "Unsupported system configuration"
     exit 1
@@ -94,6 +102,9 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     DRT_VEHICLES_PATH="/home/comura/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/${FLEET_FILE}"
     DRT_SHAPE_FILE_PATH="/home/comura/data/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95_easyNames/${SHAPE_FILE}"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "gsangiovanni" ]]; then
+    DRT_VEHICLES_PATH="/lustre/home/gsangiovanni/Rado/2025_Thurgau_MATSim15/abmt2025/src/main/create_vehicle_xml/01_Fleet_files/${FLEET_FILE}"
+    DRT_SHAPE_FILE_PATH="/lustre/home/gsangiovanni/Rado/2024_Paper2_Data/Paper2_ShapeFiles_CH1903+_LV95_easyNames/${SHAPE_FILE}"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -112,6 +123,8 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     OUTPUT_DIRECTORY_PATH="/home/muaa/DATA_ABM/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     OUTPUT_DIRECTORY_PATH="/home/comura/data/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "gsangiovanni" ]]; then
+    OUTPUT_DIRECTORY_PATH="/lustre/home/gsangiovanni/Rado/2024_Paper2_Data/MATSim_Thurgau/Paper2_SimsOutputs/1_ModalSplitCalibration"
 else
     echo "Unsupported system configuration"
     exit 1
@@ -127,6 +140,9 @@ if [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
     ANALYSIS_SCRIPT="/home/muaa/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
     CONFIG_INI_PATH="/home/muaa/ThurgauPaperAnalysisAM/config/config.ini"
+elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "gsangiovanni" ]]; then
+    ANALYSIS_SCRIPT="/lustre/home/gsangiovanni/Rado/ThurgauPaperAnalysisAM/scripts/run_all_scripts.sh"
+    CONFIG_INI_PATH="/lustre/home/gsangiovanni/Rado/ThurgauPaperAnalysisAM/config/config.ini"
 else
     echo "Unsupported system configuration for analysis script/config path"
     exit 1
