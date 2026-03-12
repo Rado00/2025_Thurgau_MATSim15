@@ -70,13 +70,24 @@ public class AstraModeParameters_DRT extends SwissModeParameters {
 		parameters.car.alpha_u = getRequiredDoubleProperty("ALPHA_CAR"); // Original from fb model: 0.2235;Horl 2021 -0.8 in the end
 		parameters.astraCar.betaCity = getRequiredDoubleProperty("BETA_CAR_CITY"); //-------- -0.459
 
+
+
+		// Distance Modal Split Calibration - must be set via system properties
+		// Public transport
+		parameters.astraPt.betaBusTravelTime_u_min = -0.0124;
+		parameters.astraPt.betaRailTravelTime_u_min = -0.0072;
+		// Car
+		parameters.car.betaTravelTime_u_min = -0.0192;
+		// Walking
+		parameters.walk.betaTravelTime_u_min = -0.0457;
+
+
 		// Public transport
 		parameters.pt.betaWaitingTime_u_min = -0.0124;
 		parameters.pt.betaAccessEgressTime_u_min = -0.0142;
 
 		parameters.astraPt.betaFeederTravelTime_u_min = -0.0452;
-		parameters.astraPt.betaBusTravelTime_u_min = -0.0124;
-		parameters.astraPt.betaRailTravelTime_u_min = -0.0072;
+
 		parameters.astraPt.betaHeadway_u_min = -0.0301;
 
 		parameters.astraPt.betaOvgkB_u = -1.7436;
@@ -90,13 +101,9 @@ public class AstraModeParameters_DRT extends SwissModeParameters {
 		parameters.astraBike.betaAgeOver60 = -2.6588;
 
 		// Car
-		parameters.car.betaTravelTime_u_min = -0.0192;
-
 		parameters.astraCar.betaWork = -1.1606;
 
 		// Walking
-		parameters.walk.betaTravelTime_u_min = -0.0457;
-
 		parameters.astraWalk.travelTimeThreshold_min = 120.0;
 		
 		// DRT

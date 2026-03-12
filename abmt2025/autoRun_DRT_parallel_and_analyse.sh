@@ -17,7 +17,7 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="BaselineCalibDRT_04_Jimmy" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+SIM_ID="BaselineCalibDRT_17" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
 FLEET_FILE="10_drt_1_8.xml"
 SHAPE_FILE="10_ShapeFile.shp"
 
@@ -33,11 +33,11 @@ MAX_TRAVEL_TIME_ALPHA="2"                # maxTravelTime = alpha * unsharedRideT
 MAX_TRAVEL_TIME_BETA="240.0"             # maxTravelTime shift in seconds
 
 # Modal Split Calibration (passed to Java as system properties)
-ALPHA_WALK="0.9"
-ALPHA_BIKE="0.65"
+ALPHA_WALK="2.2"
+ALPHA_BIKE="1.7"
 ALPHA_PT="0"
-ALPHA_CAR="0.5"
-BETA_CAR_CITY="-0.459"
+ALPHA_CAR="2"
+BETA_CAR_CITY="-0.3"
 
 
 ########################## PATHS ###########################################
