@@ -206,7 +206,7 @@ sbatch -n 1 \
     --mail-type=END,FAIL \
     --mail-user=muaa@zhaw.ch \
     --wrap=" \
-    ${MAVEN_BUILD_CMD}java -Xmx128G \
+    ${MAVEN_BUILD_CMD}java -Xmx128G -Djava.awt.headless=true \
     -DDRT_FARE_CHF=$DRT_FARE_CHF \
     -DDRT_FARE_CHF_KM=$DRT_FARE_CHF_KM \
     -DALPHA_WALK=$ALPHA_WALK \
