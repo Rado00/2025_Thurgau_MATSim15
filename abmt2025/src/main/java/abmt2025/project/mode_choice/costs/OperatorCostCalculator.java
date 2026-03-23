@@ -106,49 +106,47 @@ public class OperatorCostCalculator {
                 columnIndex.put(headers[i].trim(), i);
             }
 
+            // Read all lines, keep only the last one (last iteration)
             String line;
-            double totalDistance = 0.0;
-            double totalServiceTime = 0.0;
-            double totalEmptyDistance = 0.0;
-            int vehicleCount = 0;
-
+            String lastLine = null;
             while ((line = reader.readLine()) != null) {
-                String[] values = line.split(";");
-                vehicleCount++;
-
-                // Try different possible column names
-                if (columnIndex.containsKey("totalDistance")) {
-                    totalDistance += parseDouble(values, columnIndex.get("totalDistance"));
-                } else if (columnIndex.containsKey("distance")) {
-                    totalDistance += parseDouble(values, columnIndex.get("distance"));
-                }
-
-                if (columnIndex.containsKey("totalServiceDuration")) {
-                    totalServiceTime += parseDouble(values, columnIndex.get("totalServiceDuration"));
-                } else if (columnIndex.containsKey("serviceDuration")) {
-                    totalServiceTime += parseDouble(values, columnIndex.get("serviceDuration"));
-                }
-
-                if (columnIndex.containsKey("totalEmptyDistance")) {
-                    totalEmptyDistance += parseDouble(values, columnIndex.get("totalEmptyDistance"));
-                } else if (columnIndex.containsKey("emptyDistance")) {
-                    totalEmptyDistance += parseDouble(values, columnIndex.get("emptyDistance"));
-                }
+                lastLine = line;
             }
 
-            fleetSize = vehicleCount;
-            totalVehicleKm = totalDistance / 1000.0; // Convert m to km
-            totalVehicleHours = totalServiceTime / 3600.0; // Convert s to hours
-            emptyRatio = totalDistance > 0 ? (totalEmptyDistance / totalDistance) * 100 : 0.0;
+            if (lastLine == null) {
+                LOG.warn("No data rows in vehicle stats file");
+                return;
+            }
 
-            LOG.info("Read vehicle stats: {} vehicles, {:.2f} km, {:.2f} hours, {:.1f}% empty",
-                    fleetSize, totalVehicleKm, totalVehicleHours, emptyRatio);
+            String[] values = lastLine.split(";");
+
+            // Fleet size from "vehicles" column
+            if (columnIndex.containsKey("vehicles")) {
+                fleetSize = (int) parseDouble(values, columnIndex.get("vehicles"));
+            }
+
+            // Total distance from last iteration
+            if (columnIndex.containsKey("totalDistance")) {
+                totalVehicleKm = parseDouble(values, columnIndex.get("totalDistance")) / 1000.0;
+            }
+
+            // Vehicle-hours = fleet size × operating hours per day
+            totalVehicleHours = fleetSize * costParameters.operatingHoursPerDay;
+
+            // Empty ratio from last iteration
+            if (columnIndex.containsKey("emptyRatio")) {
+                emptyRatio = parseDouble(values, columnIndex.get("emptyRatio")) * 100.0;
+            }
+
+            LOG.info("Read vehicle stats (last iteration): {} vehicles, {:.2f} km, {:.2f} hours ({}h/day), {:.1f}% empty",
+                    fleetSize, totalVehicleKm, totalVehicleHours, costParameters.operatingHoursPerDay, emptyRatio);
 
         } catch (IOException e) {
             LOG.error("Error reading vehicle stats file: ", e);
             calculateFromPopulation();
         }
     }
+
 
     private void readLegStats() {
         File legStatsFile = new File(outputDirectory, "drt_legs_drt.csv");
@@ -266,7 +264,7 @@ public class OperatorCostCalculator {
             writer.write("FLEET INFORMATION\n");
             writer.write(String.format("  Number of vehicles:           %d\n", fleetSize));
             writer.write(String.format("  Total vehicle-km:             %.2f km\n", totalVehicleKm));
-            writer.write(String.format("  Total vehicle-hours:          %.2f h\n", totalVehicleHours));
+            writer.write(String.format("  Total vehicle-hours (%.0fh/day):  %.2f h\n", costParameters.operatingHoursPerDay, totalVehicleHours));
             writer.write(String.format("  Empty ratio:                  %.1f%%\n", emptyRatio));
             writer.write("\n");
 

@@ -38,6 +38,9 @@ public class DrtCostParameters extends SwissCostParameters {
 	public double DRTOperatorCost_CHF_driverHour = 35.0;
 	// Fixed daily cost per vehicle (insurance, cleaning, parking): ~20-40 CHF/vehicle/day
 	public double DRTOperatorCost_CHF_vehicleDay = 30.0;
+
+	public double operatingHoursPerDay = 18.0;
+
 	
 	//TODO: add your own cost parameters
 	public static DrtCostParameters buildDefault() {

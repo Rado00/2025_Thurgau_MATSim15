@@ -32,9 +32,8 @@ import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.scenario.ScenarioUtils;
-import org.matsim.core.controler.events.IterationEndsEvent;
-import org.matsim.core.controler.listener.IterationEndsListener;
-
+import org.matsim.core.controler.listener.ShutdownListener;
+import org.matsim.core.controler.events.ShutdownEvent;
 import abmt2025.project.config.AstraConfigurator_Baseline;
 import abmt2025.project.config.AstraConfigurator_DRT;
 import abmt2025.project.config.AstraConfigurator_DRT;
@@ -157,15 +156,12 @@ public class RunSimulation_DRT {
 		DrtCostParameters drtCostParams = DrtCostParameters.buildDefault(); 
 		OperatorCostCalculator costCalculator = new OperatorCostCalculator(scenario, drtCostParams);
 		// Add Cost Calculation at the End of the Simulation
-		controller.addControlerListener(new IterationEndsListener() {
+		controller.addControlerListener(new ShutdownListener() {
 			@Override
-			public void notifyIterationEnds(IterationEndsEvent event) {
-				if (event.getIteration() == event.getServices().getConfig().controller().getLastIteration()) {
-					costCalculator.calculateAndWriteOperatorCosts();
-				}
+			public void notifyShutdown(ShutdownEvent event) {
+				costCalculator.calculateAndWriteOperatorCosts();
 			}
-		});
-		
+		});		
 
 		controller.addOverridingModule(new AbstractModule() {
 			@Override
