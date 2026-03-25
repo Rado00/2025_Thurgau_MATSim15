@@ -7,19 +7,19 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=4 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
+LAST_ITERATION=100 # Set number of iterations dynamically (can also do: LAST_ITERATION=$1)
 DRT_CONFIG="Thurgau_config_DRT_M15_10.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
 DELETE_EVENTS_FILE=true
 
-BASELINE_PCT="1pct"
+BASELINE_PCT="100pct"
 
 
-SIM_ID="Test_DRT_Costs_2" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="25_drt_20_8.xml"
-SHAPE_FILE="25_ShapeFile.shp"
+SIM_ID="BaselineCalibDRT_50" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="10_drt_1_8.xml"
+SHAPE_FILE="10_ShapeFile.shp"
 
 ########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################
 # DRT Fare (passed to Java as system properties)
@@ -34,9 +34,9 @@ MAX_TRAVEL_TIME_BETA="450.0"             # maxTravelTime shift in seconds
 
 # Modal Split Calibration (passed to Java as system properties)
 ALPHA_WALK="2.5"
-ALPHA_BIKE="2.3"
+ALPHA_BIKE="2.55"
 ALPHA_PT="0"
-ALPHA_CAR="1.7"
+ALPHA_CAR="1.6"
 BETA_CAR_CITY="-0.459"
 
 
