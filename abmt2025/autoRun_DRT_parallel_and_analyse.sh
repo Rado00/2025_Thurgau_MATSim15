@@ -17,20 +17,20 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="BaselineCalibDRT_50" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="10_drt_1_8.xml"
-SHAPE_FILE="10_ShapeFile.shp"
+SIM_ID="01_1_PhD" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="01_drt_1_8.xml"
+SHAPE_FILE="01_ShapeFile.shp"
 
 ########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################
 # DRT Fare (passed to Java as system properties)
-DRT_FARE_CHF="10"           # Fixed constant price DRT (CHF)
-DRT_FARE_CHF_KM="0"        # Per-km price DRT (CHF/km)
+DRT_FARE_CHF="2"           # Fixed constant price DRT (CHF)
+DRT_FARE_CHF_KM="0.7"        # Per-km price DRT (CHF/km)
 
 # DRT Operational Constraints (substituted in config XML)
 REJECT_IF_CONSTRAINTS_VIOLATED="true"   # true = hard constraints, false = soft constraints
-MAX_WAIT_TIME="1800.0"                    # Max wait time in seconds
-MAX_TRAVEL_TIME_ALPHA="3"                # maxTravelTime = alpha * unsharedRideTime + beta
-MAX_TRAVEL_TIME_BETA="450.0"             # maxTravelTime shift in seconds
+MAX_WAIT_TIME="2400.0"                    # Max wait time in seconds
+MAX_TRAVEL_TIME_ALPHA="4"                # maxTravelTime = alpha * unsharedRideTime + beta
+MAX_TRAVEL_TIME_BETA="600.0"             # maxTravelTime shift in seconds
 
 # Modal Split Calibration (passed to Java as system properties)
 ALPHA_WALK="2.5"

@@ -7,14 +7,14 @@ USER_NAME=$(whoami)
 
 ########################## CHECK AUTORUN SETTING ###########################################
 
-LAST_ITERATION=4
+LAST_ITERATION=100
 DRT_CONFIG="Thurgau_config_DRT_M15_10.xml"
 
 RUN_ANALYSIS=true
 CLEAN_ITERATIONS=true
 DELETE_EVENTS_FILE=true
 
-BASELINE_PCT="1pct"
+BASELINE_PCT="100pct"
 
 ########################## SEQUENTIAL SIMULATION ARRAYS ###########################################
 # Define arrays for SIM_ID, FLEET_FILE, SHAPE_FILE
@@ -22,39 +22,48 @@ BASELINE_PCT="1pct"
 # Simulations are submitted one after another (each waits for the previous to finish).
 
 SIM_IDS=(
-    "Test_seq_01"
-    "Test_seq_02"
-    "Test_seq_03"
+    "22_1_PhD"
+    "22_2_PhD"
+    "22_3_PhD"
+    "22_4_PhD"
+    "22_5_PhD"
+
 )
 
 FLEET_FILES=(
-    "25_drt_20_8.xml"
-    "25_drt_59_8.xml"
-    "25_drt_119_8.xml"
+    "22_drt_16_8.xml"
+    "22_drt_10_8.xml"
+    "22_drt_6_8.xml"
+    "22_drt_4_8.xml"
+    "22_drt_3_8.xml"
+
 )
 
 SHAPE_FILES=(
-    "25_ShapeFile.shp"
-    "25_ShapeFile.shp"
-    "25_ShapeFile.shp"
+    "22_ShapeFile.shp"
+    "22_ShapeFile.shp"
+    "22_ShapeFile.shp"
+    "22_ShapeFile.shp"
+    "22_ShapeFile.shp"
+
 )
 
 ########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################
 # DRT Fare (passed to Java as system properties)
-DRT_FARE_CHF="10"           # Fixed constant price DRT (CHF)
-DRT_FARE_CHF_KM="0"        # Per-km price DRT (CHF/km)
+DRT_FARE_CHF="2"           # Fixed constant price DRT (CHF)
+DRT_FARE_CHF_KM="0.7"        # Per-km price DRT (CHF/km)
 
 # DRT Operational Constraints (substituted in config XML)
 REJECT_IF_CONSTRAINTS_VIOLATED="true"   # true = hard constraints, false = soft constraints
-MAX_WAIT_TIME="1800.0"                    # Max wait time in seconds
-MAX_TRAVEL_TIME_ALPHA="3"                # maxTravelTime = alpha * unsharedRideTime + beta
-MAX_TRAVEL_TIME_BETA="450.0"             # maxTravelTime shift in seconds
+MAX_WAIT_TIME="2400.0"                    # Max wait time in seconds
+MAX_TRAVEL_TIME_ALPHA="4"                # maxTravelTime = alpha * unsharedRideTime + beta
+MAX_TRAVEL_TIME_BETA="600.0"             # maxTravelTime shift in seconds
 
 # Modal Split Calibration (passed to Java as system properties)
 ALPHA_WALK="2.5"
-ALPHA_BIKE="2.3"
+ALPHA_BIKE="2.55"
 ALPHA_PT="0"
-ALPHA_CAR="1.7"
+ALPHA_CAR="1.6"
 BETA_CAR_CITY="-0.459"
 
 
