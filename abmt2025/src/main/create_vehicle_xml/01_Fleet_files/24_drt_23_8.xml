@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<!DOCTYPE vehicles SYSTEM "http://matsim.org/files/dtd/dvrp_vehicles_v1.dtd">
+<vehicles>
+  <vehicle id="drt0" start_link="960674" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt1" start_link="315950" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt2" start_link="635173" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt3" start_link="446780" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt4" start_link="1015330" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt5" start_link="41034" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt6" start_link="265262" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt7" start_link="628012" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt8" start_link="1064650" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt9" start_link="660026" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt10" start_link="263008" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt11" start_link="716214" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt12" start_link="961215" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt13" start_link="41060" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt14" start_link="315501" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt15" start_link="20699" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt16" start_link="628003" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt17" start_link="170768" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt18" start_link="317754" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt19" start_link="397633" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt20" start_link="46724" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt21" start_link="723115" t_0="0.0" t_1="86400.0" capacity="8"/>
+  <vehicle id="drt22" start_link="66045" t_0="0.0" t_1="86400.0" capacity="8"/>
+</vehicles>

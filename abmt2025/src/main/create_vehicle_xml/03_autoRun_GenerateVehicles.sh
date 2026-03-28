@@ -10,8 +10,8 @@ OS_TYPE=$(uname)
 ########################## CHECK  SETTING ###########################################
 
 
-ZONE_ID="10"
-NUM_VEHICLES=100
+ZONE_ID="25"
+NUM_VEHICLES=19
 
 T0=0
 T1=86400
