@@ -22,30 +22,18 @@ BASELINE_PCT="100pct"
 # Simulations are submitted one after another (each waits for the previous to finish).
 
 SIM_IDS=(
-    "22_1_PhD"
-    "22_2_PhD"
-    "22_3_PhD"
-    "22_4_PhD"
-    "22_5_PhD"
-
+    "19_2_PhD"
+    "19_3_PhD"
 )
 
 FLEET_FILES=(
-    "22_drt_16_8.xml"
-    "22_drt_10_8.xml"
-    "22_drt_6_8.xml"
-    "22_drt_4_8.xml"
-    "22_drt_3_8.xml"
-
+    "19_drt_21_8.xml"
+    "19_drt_13_8.xml"
 )
 
 SHAPE_FILES=(
-    "22_ShapeFile.shp"
-    "22_ShapeFile.shp"
-    "22_ShapeFile.shp"
-    "22_ShapeFile.shp"
-    "22_ShapeFile.shp"
-
+    "19_ShapeFile.shp"
+    "19_ShapeFile.shp"
 )
 
 ########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################

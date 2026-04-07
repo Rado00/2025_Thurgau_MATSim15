@@ -17,14 +17,14 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="01_1_PhD" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="01_drt_1_8.xml"
-SHAPE_FILE="01_ShapeFile.shp"
+SIM_ID="Baseline_Final_PhD" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="00_drt_1_8.xml"
+SHAPE_FILE="00_ShapeFile.shp"
 
 ########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################
 # DRT Fare (passed to Java as system properties)
-DRT_FARE_CHF="2"           # Fixed constant price DRT (CHF)
-DRT_FARE_CHF_KM="0.7"        # Per-km price DRT (CHF/km)
+DRT_FARE_CHF="10"           # Fixed constant price DRT (CHF)
+DRT_FARE_CHF_KM="0"        # Per-km price DRT (CHF/km)
 
 # DRT Operational Constraints (substituted in config XML)
 REJECT_IF_CONSTRAINTS_VIOLATED="true"   # true = hard constraints, false = soft constraints
