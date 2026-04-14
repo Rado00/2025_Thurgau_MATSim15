@@ -17,13 +17,14 @@ DELETE_EVENTS_FILE=true
 BASELINE_PCT="100pct"
 
 
-SIM_ID="Baseline_Final_PhD" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
-FLEET_FILE="00_drt_1_8.xml"
-SHAPE_FILE="00_ShapeFile.shp"
+SIM_ID="Price_Zone_25_0" # CHANGE TO RUN PARALLEL SIMS WITH DIFFERENT SETTINGS
+FLEET_FILE="25_drt_70_8.xml"
+SHAPE_FILE="25_ShapeFile.shp"
+TARGET_AREA=""  # Se vuoto, usa SHAPE_FILE. Altrimenti usa questo valore.
 
 ########################## DRT PARAMETERS (for swissRail_08 and 10 config) ###########################################
 # DRT Fare (passed to Java as system properties)
-DRT_FARE_CHF="10"           # Fixed constant price DRT (CHF)
+DRT_FARE_CHF="0"           # Fixed constant price DRT (CHF)
 DRT_FARE_CHF_KM="0"        # Per-km price DRT (CHF/km)
 
 # DRT Operational Constraints (substituted in config XML)
@@ -148,6 +149,14 @@ else
     exit 1
 fi
 
+# Determine effective TARGET_AREA
+if [[ -z "$TARGET_AREA" ]]; then
+    EFFECTIVE_TARGET_AREA="$SHAPE_FILE"
+else
+    EFFECTIVE_TARGET_AREA="$TARGET_AREA"
+fi
+echo "Target area for analysis: $EFFECTIVE_TARGET_AREA"
+
 ########################## CREATE UNIQUE CONFIG AND JAR ###########################################
 
 # Define the path for the new temporary config file
@@ -218,8 +227,7 @@ sbatch -n 1 \
     --config-path $CONFIG_FILE_PATH \
     --output-directory $OUTPUT_DIRECTORY_PATH \
     --output-sim-name $OUTPUT_SIM_NAME \
-    && sed -i 's|^sim_output_folder *=.*|sim_output_folder = $RELATIVE_OUTPUT_PATH/$OUTPUT_SIM_NAME|' $CONFIG_INI_PATH \
-    $(if $RUN_ANALYSIS; then echo "&& echo '[ANALYSIS] Starting Python analysis...' && bash $ANALYSIS_SCRIPT && echo '[ANALYSIS] Analysis complete!'"; fi) \
+    $(if $RUN_ANALYSIS; then echo "&& sed -i 's|^sim_output_folder *=.*|sim_output_folder = $RELATIVE_OUTPUT_PATH/$OUTPUT_SIM_NAME|' $CONFIG_INI_PATH && sed -i 's|^target_area *=.*|target_area = $EFFECTIVE_TARGET_AREA|' $CONFIG_INI_PATH && echo '[ANALYSIS] Starting Python analysis...' && bash $ANALYSIS_SCRIPT && echo '[ANALYSIS] Analysis complete!'"; fi) \
     $(if $CLEAN_ITERATIONS; then echo "&& echo '[CLEANUP] Waiting 90 seconds before first check...' && sleep 90 && (find $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME -type f -mmin -1 2>/dev/null | grep -q . && echo '[CLEANUP] Files modified in last minute detected. Waiting 2 more minutes...' && sleep 120 && (find $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME -type f -mmin -1 2>/dev/null | grep -q . && echo '[CLEANUP] Files still being modified. Waiting 3 more minutes for safety...' && sleep 180 && echo '[CLEANUP] Final wait complete. Proceeding with deletion.' || echo '[CLEANUP] No recent modifications detected at second check. Proceeding with deletion.') || echo '[CLEANUP] No recent modifications detected at first check. Proceeding with deletion.') && echo '[CLEANUP] Finding last iteration...' && ACTUAL_LAST_ITER=\$(ls -d $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME/ITERS/it.* 2>/dev/null | sed 's/.*it\\.//' | sort -n | tail -1) && echo \"[CLEANUP] Last iteration found: it.\$ACTUAL_LAST_ITER\" && echo '[CLEANUP] Deleting all iteration folders except the last one...' && for iter_dir in $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME/ITERS/it.*; do iter_num=\$(basename \$iter_dir | sed 's/it\\.//' ); if [ \"\$iter_num\" != \"\$ACTUAL_LAST_ITER\" ]; then echo \"[CLEANUP] Removing iteration \$iter_num...\" && rm -rf \$iter_dir; fi; done && echo '[CLEANUP] Iteration folders deleted. Remaining:' && ls $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME/ITERS/ $(if $DELETE_EVENTS_FILE; then echo "&& echo '[CLEANUP] DELETE_EVENTS_FILE=true, removing large event files...' && [ -f $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME/ITERS/it.\$ACTUAL_LAST_ITER/\$ACTUAL_LAST_ITER.events.xml.gz ] && echo \"[CLEANUP] Deleting it.\$ACTUAL_LAST_ITER/\$ACTUAL_LAST_ITER.events.xml.gz...\" && rm -f $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME/ITERS/it.\$ACTUAL_LAST_ITER/\$ACTUAL_LAST_ITER.events.xml.gz || echo '[CLEANUP] File events.xml.gz not found in last iteration, skipping.' && [ -f $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME/output_events.xml.gz ] && echo '[CLEANUP] Deleting output_events.xml.gz...' && rm -f $OUTPUT_DIRECTORY_PATH/$OUTPUT_SIM_NAME/output_events.xml.gz || echo '[CLEANUP] File output_events.xml.gz not found, skipping.'"; else echo "&& echo '[CLEANUP] DELETE_EVENTS_FILE=false, keeping event files.'"; fi) && echo '[CLEANUP] Cleanup complete!'"; fi)
     "
 
