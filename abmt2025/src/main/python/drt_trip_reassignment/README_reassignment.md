@@ -62,3 +62,10 @@ done
 
 Sequential runtime: ~30-60 s per 287 MB file pair on a modern laptop
 with pyarrow installed.
+
+
+
+SU LAPTOP
+cd C:\Users\corra\Documents\1_GitHub\2025_Thurgau_MATSim15\abmt2025\src\main\python\drt_trip_reassignment
+python reassign_rejected_trips.py --baseline C:\Users\corra\Desktop\Sims_Problema\DRT_00_ShapeFile_00_drt_1_8_Baseline_Final_PhD_trips_all_activities_inside_sim.csv --drt C:\Users\corra\Desktop\Sims_Problema\DRT_25_ShapeFile_25_drt_19_8_25_5_PhD_trips_all_activities_inside_sim.csv
+
