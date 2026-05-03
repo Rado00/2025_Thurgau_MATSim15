@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Classify DRT-containing scenario trips against a baseline.
+"""Logic A - Classify DRT-containing scenario trips against a baseline.
 
-For each trip in the scenario CSV that contains DRT (standalone or as a leg
-in a multimodal PT+DRT-feeder trip), find the corresponding trip of the
-same person in the baseline CSV and classify it as:
+Per-trip matching by (person, trip_number). For each trip in the scenario
+CSV that contains DRT (standalone or as a leg in a multimodal PT+DRT-feeder
+trip), find the corresponding trip of the same person in the baseline CSV
+and classify it as:
 
   - new_trip:        no matching trip in baseline (person had no trip with
                      this trip_number)

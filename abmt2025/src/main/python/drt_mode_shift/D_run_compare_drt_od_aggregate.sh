@@ -1,10 +1,14 @@
 #!/bin/bash
 #
 # Wrapper that activates the right Python environment and runs
-# compare_drt_substitution.py on every (baseline, scenario) pair listed in
-# pairs.txt (located next to this script). One pair per line, paths
+# D_compare_drt_od_aggregate.py on every (baseline, scenario) pair listed
+# in pairs.txt (located next to this script). One pair per line, paths
 # separated by a single comma. Empty lines and lines starting with '#' are
 # ignored.
+#
+# Logic D: aggregate per OD-cell, no person matching. Per-mode counts and
+# deltas baseline vs scenario, focused on OD cells where DRT appears in
+# the scenario.
 #
 # Output directory is set conditionally based on host (laptop / cluster).
 
@@ -15,23 +19,20 @@ USER_NAME=$(whoami)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PAIRS_FILE="$SCRIPT_DIR/pairs.txt"
-PYTHON_SCRIPT="$SCRIPT_DIR/compare_drt_substitution.py"
+PYTHON_SCRIPT="$SCRIPT_DIR/D_compare_drt_od_aggregate.py"
 
 # ---------- conditional environment activation + output directory ----------
 
 if [[ ( "$OS_TYPE" == "MINGW"* || "$OS_TYPE" == "CYGWIN"* || "$OS_TYPE" == "MSYS"* ) && "$USER_NAME" == "corra" ]]; then
-    # Windows laptop (Git Bash)
     ENV_ACTIVATE="/c/Users/corra/Documents/1_GitHub/PythonEnvironments/ThurgauAnalysisEnv/Scripts/activate"
     OUTPUT_DIR="/c/Users/corra/Desktop/Sims_Problema/RisultatiConfronto"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "muaa" ]]; then
-    # ZHAW Linux server
     ENV_ACTIVATE="$HOME/PythonEnvironments/ThurgauAnalysisEnv/bin/activate"
     OUTPUT_DIR="$HOME/DATA_ABM/Sims_Problema/RisultatiConfronto"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "comura" ]]; then
     ENV_ACTIVATE="$HOME/PythonEnvironments/ThurgauAnalysisEnv/bin/activate"
     OUTPUT_DIR="$HOME/data/Sims_Problema/RisultatiConfronto"
 elif [[ "$OS_TYPE" == "Linux" && "$USER_NAME" == "gsangiovanni" ]]; then
-    # UZH cluster
     ENV_ACTIVATE="$HOME/PythonEnvironments/ThurgauAnalysisEnv/bin/activate"
     OUTPUT_DIR="$HOME/Rado/Sims_Problema/RisultatiConfronto"
 else
@@ -50,8 +51,6 @@ echo
 
 mkdir -p "$OUTPUT_DIR"
 
-# ---------- activate environment ----------
-
 if [ -f "$ENV_ACTIVATE" ]; then
     # shellcheck disable=SC1090
     source "$ENV_ACTIVATE"
@@ -62,14 +61,11 @@ else
 fi
 echo
 
-# ---------- iterate over pairs ----------
-
 if [ ! -f "$PAIRS_FILE" ]; then
     echo "ERROR: pairs file not found: $PAIRS_FILE"
     exit 2
 fi
 
-# Pick whichever Python interpreter is on PATH after activation
 PY_BIN="$(command -v python || command -v python3)"
 if [ -z "$PY_BIN" ]; then
     echo "ERROR: no python interpreter on PATH"
@@ -83,7 +79,6 @@ FAILED=0
 while IFS= read -r line || [ -n "$line" ]; do
     LINE_NUM=$((LINE_NUM + 1))
 
-    # strip CR (in case of CRLF line endings) and surrounding whitespace
     line="${line%$'\r'}"
     trimmed="$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
 
