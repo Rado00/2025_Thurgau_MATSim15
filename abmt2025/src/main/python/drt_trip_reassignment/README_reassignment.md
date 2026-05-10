@@ -49,15 +49,23 @@ Optional flags:
 
 ## Batch over many cases
 
-Example wrapper to loop over multiple DRT scenarios sharing one baseline:
+Use `run_reassign_batch.sh` (next to this README). It iterates every
+`*trips_all_activities_inside*.csv` in a configured `INPUT_DIR`, runs
+`reassign_rejected_trips.py` against a single `BASELINE_FILE`, and writes
+the `*_fx.csv` plus a per-run `*_fx_report.txt` into a separate
+`OUTPUT_DIR`. The baseline file itself is auto-skipped if it sits inside
+`INPUT_DIR`, and any pre-existing `*_fx.csv` is also skipped.
+
+Edit the host-conditional block at the top of the script to set:
+
+- `BASELINE_FILE`
+- `INPUT_DIR`
+- `OUTPUT_DIR`
+
+Run:
 
 ```bash
-BASELINE_FILE=/path/to/baseline/trips_all_activities_inside.csv
-for drt_dir in /path/to/outputs/DRT_*/; do
-    python reassign_rejected_trips.py \
-        --baseline "$BASELINE_FILE" \
-        --drt      "$drt_dir/trips_all_activities_inside.csv"
-done
+bash run_reassign_batch.sh
 ```
 
 Sequential runtime: ~30-60 s per 287 MB file pair on a modern laptop
