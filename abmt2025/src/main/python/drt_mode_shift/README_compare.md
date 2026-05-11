@@ -18,6 +18,13 @@ host-conditional output directory (laptop / cluster).
 | C | `C_compare_drt_user_persona.py` | `C_run_compare_drt_user_persona.sh` | none - aggregate over DRT-user persons |
 | D | `D_compare_drt_od_aggregate.py` | `D_run_compare_drt_od_aggregate.sh` | none - aggregate per OD-cell |
 
+Plus a Logic A batch-summary helper that aggregates a handful of metrics
+across many scenarios in a single wide CSV (one column per simulation):
+
+| Helper | Python script | Bash launcher | Purpose |
+|---|---|---|---|
+| A-batch | `A_batch_summary.py` | `A_run_batch_summary.sh` | Runs Logic A against every `*trips_all_activities_inside*.csv` in a directory and writes one wide summary CSV per directory (`feeder_pt sub bike`, `feeder_pt sub walk`, `feeder_pt new_trip`). Columns ordered by hardcoded `SIM_ORDER`; sims not in the list are ignored. Useful as direct input for downstream Excel processing. |
+
 Common files:
 
 - `pairs.txt` - one comparison per line, `<baseline_csv>,<scenario_csv>`.
