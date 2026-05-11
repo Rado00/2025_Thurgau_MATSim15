@@ -99,8 +99,17 @@ def extract_sim_name(path: Path) -> str | None:
     for suffix in ("_trips_all_activities_inside_sim_fx",
                    "_trips_all_activities_inside_sim"):
         if name.endswith(suffix):
-            return name[:-len(suffix)]
-    return None
+            name = name[:-len(suffix)]
+            break
+    else:
+        return None
+
+    # Many of the production files carry a trailing '_PhD' tag between the
+    # sim name and the trips marker (e.g. '..._25_drt_70_8_25_2_PhD_trips
+    # _all_activities_inside_sim.csv'). SIM_ORDER does not include it.
+    if name.endswith("_PhD"):
+        name = name[:-len("_PhD")]
+    return name
 
 
 def compute_metrics(baseline_df: pd.DataFrame, scenario_path: Path) -> dict[str, int]:
